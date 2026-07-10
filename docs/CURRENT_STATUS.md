@@ -11,7 +11,15 @@ Phase 2 - Database Design and Core Data Models
 
 Status:
 
-⬜ Not Started
+🟡 In Progress — Phase 2A Complete, Phase 2B Next
+
+Phase 2A deliverable: `docs/04_Database_Design.md` ✅ Approved (Database Version 1.0)
+
+Phase 2 sub-phases:
+- Phase 2A: Database design document ✅ Approved
+- Phase 2B: SQLAlchemy models (14 models) ← Next
+- Phase 2C: First Alembic migration
+- Phase 2D: Database tests
 
 ---
 
@@ -46,7 +54,7 @@ v0.1-foundation
 
 ---
 
-# Phase 1 - In Progress
+# Phase 1 - Completed
 
 ## Goal
 
@@ -99,8 +107,8 @@ Create production-ready development environment foundation.
 | Phase | Name | Status |
 | ------ | ------------------------------------------ | --------- |
 | 0 | Project Foundation | ✅ Complete |
-| 1 | Development Environment Setup | 🟡 In Progress |
-| 2 | Database Design and Core Data Models | Not Started |
+| 1 | Development Environment Setup | ✅ Complete |
+| 2 | Database Design and Core Data Models | 🟡 In Progress |
 | 3 | Market Data System | Not Started |
 | 4 | Indicator Engine | Not Started |
 | 5 | Strategy Engine | Not Started |
@@ -162,15 +170,15 @@ Development Guide:
 
 Database Design:
 
-Phase 2
+Phase 2A Approved — Phase 2B Next
 
 Backend:
 
-Phase 1 In Progress
+Phase 1 Complete
 
 Frontend:
 
-Phase 1 In Progress
+Phase 1 Complete
 
 Trading Engine:
 
@@ -233,11 +241,20 @@ backend/app/
 
 # Next Milestone
 
-Complete Phase 1 - Development Environment Setup
+Begin Phase 2 - Database Design and Core Data Models
+
+Phase 1 deliverables have been completed and verified:
+- FastAPI skeleton with configuration system and structured logging
+- SQLAlchemy engine + session factory + DeclarativeBase
+- Alembic migration setup (tooling ready, no migrations yet)
+- Docker Compose: 3 containers (postgres, backend, frontend) on ats_network
+- React + Vite + Tailwind CSS v4 frontend foundation
+- Axios API client with backend health check
+- Pytest testing foundation with health endpoint tests
+- All domain module stubs (market, indicators, strategy, risk, execution, workers, services)
+- Abstract broker interface + abstract data provider interface
 
 Git tag: v0.2-dev-environment
-
-Then begin Phase 2 - Database Design and Core Data Models
 
 ---
 
