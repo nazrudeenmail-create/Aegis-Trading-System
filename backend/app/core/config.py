@@ -12,9 +12,11 @@ Rules:
     - Use get_settings() everywhere — it is cached after the first call.
 """
 
+import json
 from functools import lru_cache
 from typing import List
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -42,8 +44,70 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str = "change-this-in-production"
 
-    # CORS — list of allowed frontend origins
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:5173"]
+    # CORS — stored as a string (JSON or comma-separated), accessed as list
+    # via the `allowed_origins` property.
+    # Accepts:
+    #   JSON array:  ["http://localhost:5173", "http://localhost:3000"]
+    #   CSV:         http://localhost:5173,http://localhost:3000
+    #   Empty:       falls back to dev default
+    ALLOWED_ORIGINS: str = '["http://localhost:5173"]'
+
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def normalize_allowed_origins(cls, v):
+        """
+        Normalize any input format to a JSON string for storage.
+
+        Accepts:
+            - Python list (from code) → JSON string
+            - JSON array string → validated JSON string
+            - Comma-separated string → converted to JSON string
+            - Empty string/None → dev default
+
+        This prevents pydantic-settings from trying (and failing) to
+        JSON-decode complex types, and gives clear behavior for all
+        common .env formats.
+        """
+        if v is None:
+            return '["http://localhost:5173"]'
+
+        if isinstance(v, list):
+            return json.dumps(v)
+
+        if isinstance(v, str):
+            v = v.strip()
+            if not v:
+                return '["http://localhost:5173"]'
+
+            # Try JSON parse first
+            try:
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return json.dumps([str(o) for o in parsed])
+            except (json.JSONDecodeError, TypeError):
+                pass
+
+            # Fall back to comma-separated
+            origins = [o.strip() for o in v.split(",") if o.strip()]
+            return json.dumps(origins) if origins else '["http://localhost:5173"]'
+
+        return v
+
+    @property
+    def allowed_origins(self) -> List[str]:
+        """
+        Return ALLOWED_ORIGINS as a parsed list of strings.
+
+        This is what middleware and application code should use.
+        """
+        try:
+            parsed = json.loads(self.ALLOWED_ORIGINS)
+            if isinstance(parsed, list):
+                return [str(o) for o in parsed]
+        except (json.JSONDecodeError, TypeError):
+            pass
+        # Last-resort fallback: split by comma
+        return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
 
     model_config = SettingsConfigDict(
         env_file=".env",

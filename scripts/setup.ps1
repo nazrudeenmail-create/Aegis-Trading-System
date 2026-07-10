@@ -129,7 +129,17 @@ if (-not $FrontendOnly) {
     if (-not (Test-Path ".env")) {
         Write-Host "  Creating .env from .env.example..." -ForegroundColor Gray
         Copy-Item ".env.example" ".env"
-        Write-Host "  Edit backend\.env to configure your database connection." -ForegroundColor Yellow
+
+        # Auto-generate SECRET_KEY if it's still the placeholder
+        $envContent = Get-Content ".env" -Raw
+        if ($envContent -match "SECRET_KEY=replace_with_random_secret") {
+            $generatedKey = python -c "import secrets; print(secrets.token_hex(32))"
+            $envContent = $envContent -replace "SECRET_KEY=replace_with_random_secret", "SECRET_KEY=$generatedKey"
+            Set-Content ".env" $envContent -NoNewline
+            Write-Host "  Auto-generated SECRET_KEY." -ForegroundColor Gray
+        }
+
+        Write-Host "  Edit backend\.env to configure your DATABASE_URL if needed." -ForegroundColor Yellow
     }
 
     Write-Host "  Backend setup complete." -ForegroundColor Green

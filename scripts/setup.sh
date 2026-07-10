@@ -158,7 +158,16 @@ if [ "$FRONTEND_ONLY" = false ]; then
     if [ ! -f ".env" ]; then
         print_gray "Creating .env from .env.example..."
         cp .env.example .env
-        echo -e "  ${YELLOW}⚠  Edit backend/.env to configure your database connection.${RESET}"
+
+        # Auto-generate SECRET_KEY if it's still the placeholder
+        if grep -q "SECRET_KEY=replace_with_random_secret" .env 2>/dev/null; then
+            GENERATED_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+            # Use | as delimiter to avoid issues with slashes in the key
+            sed -i "s|SECRET_KEY=replace_with_random_secret|SECRET_KEY=${GENERATED_KEY}|" .env
+            print_gray "Auto-generated SECRET_KEY."
+        fi
+
+        echo -e "  ${YELLOW}⚠  Edit backend/.env to configure your DATABASE_URL if needed.${RESET}"
     else
         print_gray ".env already exists — skipping."
     fi
