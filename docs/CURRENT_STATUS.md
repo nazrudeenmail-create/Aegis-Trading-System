@@ -17,7 +17,7 @@ Phase 2A deliverable: `docs/04_Database_Design.md` ✅ Approved (Database Versio
 
 Phase 2 sub-phases:
 - Phase 2A: Database design document ✅ Approved
-- Phase 2B: SQLAlchemy models (14 models) ← Next
+- Phase 2B: SQLAlchemy models (15 models) ← Next
 - Phase 2C: First Alembic migration
 - Phase 2D: Database tests
 
