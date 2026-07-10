@@ -41,6 +41,15 @@ class Settings(BaseSettings):
         "postgresql+psycopg://ats_user:ats_password@localhost:5432/ats_development"
     )
 
+    # Market Data Provider
+    MARKET_DATA_PROVIDER: str = "capital_com"
+    
+    # Capital.com Config
+    CAPITAL_COM_API_URL: str = "https://api-capital.backend-capital.com/api/v1"
+    CAPITAL_COM_API_KEY: str = ""
+    CAPITAL_COM_USERNAME: str = ""
+    CAPITAL_COM_PASSWORD: str = ""
+
     # Security
     SECRET_KEY: str = "change-this-in-production"
 

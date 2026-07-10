@@ -13,10 +13,15 @@ Adding new fixtures (Phase 2+):
     - mock_broker: Paper broker for execution tests
 """
 
+from collections.abc import Generator
+
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.main import app
+from app.core.config import get_settings
 
 
 @pytest.fixture(scope="module")
@@ -38,3 +43,27 @@ def client() -> TestClient:
     """
     with TestClient(app) as test_client:
         yield test_client
+
+@pytest.fixture(scope="function")
+def db_session() -> Generator[Session, None, None]:
+    """
+    Provide a database session that rolls back after each test.
+    This means every test starts with a clean slate and leaves none
+    of its data behind. No tear-down scripts, no database resets.
+    """
+    settings = get_settings()
+
+    engine = create_engine(settings.DATABASE_URL)
+    connection = engine.connect()
+    transaction = connection.begin()
+
+    TestSession = sessionmaker(bind=connection)
+    session = TestSession()
+
+    try:
+        yield session
+    finally:
+        session.close()
+        transaction.rollback()
+        connection.close()
+        engine.dispose()

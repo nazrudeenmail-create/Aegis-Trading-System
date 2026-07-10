@@ -1,17 +1,39 @@
 # CURRENT STATUS
 
-Version: 1.5
-Last Updated: 2026-07-10
+Version: 1.6
+Last Updated: 2026-07-11
 
 ---
 
 # Current Phase
 
-Phase 3 — Market Data System
+Phase 4 — Indicator Engine
 
 Status:
 
-⬜ Not Started — Phase 2 Complete
+⬜ Not Started — Phase 3 Complete
+
+---
+
+# Phase 3 — Market Data System
+
+Status:
+
+✅ Complete
+
+Phase 3 deliverable summary:
+- Phase 3A: `docs/05_Market_Data_System.md` ✅ Approved
+- Phase 3B: Domain Models (`Candle`, `Instrument`, `Timeframe`)
+- Phase 3C: `CandleValidator` (Strict data integrity, no negatives, sequential checking)
+- Phase 3D: `CapitalComProvider` (Broker integration, REST API, JSON parsing)
+- Phase 3E: `DataIngestionService` & `CandleQueryService`
+- Phase 3F: `CandleRepository` (Strict 1M database storage, upsert collision handling)
+- Phase 3G: `TimeframeBuilder` (Mathematical timeframe aggregation)
+- Phase 3H: `CandleCache` (Thread-safe LRU-style cache)
+- Phase 3I: `GapDetector` & `QualityReport`
+- Phase 3J: Pytest Suite (27 passing tests, including full PostgreSQL pipeline integration)
+
+Git tag: v0.4-market-data-foundation
 
 ---
 
@@ -122,8 +144,8 @@ Create production-ready development environment foundation.
 | 0 | Project Foundation | ✅ Complete |
 | 1 | Development Environment Setup | ✅ Complete |
 | 2 | Database Design and Core Data Models | ✅ Complete |
-| 3 | Market Data System | ⬜ Next |
-| 4 | Indicator Engine | Not Started |
+| 3 | Market Data System | ✅ Complete |
+| 4 | Indicator Engine | ⬜ Next |
 | 5 | Strategy Engine | Not Started |
 | 6 | Exit Logic | Not Started |
 | 7 | Risk Management | Not Started |
@@ -195,7 +217,8 @@ Frontend:
 
 Trading Engine:
 
-⬜ Phase 3 (Market Data) — Next
+✅ Phase 3 Complete (Market Data Foundation)
+⬜ Phase 4 (Indicator Engine) — Next
 
 Deployment:
 
@@ -254,17 +277,15 @@ backend/app/
 
 # Next Milestone
 
-Begin Phase 3 — Market Data System
+Begin Phase 4 — Indicator Engine
 
-Phase 2 deliverables have been completed and verified:
-- 18 PostgreSQL ENUM types + 15 tables (migration applied)
-- 15 SQLAlchemy models with full relationship graph
-- Alembic auto-discovery via `app.database.models`
-- 130 tests passing (119 database + 11 health)
-- Round-trip migration verified (downgrade → upgrade)
-- Standards: 04_Database_Design, 05_SQLAlchemy_Model_Standards, 06_Alembic_Migration_Standards
+Phase 3 deliverables have been completed and verified:
+- Strict 1M Database Storage Enforced
+- Provider JSON completely isolated from Domain Models
+- Timeframe Aggregation Mathematically Verified
+- Pipeline passed visual tests and 27 Pytest cases
 
-Git tag: v0.3-database-foundation
+Git tag: v0.4-market-data-foundation
 
 ---
 
