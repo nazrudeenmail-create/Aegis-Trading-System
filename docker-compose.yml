@@ -1,0 +1,113 @@
+# ATS — Docker Development Environment
+#
+# Services:
+#   postgres  — PostgreSQL 16 database
+#   backend   — FastAPI application (Python 3.12)
+#   frontend  — React + Vite development server
+#
+# Network:
+#   All services communicate on ats_network (explicit bridge).
+#   Future services (Redis, workers) join the same network.
+#
+# Usage:
+#   docker compose up           — start all services
+#   docker compose up postgres  — start only the database
+#   docker compose down         — stop and remove containers
+#   docker compose down -v      — stop and delete database volume (WARNING: data loss)
+
+services:
+
+  # ─────────────────────────────────────────────
+  # PostgreSQL 16
+  # ─────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: ats_postgres
+    environment:
+      POSTGRES_USER: ats_user
+      POSTGRES_PASSWORD: ats_password
+      POSTGRES_DB: ats_development
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist database data between container restarts
+      - ats_postgres_data:/var/lib/postgresql/data
+      # Run initialization SQL on first start
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ats_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ats_user -d ats_development"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # FastAPI Backend
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    container_name: ats_backend
+    environment:
+      # When inside Docker, postgres refers to the service name above (Docker DNS)
+      DATABASE_URL: postgresql+psycopg://ats_user:ats_password@postgres:5432/ats_development
+      APP_ENV: development
+      APP_NAME: Aegis Trading System
+      APP_VERSION: "0.1.0"
+      DEBUG: "True"
+      SECRET_KEY: dev-secret-key-change-in-production
+      ALLOWED_ORIGINS: '["http://localhost:5173"]'
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source code for hot-reload during development
+      - ./backend:/app
+    networks:
+      - ats_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────────
+  # React + Vite Frontend
+  # ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend/Dockerfile
+    container_name: ats_frontend
+    environment:
+      VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source code for hot-reload
+      - ./frontend:/app
+      # Prevent node_modules from being overwritten by the host mount
+      - /app/node_modules
+    networks:
+      - ats_network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# ─────────────────────────────────────────────
+# Volumes
+# ─────────────────────────────────────────────
+volumes:
+  ats_postgres_data:
+    driver: local
+
+# ─────────────────────────────────────────────
+# Networks
+# ─────────────────────────────────────────────
+networks:
+  ats_network:
+    driver: bridge
+    # Future services join this network:
+    #   redis, celery_worker, market_data_service, etc.

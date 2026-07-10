@@ -1,0 +1,82 @@
+# Aegis Trading System — Git Ignore Rules
+#
+# Rule: Never commit secrets, local configs, build artifacts, or OS files.
+
+# ─────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────
+backend/venv/
+backend/.venv/
+**/__pycache__/
+**/*.py[cod]
+**/*.pyo
+**/*.egg-info/
+**/.eggs/
+**/dist/
+**/build/
+**/*.so
+
+# ─────────────────────────────────────────────
+# Environment Files (SECRETS — NEVER COMMIT)
+# ─────────────────────────────────────────────
+backend/.env
+frontend/.env
+.env
+.env.docker
+.env.local
+.env.production
+
+# ─────────────────────────────────────────────
+# Frontend
+# ─────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ─────────────────────────────────────────────
+# Docker
+# ─────────────────────────────────────────────
+.docker/
+
+# ─────────────────────────────────────────────
+# Database
+# ─────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ─────────────────────────────────────────────
+# Logs
+# ─────────────────────────────────────────────
+*.log
+logs/
+*.log.*
+
+# ─────────────────────────────────────────────
+# IDE and Editor
+# ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─────────────────────────────────────────────
+# Operating System
+# ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ─────────────────────────────────────────────
+# Testing
+# ─────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.coveragerc
+
+# ─────────────────────────────────────────────
+# Alembic (keep alembic/ folder but ignore generated pyc)
+# ─────────────────────────────────────────────
+backend/alembic/__pycache__/

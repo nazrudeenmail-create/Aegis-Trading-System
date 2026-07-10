@@ -1,21 +1,31 @@
 # CURRENT STATUS
 
-Version: 1.2
-Last Updated: 2026-07-09
+Version: 1.4
+Last Updated: 2026-07-10
 
 ---
 
 # Current Phase
 
-Phase 0 - Project Foundation
+Phase 2 - Database Design and Core Data Models
+
+Status:
+
+⬜ Not Started
+
+---
+
+# Phase 1 - Development Environment Setup
 
 Status:
 
 ✅ Completed
 
+Git tag: v0.2-dev-environment
+
 ---
 
-# Completed
+# Phase 0 - Completed
 
 ## Documentation
 
@@ -30,67 +40,113 @@ Status:
 * PROJECT_CONTEXT.md
 * MASTER_PROMPT.md
 
----
+Git Milestone:
 
-# Development Guide Status
-
-03_Development_Guide.md
-
-Status:
-
-✅ Completed
-
-Completed Chapters:
-
-✅ Chapter 1 - Development Environment Overview
-
-✅ Chapter 2 - Local Machine Setup
-
-✅ Chapter 3 - Project Repository Structure and Git Workflow
-
-✅ Chapter 4 - Backend Development Environment Setup
-
-✅ Chapter 5 - Frontend Development Environment Setup
-
-✅ Chapter 6 - Database Development Environment Setup
-
-✅ Chapter 7 - Docker Development Environment Setup
-
-✅ Chapter 8 - Development Workflow and Coding Standards
-
-✅ Chapter 9 - Testing Strategy and Quality Assurance
-
-✅ Chapter 10 - Local Development Workflow
-
-✅ Chapter 11 - Environment Separation: Development, Testing, and Production
-
-✅ Chapter 12 - Configuration Management and Secrets Handling
-
-✅ Chapter 13 - Logging and Monitoring Standards
-
-✅ Chapter 14 - Deployment Preparation Guide
-
-✅ Chapter 15 - Development Maintenance and Long-Term Project Management
+v0.1-foundation
 
 ---
 
-# Documentation Progress
+# Phase 1 - In Progress
 
-Completed:
+## Goal
 
-✅ README.md
+Create production-ready development environment foundation.
 
-✅ 00_Project_Vision.md
+## What Gets Built in Phase 1
 
-✅ 01_Tech_Stack.md
+* FastAPI skeleton with configuration system and structured logging
+* SQLAlchemy engine + session factory + DeclarativeBase
+* Alembic migration setup (no migrations yet — just the tooling)
+* Docker Compose: 3 containers (postgres, backend, frontend) on ats_network
+* React + Vite + Tailwind CSS v4 frontend foundation
+* Axios API client with backend health check
+* Pytest testing foundation with health endpoint tests
+* All domain module stubs (market, indicators, strategy, risk, execution, workers, services)
+* Abstract broker interface + abstract data provider interface
 
-✅ 02_System_Architecture.md
+## What Does NOT Get Built in Phase 1
 
-✅ 03_Development_Guide.md
+* No trading logic
+* No indicators
+* No strategy
+* No broker connection
+* No market data ingestion
+* No database schema (that is Phase 2)
 
 ---
 
-# Current Architecture Status
+# Phase 1 - Architecture Decisions Locked
+
+| Decision | Value |
+| -------------------- | -------------------------------------------- |
+| Python | 3.12.x |
+| PostgreSQL driver | psycopg[binary]>=3.2.0 (psycopg3) |
+| SQLAlchemy URL | postgresql+psycopg://... |
+| Tailwind CSS | v4 + @tailwindcss/vite |
+| React | JavaScript (no TypeScript) |
+| Docker network | ats_network (explicit bridge) |
+| Health endpoints | /health AND /api/v1/health |
+| Services layer | app/services/ created |
+| Broker interface | Abstract stub (concrete in Phase 8) |
+| Market data interface | Abstract stub (concrete in Phase 3) |
+| Ports | Backend 8000 / Frontend 5173 / PostgreSQL 5432 |
+| Dev DB credentials | ats_user / ats_password / ats_development |
+
+---
+
+# Full Project Phase Map
+
+| Phase | Name | Status |
+| ------ | ------------------------------------------ | --------- |
+| 0 | Project Foundation | ✅ Complete |
+| 1 | Development Environment Setup | 🟡 In Progress |
+| 2 | Database Design and Core Data Models | Not Started |
+| 3 | Market Data System | Not Started |
+| 4 | Indicator Engine | Not Started |
+| 5 | Strategy Engine | Not Started |
+| 6 | Exit Logic | Not Started |
+| 7 | Risk Management | Not Started |
+| 8 | Execution Engine (Paper Trading) | Not Started |
+| 9 | API Layer and WebSocket | Not Started |
+| 10 | Frontend Dashboard | Not Started |
+| 11 | Integration Testing | Not Started |
+| 13 | Decision Journal and Intelligence Monitoring | Not Started |
+| 12 | Deployment Preparation | Not Started |
+
+Realistic timeline:
+
+* Fast pace: 8-10 weeks
+* Careful pace (recommended): 12-16 weeks
+
+---
+
+# Development Workflow Rule
+
+For every module in every phase:
+
+```
+Build module
+     ↓
+Run locally
+     ↓
+Test (automated + manual)
+     ↓
+Fix any issues
+     ↓
+Document behavior
+     ↓
+Git commit (one clean commit per module)
+     ↓
+Confirm with developer
+     ↓
+Move to next module
+```
+
+This rule applies to all phases.
+
+---
+
+# Architecture Status
 
 Project Foundation:
 
@@ -106,147 +162,83 @@ Development Guide:
 
 Database Design:
 
-Not Started
+Phase 2
 
 Backend:
 
-Not Started
+Phase 1 In Progress
 
 Frontend:
 
-Not Started
+Phase 1 In Progress
+
+Trading Engine:
+
+Phase 3-8
 
 Deployment:
 
-Not Started
+Phase 12
 
 ---
 
 # Important Decisions
 
-* Project folder remains:
+* Project folder remains: Aegis-Trading-System
 
-Aegis-Trading-System
+* Backend organized by responsibility (domain-based):
 
+```
+backend/app/
+  ├── api/
+  ├── core/
+  ├── database/
+  ├── execution/
+  ├── indicators/
+  ├── market/
+  ├── risk/
+  ├── services/
+  ├── strategy/
+  ├── workers/
+  └── main.py
+```
 
-* Backend organized by responsibility:
+* Frontend uses React + JavaScript (not TypeScript)
 
-app/
+* Backend uses Python 3.12 + FastAPI
 
-├── api/
+* PostgreSQL is the production database
 
-├── core/
+* Business logic exists only in backend
 
-├── market/
+* Frontend never calculates indicators
 
-├── indicators/
+* All higher timeframes are built from 1-minute candles
 
-├── strategy/
+* Documentation is completed before implementation
 
-├── risk/
+* Accuracy > Speed > Profit
 
-├── execution/
+* Trading logic must be explainable
 
-├── database/
+* Capital preservation is the primary objective
 
-├── workers/
+* Broker interface is abstract — broker choice deferred to Phase 8
 
-└── main.py
+* Market data provider is abstract — provider choice deferred to Phase 3
 
-
-* Frontend uses React + JavaScript.
-
-* Backend uses Python + FastAPI.
-
-* PostgreSQL is the production database.
-
-* SQLite only for testing if required.
-
-* Business logic exists only in backend.
-
-* Frontend never calculates indicators.
-
-* All higher timeframes are built from 1-minute candles.
-
-* Documentation is completed before implementation.
-
-* Accuracy > Speed > Profit.
-
-* Trading logic must be explainable.
-
-* Capital preservation is the primary objective.
-
----
-
-# Project Milestone
-
-Phase 0 - Project Foundation
-
-Status:
-
-✅ Completed
-
-
-Milestone:
-
-Foundation documentation completed.
-
-Ready for implementation phase.
-
----
-
-# Next Phase
-
-Phase 1 - Development Environment Setup
-
-Next Tasks:
-
-1. Initialize backend project structure
-
-2. Configure FastAPI application
-
-3. Configure PostgreSQL connection
-
-4. Configure SQLAlchemy and Alembic
-
-5. Initialize React frontend
-
-6. Configure Docker development environment
-
-7. Create testing foundation
-
----
-
-# Current Development Status
-
-Database Design:
-
-Next Phase
-
-Backend Code:
-
-Not Started
-
-Frontend Code:
-
-Not Started
-
-Trading Logic:
-
-Not Started
-
-Production Deployment:
-
-Future Phase
+* Phase 13 (Decision Journal) captures every trading decision with full context for audit and improvement
 
 ---
 
 # Next Milestone
 
-Complete:
+Complete Phase 1 - Development Environment Setup
 
-Phase 1 - Development Environment Setup
+Git tag: v0.2-dev-environment
 
-Then begin:
+Then begin Phase 2 - Database Design and Core Data Models
 
-Phase 2 - Database Design and Core Data Models
+---
+
+END OF DOCUMENT
