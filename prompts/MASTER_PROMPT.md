@@ -70,8 +70,10 @@ Never:
 Backend owns:
 
 - Market Data
-- Indicator Calculations
-- Strategy
+- Market Intelligence (Analyzers)
+- Strategy Library
+- Backtesting Engine
+- Strategy Ranking Engine
 - Risk Management
 - Trade Execution
 - Database

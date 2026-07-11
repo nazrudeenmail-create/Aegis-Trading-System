@@ -14,7 +14,7 @@ Aegis Trading System (ATS)
 
 # Project Goal
 
-Build a professional rule-based algorithmic trading platform that is modular, scalable, maintainable, and suitable for long-term development.
+Build a professional Quantitative Research Platform capable of objectively evaluating, backtesting, ranking, and executing multiple algorithmic trading strategies in real time.
 
 The focus is not maximum profit.
 
@@ -54,33 +54,15 @@ Infrastructure
 
 ---
 
-# Current Trading Strategy
+# Quantitative Research Pipeline
 
-Multi-Timeframe Strategy
+The system evaluates the market through a 5-layer pipeline:
 
-4H → Market Bias
-
-1H → Trend Health
-
-15M → Entry Confirmation
-
-5M → Entry Timing
-
-Exit Logic
-
-5M provides early warning.
-
-15M confirms exit.
-
-After 15M confirms, the system checks whether the next 5M candle shows momentum recovery.
-
-If recovery occurs, continue holding.
-
-If recovery fails, partially exit, then fully exit if weakness continues according to the strategy rules.
-
-Re-entry follows the same multi-timeframe confirmation process.
-
----
+1. **Market Intelligence Layer:** Extracts 165+ objective mathematical analyzers (EMA, MACD, ATR, FVG, etc.) from raw candle data.
+2. **Strategy Library:** Houses a catalog of objective, testable trading strategies (e.g., EMA Pullback, MACD Cross, London Breakout).
+3. **Backtesting Engine:** Simulates the performance of every strategy against years of historical OHLCV data.
+4. **Strategy Ranking Engine:** Dynamically scores and selects the most effective strategy for the current market condition.
+5. **Execution Engine:** Validates the signal against the Risk Engine and communicates with broker APIs for execution.
 
 # Development Rules
 
