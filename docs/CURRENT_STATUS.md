@@ -7,11 +7,11 @@ Last Updated: 2026-07-11
 
 # Current Phase
 
-Phase 6 — Risk Management Engine
+Phase 5 — Strategy Library (Drafting Strategies 02 and 03)
 
 Status:
 
-⬜ Not Started — Phase 5 Complete
+⬜ In Progress
 
 ---
 
@@ -184,8 +184,8 @@ Create production-ready development environment foundation.
 | 3 | Market Data System | ✅ Complete |
 | 4 | Market Intelligence Layer | ✅ Complete |
 | 5 | Strategy Library | ✅ Complete |
-| 6 | Risk Management Engine | ⬜ Next |
-| 7 | Strategy Ranking Engine | Not Started |
+| 6 | Risk Management Engine | ✅ Complete |
+| 7 | Strategy Ranking Engine | ⬜ Next (After adding strategies) |
 | 8 | Paper Trading | Not Started |
 | 9 | Decision Journal & Monitoring | Not Started |
 | 10 | API & Real-Time Communication | Not Started |
@@ -315,15 +315,15 @@ backend/app/
 
 # Next Milestone
 
-Begin Phase 6 — Risk Management Engine
+Begin Phase 5 — Drafting Strategies 02 and 03 (Prep for Phase 7)
 
-Phase 5 deliverables have been completed and verified:
-- `BaseStrategy` interface enforcing strict inputs and outputs
-- Completely segregated `TradeCandidate` generation vs selection (Ranking Engine prepared)
-- Robust Strategy 01 implementation filtering noise
-- Passed all tests
+Phase 6 deliverables have been completed and verified:
+- `RiskProfile` and `RiskAssessment` models
+- Pure math `PositionCalculator`
+- Modular `RiskValidator`s handling exposure and daily loss
+- Orchestrator `RiskEngine` evaluating `TradeCandidate` safely
 
-Git tag: v0.6-strategy-engine-foundation
+Git tag: v0.7-risk-management-engine
 
 ---
 
