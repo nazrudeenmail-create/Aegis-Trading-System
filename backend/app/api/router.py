@@ -6,7 +6,7 @@ Responsibility:
     - Apply the /api/v1 prefix to all routes.
     - Keep main.py clean — it only calls include_router(api_router).
 
-Adding a new domain router (example — Phase 9):
+Adding a new domain router (example — Phase 10):
     from app.api.v1 import market
     api_router.include_router(market.router, prefix="/market", tags=["Market"])
 """
@@ -25,7 +25,7 @@ api_router.include_router(
 )
 
 # Future routers — registered here when ready:
-# Phase 9:
+# Phase 10:
 # api_router.include_router(market.router, prefix="/api/v1/market", tags=["Market"])
 # api_router.include_router(trades.router, prefix="/api/v1/trades", tags=["Trades"])
 # api_router.include_router(signals.router, prefix="/api/v1/signals", tags=["Signals"])

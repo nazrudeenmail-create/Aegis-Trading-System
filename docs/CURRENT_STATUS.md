@@ -187,11 +187,11 @@ Create production-ready development environment foundation.
 | 6 | Risk Management Engine | ⬜ Next |
 | 7 | Strategy Ranking Engine | Not Started |
 | 8 | Paper Trading | Not Started |
-| 9 | Live Trading Execution | Not Started |
-| 10 | Frontend Dashboard | Not Started |
-| 11 | API Layer and WebSocket | Not Started |
-| 12 | Deployment Preparation | Not Started |
-| 13 | Decision Journal and Intelligence Monitoring | Not Started |
+| 9 | Decision Journal & Monitoring | Not Started |
+| 10 | API & Real-Time Communication | Not Started |
+| 11 | Frontend Dashboard | Not Started |
+| 12 | Live Trading Execution (Controlled) | Not Started |
+| 13 | Deployment + Continuous Intelligence | Not Started |
 
 Realistic timeline:
 
@@ -250,7 +250,7 @@ Backend:
 
 Frontend:
 
-✅ Phase 1 Complete — Ready to consume Phase 9 API
+✅ Phase 1 Complete — Ready to consume Phase 10 API
 
 Trading Engine:
 
@@ -260,7 +260,7 @@ Trading Engine:
 
 Deployment:
 
-Phase 12
+Phase 13
 
 ---
 
@@ -309,7 +309,7 @@ backend/app/
 
 * Market data provider is abstract — provider choice deferred to Phase 3
 
-* Phase 13 (Decision Journal) captures every trading decision with full context for audit and improvement
+* Phase 9 (Decision Journal & Monitoring) captures every trading decision with full context for audit and improvement
 
 ---
 

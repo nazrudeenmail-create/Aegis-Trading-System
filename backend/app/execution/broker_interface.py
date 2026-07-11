@@ -3,14 +3,14 @@ Aegis Trading System — Abstract Broker Interface
 
 Responsibility:
     Define the interface that all broker implementations must follow.
-    Concrete implementations are created in Phase 8.
+    Concrete implementations are created in Phase 12.
 
 Architecture rule:
     The Strategy Engine and Risk Engine never call a broker directly.
     They call broker_interface methods. The actual broker is a
     configuration choice — not hardcoded anywhere.
 
-Future implementations (Phase 8):
+Future implementations (Phase 12):
     - PaperBroker: simulated execution for paper trading (first implementation)
     - IBKRBroker: Interactive Brokers live trading
     - AlpacaBroker: Alpaca live trading

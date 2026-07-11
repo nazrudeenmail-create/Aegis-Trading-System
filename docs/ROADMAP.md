@@ -156,17 +156,17 @@ Components:
 
 ---
 
-# Phase 6 — Backtesting Engine
+# Phase 6 — Risk Management Engine
 
 Purpose:
 
-Simulate strategy performance over years of historical data.
+Protect capital. Calculate position sizes based on risk tolerance and enforce global exposure limits.
 
 Components:
 
-- Historical data loader
-- Simulated execution environment
-- Performance metrics (Win Rate, Profit Factor, Max Drawdown)
+- Position sizing & Stop Loss enforcement
+- Exposure limits
+- Margin validation
 
 ---
 
@@ -184,90 +184,25 @@ Components:
 
 ---
 
-# Phase 8 — Paper Trading & Risk Management
+# Phase 8 — Paper Trading
 
 Purpose:
 
-Protect simulated capital and execute trades in a risk-free live environment.
+The first complete end-to-end trading environment. Protect simulated capital and execute trades in a risk-free live environment.
 
 Components:
 
 - Forward testing
-- Position sizing & Stop Loss enforcement
-- Exposure limits
+- Simulated execution environment
+- Virtual Account Balance tracking
 
 ---
 
-# Phase 9 — Live Trading Execution
+# Phase 9 — Decision Journal & Monitoring
 
 Purpose:
 
-Connect to real money Broker APIs.
-
-Components:
-
-- Order management
-- Broker interface (Capital.com, IBKR, etc.)
-- Real-time execution tracking
-
-
----
-
-# Phase 10 — Frontend Dashboard
-
-Purpose:
-
-Create the user interface.
-
-Components:
-
-- Market overview
-- Confidence display
-- Positions
-- Trades
-- Settings
-- System monitoring
-
-
----
-
-# Phase 11 — API & Real-Time Communication
-
-Purpose:
-
-Expose ATS capabilities.
-
-Components:
-
-- REST API
-- WebSocket streaming
-- Real-time events
-
-
----
-
-# Phase 12 — Deployment Preparation
-
-Purpose:
-
-Prepare production environment.
-
-Components:
-
-- Production Docker setup
-- Cloud deployment
-- Monitoring
-- Backup strategy
-- Security review
-
-
----
-
-# Phase 13 — Decision Journal & Intelligence Monitoring
-
-Purpose:
-
-Make ATS explainable and measurable.
+Make ATS explainable and measurable before real money is used. Record every decision like a black box recorder.
 
 Components:
 
@@ -276,6 +211,69 @@ Components:
 - Confidence analysis
 - Performance analytics
 - Strategy improvement insights
+
+---
+
+# Phase 10 — API & Real-Time Communication
+
+Purpose:
+
+Expose ATS capabilities and real-time execution events.
+
+Components:
+
+- REST API
+- WebSocket streaming
+- Real-time execution and health events
+
+---
+
+# Phase 11 — Frontend Dashboard
+
+Purpose:
+
+Create the user interface control center.
+
+Components:
+
+- Market overview
+- Decision visibility
+- Positions
+- Trades
+- Settings
+- System monitoring
+
+---
+
+# Phase 12 — Live Trading Execution (Controlled)
+
+Purpose:
+
+Connect to real money Broker APIs starting with very small controlled accounts (e.g. $100-$500).
+
+Components:
+
+- Order management
+- Broker interface (Capital.com, IBKR, etc.)
+- Real-time execution tracking
+- Gradual risk scaling
+
+---
+
+# Phase 13 — Deployment + Continuous Intelligence
+
+Purpose:
+
+Prepare production environment and continuous improvement.
+
+Components:
+
+- Production Docker setup
+- Cloud deployment
+- Backups and monitoring
+- Security review
+- Performance optimization
+- AI analysis and strategy improvement
 
 
 ---

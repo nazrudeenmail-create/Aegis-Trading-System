@@ -47,10 +47,10 @@ async def lifespan(application: FastAPI):
         Startup:
             - Database connection pool verification (Phase 2)
             - Market data worker startup (Phase 3)
-            - WebSocket manager initialization (Phase 9)
+            - WebSocket manager initialization (Phase 10)
         Shutdown:
             - Graceful worker shutdown (Phase 3+)
-            - Open position safety checks before shutdown (Phase 8)
+            - Open position safety checks before shutdown (Phase 12)
     """
     # ── Startup ──────────────────────────────────────────────────────────
     logger.info(

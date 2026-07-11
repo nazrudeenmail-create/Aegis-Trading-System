@@ -12,7 +12,7 @@ Architecture rule:
 
         Component → Repository → SessionLocal → PostgreSQL
 
-Usage in FastAPI routes (Phase 9):
+Usage in FastAPI routes (Phase 10):
     from app.database.connection import get_db
     from sqlalchemy.orm import Session
 

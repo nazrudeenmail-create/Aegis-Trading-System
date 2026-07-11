@@ -5,7 +5,7 @@
 # Architecture:
 #   API Route → Service → Repository / Trading Module
 #
-# Future services (Phase 9+):
+# Future services (Phase 10+):
 #   - MarketDataService
 #   - StrategyService
 #   - RiskService

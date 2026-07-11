@@ -47,7 +47,7 @@ We normalize to avoid data duplication and keep relationships explicit. We do no
 
 ## 1.5 Designed for One Broker Initially, with Future Expansion
 
-The schema includes an `accounts` table from the start, supporting multiple accounts (paper, demo, live) and multiple brokers. In Version 1, a single default account is used. When Phase 8 introduces a concrete broker, new accounts can be added without schema changes.
+The schema includes an `accounts` table from the start, supporting multiple accounts (paper, demo, live) and multiple brokers. In Version 1, a single default account is used. When Phase 12 introduces a concrete broker, new accounts can be added without schema changes.
 
 ## 1.6 Accuracy > Speed > Profit
 
@@ -669,7 +669,7 @@ Structured application logging. For system events, errors, and operational diagn
 
 ### 4.15 `decision_logs`
 
-The complete audit trail of every trading decision. This is the foundation for Phase 13 (Decision Journal & Intelligence Monitoring). Every decision — whether it resulted in a trade or not — is recorded here.
+The complete audit trail of every trading decision. This is the foundation for Phase 9 (Decision Journal & Monitoring). Every decision — whether it resulted in a trade or not — is recorded here.
 
 | Column | Type | Constraints | Description |
 |---|---|---|---|
@@ -690,7 +690,7 @@ The complete audit trail of every trading decision. This is the foundation for P
 - `ix_decision_logs_decision_type` — on `decision_type`
 - `ix_decision_logs_created_at` — on `created_at`
 
-**Note:** `decision_context` is the most important column in the system for explainability. It should capture enough information to reconstruct *why* a decision was made, even years later. The exact JSONB schema will be defined in Phase 5 (Strategy Engine) and Phase 13 (Decision Journal).
+**Note:** `decision_context` is the most important column in the system for explainability. It should capture enough information to reconstruct *why* a decision was made, even years later. The exact JSONB schema will be defined in Phase 5 (Strategy Engine) and Phase 9 (Decision Journal).
 
 ---
 
