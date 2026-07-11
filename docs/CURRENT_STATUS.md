@@ -22,7 +22,7 @@ Status:
 ✅ Complete
 
 Phase 3 deliverable summary:
-- Phase 3A: `docs/05_Market_Data_System.md` ✅ Approved
+- Phase 3A: `docs/engines/01_market_data.md` ✅ Approved
 - Phase 3B: Domain Models (`Candle`, `Instrument`, `Timeframe`)
 - Phase 3C: `CandleValidator` (Strict data integrity, no negatives, sequential checking)
 - Phase 3D: `CapitalComProvider` (Broker integration, REST API, JSON parsing)
@@ -44,11 +44,11 @@ Status:
 ✅ Complete
 
 Phase 2 deliverable summary:
-- Phase 2A: `docs/04_Database_Design.md` ✅ Approved (Database Version 1.0)
-- Phase 2A: `docs/05_SQLAlchemy_Model_Standards.md` ✅ Created
+- Phase 2A: `docs/database/01_design.md` ✅ Approved (Database Version 1.0)
+- Phase 2A: `docs/database/02_models.md` ✅ Created
 - Phase 2B: `backend/app/database/enums.py` — 18 Python Enum classes
 - Phase 2B: 15 SQLAlchemy model files + `models/__init__.py`
-- Phase 2C: `docs/06_Alembic_Migration_Standards.md` ✅ Created
+- Phase 2C: `docs/database/03_migrations.md` ✅ Created
 - Phase 2C: `backend/alembic/env.py` — Updated with model imports
 - Phase 2C: `backend/alembic/versions/001_initial_schema.py` — 18 ENUMs + 15 tables
 - Phase 2D: 6 test files (~119 database tests)
@@ -73,10 +73,11 @@ Git tag: v0.2-dev-environment
 ## Documentation
 
 * README.md
-* 00_Project_Vision.md
-* 01_Tech_Stack.md
-* 02_System_Architecture.md
-* 03_Development_Guide.md
+* docs/core/01_vision.md
+* docs/core/02_tech_stack.md
+* docs/core/03_architecture.md
+* docs/core/04_dev_guide.md
+* docs/core/05_dev_workflow.md
 
 ## AI Files
 

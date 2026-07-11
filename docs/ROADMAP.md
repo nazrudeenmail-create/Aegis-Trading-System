@@ -213,21 +213,6 @@ Components:
 
 ---
 
-# Phase 9 — API & Real-Time Communication
-
-Purpose:
-
-Expose ATS capabilities.
-
-Components:
-
-- REST API
-- WebSocket streaming
-- Real-time events
-
-
----
-
 # Phase 10 — Frontend Dashboard
 
 Purpose:
@@ -246,36 +231,17 @@ Components:
 
 ---
 
-# Phase 11 — Integration Testing
+# Phase 11 — API & Real-Time Communication
 
 Purpose:
 
-Verify the complete system.
-
-Testing:
-
-- End-to-end scenarios
-- Market simulations
-- Strategy validation
-- Risk validation
-- Execution validation
-
-
----
-
-# Phase 13 — Decision Journal & Intelligence Monitoring
-
-Purpose:
-
-Make ATS explainable and measurable.
+Expose ATS capabilities.
 
 Components:
 
-- Decision history
-- Reason tracking
-- Confidence analysis
-- Performance analytics
-- Strategy improvement insights
+- REST API
+- WebSocket streaming
+- Real-time events
 
 
 ---
@@ -293,6 +259,23 @@ Components:
 - Monitoring
 - Backup strategy
 - Security review
+
+
+---
+
+# Phase 13 — Decision Journal & Intelligence Monitoring
+
+Purpose:
+
+Make ATS explainable and measurable.
+
+Components:
+
+- Decision history
+- Reason tracking
+- Confidence analysis
+- Performance analytics
+- Strategy improvement insights
 
 
 ---

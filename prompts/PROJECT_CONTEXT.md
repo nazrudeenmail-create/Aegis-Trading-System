@@ -106,17 +106,14 @@ docker/
 
 # Documentation
 
-Completed
+The project documentation is cleanly separated into modular folders:
 
-- README.md
-- 00_Project_Vision.md
-- 01_Tech_Stack.md
-
-In Progress
-
-- 02_System_Architecture.md
-
----
+- `docs/core/`: Project Foundation, Architecture, Tech Stack, and Dev Guide
+- `docs/database/`: Database Schema and Alembic Migration standards
+- `docs/engines/`: Specifications for Market Data, Market Analysis, Strategy, and Trade Management Engines
+- `docs/catalogs/`: Master checklists of Analyzers and Strategies
+- `docs/strategies/`: Individual quantitative strategy blueprints
+- `docs/trading_guide/`: Trading theory and market dynamics
 
 # Current Phase
 
