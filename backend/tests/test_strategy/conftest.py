@@ -5,7 +5,7 @@ from app.market.domain.candle import Candle
 from app.market_analysis.models import (
     MarketSnapshot, EMAAnalysis, ATRAnalysis, ADXAnalysis, VolumeAnalysis, 
     CandleAnalysis, SwingAnalysis, TrendAnalysis, MarketRegimeAnalysis, 
-    MomentumAnalysis, PullbackAnalysis, VolatilityAnalysis, EMAAlignmentAnalysis
+    MomentumAnalysis, PullbackAnalysis, VolatilityAnalysis
 )
 from app.market_analysis.enums import (
     TrendDirection, TrendStrength, EMAAlignment, MarketRegime, VolatilityState, MomentumState
@@ -43,9 +43,7 @@ def create_mock_snapshot(
     snapshot.candle = CandleAnalysis(is_bullish=candle_bullish, is_bearish=candle_bearish, is_engulfing=True, is_inside_bar=False, is_rejection=False)
     snapshot.swing = SwingAnalysis(swing_high=Decimal(swing_high), swing_low=Decimal(swing_low))
     
-    snapshot.ema_alignment = EMAAlignmentAnalysis(
-        timeframe="1H", alignment=alignment, stack=[], strength=TrendStrength.STRONG
-    )
+
     snapshot.trend = TrendAnalysis(direction=TrendDirection.BULLISH, strength=TrendStrength.STRONG, ema_alignment=alignment)
     snapshot.regime = MarketRegimeAnalysis(regime=regime, is_tradable=True)
     snapshot.momentum = MomentumAnalysis(momentum=MomentumState.BULLISH)

@@ -18,7 +18,7 @@ class EMATrendPullbackStrategy(BaseStrategy):
             return StrategyResult(is_valid=False, rejection_reason="Market is not trending")
             
         # Ensure all required components exist
-        if not snapshot.ema_alignment or not snapshot.adx or not snapshot.pullback or not snapshot.swing or not snapshot.candle or not snapshot.volume or not snapshot.atr:
+        if not snapshot.trend or not snapshot.adx or not snapshot.pullback or not snapshot.swing or not snapshot.candle or not snapshot.volume or not snapshot.atr:
             return StrategyResult(is_valid=False, rejection_reason="Missing required market analysis data")
             
         # 2. Trend Strength Check
@@ -45,9 +45,9 @@ class EMATrendPullbackStrategy(BaseStrategy):
         latest_candle = snapshot.candles[-1]
         
         # Branch for LONG vs SHORT based on EMA Alignment
-        if snapshot.ema_alignment.alignment == EMAAlignment.BULLISH:
+        if snapshot.trend.ema_alignment == EMAAlignment.BULLISH:
             return self._evaluate_long(snapshot, latest_candle)
-        elif snapshot.ema_alignment.alignment == EMAAlignment.BEARISH:
+        elif snapshot.trend.ema_alignment == EMAAlignment.BEARISH:
             return self._evaluate_short(snapshot, latest_candle)
         else:
             return StrategyResult(is_valid=False, rejection_reason="EMA Alignment is MIXED")
@@ -77,7 +77,7 @@ class EMATrendPullbackStrategy(BaseStrategy):
             market_conditions={
                 "trend": "BULLISH",
                 "adx": float(snapshot.adx.adx),
-                "ema_alignment": snapshot.ema_alignment.alignment.value
+                "ema_alignment": snapshot.trend.ema_alignment.value
             }
         )
         return StrategyResult(is_valid=True, candidate=candidate)
@@ -107,7 +107,7 @@ class EMATrendPullbackStrategy(BaseStrategy):
             market_conditions={
                 "trend": "BEARISH",
                 "adx": float(snapshot.adx.adx),
-                "ema_alignment": snapshot.ema_alignment.alignment.value
+                "ema_alignment": snapshot.trend.ema_alignment.value
             }
         )
         return StrategyResult(is_valid=True, candidate=candidate)
