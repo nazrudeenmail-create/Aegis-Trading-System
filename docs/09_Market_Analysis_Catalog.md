@@ -20,7 +20,7 @@ This document serves as the master roadmap for the Market Intelligence Layer (Ph
 | **EMA** | Exponential Moving Average | ⏳ |
 | SMA | Simple Moving Average | ❌ |
 | WMA | Weighted Moving Average | ❌ |
-| Trend Direction | Basic mathematical trend direction | ❌ |
+| Trend Direction | Basic mathematical trend direction | ⏳ |
 
 ## 2. Momentum
 | Analyzer | Description | Status |
@@ -86,12 +86,16 @@ This document serves as the master roadmap for the Market Intelligence Layer (Ph
 | **Asian Session Range** | High/low of the Asian session | ⏳ |
 | Kill Zones | High probability time windows | ❌ |
 
-## Categories 11-17 (Deferred to Future Versions)
+## 16. Multi-Timeframe Analysis
+| Analyzer | Description | Status |
+| :--- | :--- | :--- |
+| **MTF Alignment** | Checks if N timeframes share the same trend bias | ⏳ |
+
+## Categories 11-15 & 17 (Deferred to Future Versions)
 The following categories are fully deferred to V2 and beyond, as they are not required by any V1 Research Strategy:
 * 11. Time Analysis (Time until close, etc.)
 * 12. Gap Analysis (Common gap, breakaway gap)
 * 13. Fibonacci (Retracements, Extensions)
 * 14. Statistics (Z-Score, Correlation)
 * 15. Risk Metrics (Position sizing logic)
-* 16. Multi-Timeframe Analysis (HTF confluence)
 * 17. Event Analysis (News, Earnings, CPI)
