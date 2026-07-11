@@ -750,13 +750,13 @@ NotificationService
 
 ---
 
-# 2.5 Trading Engine Layer
+# 2.5 Trading Engine Layer (Quantitative Research Platform)
 
 ## Purpose
 
 The Trading Engine is the brain of ATS.
 
-This layer makes trading analysis and decisions.
+It has been upgraded to function as a **Quantitative Research Platform**, moving beyond a single hardcoded strategy into a dynamic ecosystem capable of backtesting, evaluating, and ranking multiple strategies in real time.
 
 ---
 
@@ -765,129 +765,88 @@ This layer makes trading analysis and decisions.
 ```text
 Trading Engine
 
-├── Indicator Engine
+├── Market Intelligence Layer (Analyzers)
 │
-├── Market Analysis Engine
+├── Strategy Library
 │
-├── Strategy Engine
+├── Backtesting Engine
 │
-├── Confidence Engine
+├── Strategy Ranking Engine
 │
 ├── Risk Engine
 │
-└── Decision Engine
+└── Execution Engine
 ```
 
 ---
 
-# 2.5.1 Indicator Engine
+# 2.5.1 Market Intelligence Layer
 
 ## Responsibility
 
-Calculate technical measurements.
+Extract objective, mathematical context from raw market data.
 
-Examples:
-
-* Moving averages.
-* MACD.
-* ATR.
-* Momentum.
-* Volatility.
+Replaces the old "Indicator Engine". This layer consists of 165+ independent analyzers grouped into categories (Trend, Momentum, Volatility, Candles, Structure, ICT, Context).
 
 Input:
 
 ```text
-Market candles
+Historical & Live Candles
 ```
 
 Output:
 
 ```text
-Indicator values
+Rich Domain Objects (e.g., FairValueGap, CISDResult, TrendContext)
 ```
 
 ---
 
-# 2.5.2 Market Analysis Engine
+# 2.5.2 Strategy Library
 
 ## Responsibility
 
-Understand market condition.
+House a catalog of objective, testable trading strategies.
 
-Example:
-
-4H timeframe:
-
-```text
-Bullish
-Bearish
-Neutral
-```
-
-1H timeframe:
-
-```text
-Strong Trend
-Weak Trend
-No Trend
-```
-
----
-
-# 2.5.3 Strategy Engine
-
-## Responsibility
-
-Apply ATS trading rules.
-
-Current strategy:
-
-```text
-4H
-Market Bias
-
-↓
-
-1H
-Trend Health
-
-↓
-
-15M
-Entry Confirmation
-
-↓
-
-5M
-Entry Timing
-```
-
-The Strategy Engine answers:
-
-"Is there a valid trading opportunity?"
-
----
-
-# 2.5.4 Confidence Engine
-
-## Responsibility
-
-Measure trade quality.
+Each strategy is a pure logical function that subscribes to specific analyzers from the Market Intelligence Layer and returns a trading signal.
 
 Example:
 
 ```text
-Long Confidence: 78%
-
-Short Confidence: 22%
+EMA Pullback Strategy
+MACD Momentum Strategy
+London Open Breakout Strategy
 ```
 
-Confidence is based on:
+---
 
-* Market alignment.
-* Trend strength.
-* Entry confirmation.
-* Risk conditions.
+# 2.5.3 Backtesting Engine
+
+## Responsibility
+
+Simulate strategy performance against historical data.
+
+This engine processes years of OHLCV data, computes the analyzers, runs the strategies, and tracks simulated wins, losses, profit factor, and drawdowns.
+
+---
+
+# 2.5.4 Strategy Ranking Engine
+
+## Responsibility
+
+Dynamically select the most effective strategy for the current market condition.
+
+Example:
+
+```text
+Current Market: Choppy, High Volatility
+
+Strategy A Score: 85%
+Strategy B Score: 41%
+Strategy C Score: 92%
+
+Selection: Strategy C
+```
 
 ---
 
@@ -895,36 +854,27 @@ Confidence is based on:
 
 ## Responsibility
 
-Protect capital.
+Protect capital and approve trades.
 
 Checks:
 
 * Position size.
-* Stop loss.
-* Risk percentage.
-* Maximum exposure.
+* Stop loss constraints.
+* Maximum account exposure.
+* News/Event embargos.
 
 Example:
 
-Strategy says:
-
-```text
-LONG opportunity found
-```
-
-Risk Engine checks:
-
-```text
-Is this trade safe?
-```
-
-Only then:
-
-```text
-APPROVE TRADE
-```
+Strategy says: `LONG opportunity found`
+Risk Engine says: `DENIED (CPI Release in 15 minutes)`
 
 ---
+
+# 2.5.6 Execution Engine
+
+## Responsibility
+
+Communicate with the Broker API to place, track, and close live trades based on approved signals from the Strategy and Risk engines.
 
 # 2.6 Data Layer
 

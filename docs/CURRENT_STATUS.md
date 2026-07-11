@@ -7,7 +7,7 @@ Last Updated: 2026-07-11
 
 # Current Phase
 
-Phase 4 — Indicator Engine
+Phase 4 — Market Intelligence Layer
 
 Status:
 
@@ -145,16 +145,16 @@ Create production-ready development environment foundation.
 | 1 | Development Environment Setup | ✅ Complete |
 | 2 | Database Design and Core Data Models | ✅ Complete |
 | 3 | Market Data System | ✅ Complete |
-| 4 | Indicator Engine | ⬜ Next |
-| 5 | Strategy Engine | Not Started |
-| 6 | Exit Logic | Not Started |
-| 7 | Risk Management | Not Started |
-| 8 | Execution Engine (Paper Trading) | Not Started |
-| 9 | API Layer and WebSocket | Not Started |
+| 4 | Market Intelligence Layer | ⬜ Next |
+| 5 | Strategy Library | Not Started |
+| 6 | Backtesting Engine | Not Started |
+| 7 | Strategy Ranking Engine | Not Started |
+| 8 | Paper Trading | Not Started |
+| 9 | Live Trading Execution | Not Started |
 | 10 | Frontend Dashboard | Not Started |
-| 11 | Integration Testing | Not Started |
-| 13 | Decision Journal and Intelligence Monitoring | Not Started |
+| 11 | API Layer and WebSocket | Not Started |
 | 12 | Deployment Preparation | Not Started |
+| 13 | Decision Journal and Intelligence Monitoring | Not Started |
 
 Realistic timeline:
 
@@ -218,7 +218,7 @@ Frontend:
 Trading Engine:
 
 ✅ Phase 3 Complete (Market Data Foundation)
-⬜ Phase 4 (Indicator Engine) — Next
+⬜ Phase 4 (Market Intelligence Layer) — Next
 
 Deployment:
 
@@ -238,7 +238,7 @@ backend/app/
   ├── core/
   ├── database/
   ├── execution/
-  ├── indicators/
+  ├── market_analysis/
   ├── market/
   ├── risk/
   ├── services/
@@ -277,7 +277,7 @@ backend/app/
 
 # Next Milestone
 
-Begin Phase 4 — Indicator Engine
+Begin Phase 4 — Market Intelligence Layer
 
 Phase 3 deliverables have been completed and verified:
 - Strict 1M Database Storage Enforced

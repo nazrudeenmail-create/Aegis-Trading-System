@@ -126,94 +126,89 @@ Supported:
 
 ---
 
-# Phase 4 — Indicator Engine
+# Phase 4 — Market Intelligence Layer
 
 Purpose:
 
-Create mathematical market analysis components.
+Create objective, mathematical market analysis components.
 
-Indicators:
+Capabilities:
 
-- ATR
-- EMA
-- MACD
-- RSI
-- CISD
-- Momentum
-
+- Trend (EMA)
+- Momentum (MACD)
+- Volatility (ATR)
+- Structure (Swings)
+- ICT (FVG, CISD)
+- Context (Session/Day Highs)
 
 ---
 
-# Phase 5 — Strategy Engine
+# Phase 5 — Strategy Library
 
 Purpose:
 
-Build ATS decision-making system.
+Build objective, testable trading strategies based on Market Intelligence.
 
 Components:
 
-- 4H Market Bias
-- 1H Trend Health
-- 15M Entry Confirmation
-- 5M Entry Timing
-- Confidence Engine
-
+- 10-15 V1 Research Candidates (EMA Pullback, MACD Cross, etc.)
+- Standardized Strategy Interface (Entry, Exit, Stop Loss rules)
 
 ---
 
-# Phase 6 — Exit Logic
+# Phase 6 — Backtesting Engine
 
 Purpose:
 
-Create intelligent position management.
+Simulate strategy performance over years of historical data.
 
 Components:
 
-- Early warning detection
-- Confirmation system
-- Recovery check
-- Partial exits
-- Full exits
-- Re-entry logic
-
+- Historical data loader
+- Simulated execution environment
+- Performance metrics (Win Rate, Profit Factor, Max Drawdown)
 
 ---
 
-# Phase 7 — Risk Management
+# Phase 7 — Strategy Ranking Engine
 
 Purpose:
 
-Protect capital.
+Dynamically score and select the best strategies for the current market environment.
 
 Components:
 
-- Position sizing
-- Stop loss
-- Trailing stop
+- Market regime detection (Choppy vs Trending)
+- Real-time scoring matrix
+- Strategy selection logic
+
+---
+
+# Phase 8 — Paper Trading & Risk Management
+
+Purpose:
+
+Protect simulated capital and execute trades in a risk-free live environment.
+
+Components:
+
+- Forward testing
+- Position sizing & Stop Loss enforcement
 - Exposure limits
-- Risk approval
-
 
 ---
 
-# Phase 8 — Execution Engine
+# Phase 9 — Live Trading Execution
 
 Purpose:
 
-Connect decisions to trading execution.
+Connect to real money Broker APIs.
 
 Components:
 
-- Paper trading
 - Order management
-- Position tracking
-- Broker interface
-
-Future:
-
-- Interactive Brokers
-- Alpaca
-- Other brokers
+- Broker interface (Capital.com, IBKR, etc.)
+- Real-time execution tracking
 
 
 ---
