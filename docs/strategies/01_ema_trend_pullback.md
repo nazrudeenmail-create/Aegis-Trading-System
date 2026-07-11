@@ -69,9 +69,16 @@ All conditions must be true.
 
 ## Trend Direction
 
-- Price > EMA200
-- EMA20 > EMA50
-- EMA9 > EMA21
+Long Trend Direction:
+
+Higher timeframe:
+Price > EMA200
+
+Trend timeframe:
+EMA20 > EMA50
+
+Entry timeframe:
+EMA9 > EMA21
 
 ## Trend Strength
 
@@ -109,15 +116,107 @@ Generate a **BUY Trade Candidate**.
 
 # 5A. Multi-Timeframe Trend Alignment
 
-The strategy evaluates EMA structure across higher and lower timeframes.
+The strategy evaluates EMA structure across multiple timeframes.
 
 Higher timeframe determines market bias.
-Lower timeframe determines entry timing.
+Lower timeframe determines execution timing.
 
-Daily → Direction
-4H → Trend quality
-1H → Setup
-15M → Entry
+## Timeframe Responsibilities
+
+| Timeframe | Purpose                    |
+| --------- | -------------------------- |
+| Daily     | Long-term market direction |
+| 4H        | Primary trend quality      |
+| 1H        | Setup confirmation         |
+| 15M       | Entry trigger              |
+
+---
+
+## Long Example
+
+Higher timeframe:
+
+```
+Daily:
+
+Price > EMA200
+```
+
+Trend timeframe:
+
+```
+4H:
+
+EMA20 > EMA50
+EMA50 > EMA200
+```
+
+Setup timeframe:
+
+```
+1H:
+
+EMA9 > EMA21
+Pullback detected
+```
+
+Entry timeframe:
+
+```
+15M:
+
+Bullish confirmation candle
+```
+
+Result:
+
+```
+BUY Trade Candidate
+```
+
+---
+
+## Short Example
+
+Higher timeframe:
+
+```
+Daily:
+
+Price < EMA200
+```
+
+Trend timeframe:
+
+```
+4H:
+
+EMA20 < EMA50
+EMA50 < EMA200
+```
+
+Setup timeframe:
+
+```
+1H:
+
+EMA9 < EMA21
+Pullback detected
+```
+
+Entry timeframe:
+
+```
+15M:
+
+Bearish confirmation candle
+```
+
+Result:
+
+```
+SELL Trade Candidate
+```
 
 ---
 
@@ -131,9 +230,16 @@ All conditions must be true.
 
 ## Trend Direction
 
-- Price < EMA200
-- EMA20 < EMA50
-- EMA9 < EMA21
+Short Trend Direction:
+
+Higher timeframe:
+Price < EMA200
+
+Trend timeframe:
+EMA20 < EMA50
+
+Entry timeframe:
+EMA9 < EMA21
 
 ## Trend Strength
 
@@ -256,9 +362,11 @@ EMA20 crosses EMA50
 Execution:
 Handled by the Trade & Risk Management module.
 
-Confidence:
+Market Analysis:
 
-Provided by Market Analysis Engine
+Provides objective market facts only.
+
+Strategy Engine determines trade qualification based on rule satisfaction.
 
 The strategy never executes trades directly.
 
@@ -311,31 +419,31 @@ Market Analysis Engine
 
 ↓
 
-Market Regime = Trending?
+Multi-Timeframe EMA Alignment
 
 ↓
 
-Trend Direction Valid?
+Market Regime Check
 
 ↓
 
-ADX ≥ 25?
+Trend Direction Check
 
 ↓
 
-Valid Pullback?
+Trend Strength Check
 
 ↓
 
-Market Structure Valid?
+Pullback Quality Check
 
 ↓
 
-Confirmation Candle?
+Market Structure Check
 
 ↓
 
-Volume Confirmed?
+Entry Confirmation Check
 
 ↓
 
