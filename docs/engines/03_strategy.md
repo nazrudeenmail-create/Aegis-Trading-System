@@ -53,6 +53,13 @@ Trade Candidate
 
       ▼
 
+(Future Phase)
+Strategy Ranking Engine
+
+      │
+
+      ▼
+
 Risk Engine
 
 ---
@@ -63,10 +70,9 @@ The Strategy Engine is responsible for:
 
 - Evaluate every strategy
 - Check entry conditions
-- Calculate Strategy Confidence Score (weighting objective facts)
-- Generate trade candidates
+- Generate trade candidates (objective facts only)
 - Reject invalid setups
-- Send valid trade candidates to the Risk Engine
+- Send valid trade candidates to the Strategy Ranking Engine / Risk Engine
 
 The Strategy Engine does NOT:
 
@@ -84,9 +90,9 @@ Every strategy follows the same workflow.
 1. Receive market analysis.
 2. Check strategy rules.
 3. Validate entry conditions.
-4. Calculate Strategy Confidence (score out of 100).
+4. Calculate invalidation level (stop loss distance).
 5. Create Trade Candidate.
-6. Send Trade Candidate to Risk Engine.
+6. Send Trade Candidate to next engine.
 
 ---
 
@@ -100,7 +106,6 @@ Every strategy should contain:
 - Entry Rules
 - Exit Rules
 - Required Analyzers
-- Confidence Weighting Rules
 
 This keeps all strategies consistent.
 
@@ -114,7 +119,7 @@ Example:
 
 Strategy:
 
-EMA Trend Pullback
+EMA Trend Pullback v2.1
 
 Direction:
 
@@ -124,13 +129,13 @@ Entry Price:
 
 100
 
-Strategy Confidence:
+Stop Loss:
 
-High
+95
 
 The Trade Candidate is not an executed trade.
 
-It is only a proposed trading opportunity.
+It is only a proposed trading opportunity based on objective facts.
 
 ---
 
@@ -154,7 +159,7 @@ No Trade
 
 Each strategy works independently.
 
-The Risk Engine decides whether a trade should proceed.
+A future **Strategy Ranking Engine** will evaluate multiple candidates and choose the highest quality opportunity before passing it to the Risk Engine.
 
 ---
 
@@ -246,7 +251,7 @@ Generate BUY Trade Candidate
 
 ↓
 
-Send to Risk Engine
+Send to Strategy Ranking Engine (Future) -> Risk Engine
 
 ---
 

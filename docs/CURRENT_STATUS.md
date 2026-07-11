@@ -7,13 +7,29 @@ Last Updated: 2026-07-11
 
 # Current Phase
 
-Phase 5 — Strategy Library
+Phase 6 — Risk Management Engine
 
 Status:
 
-⬜ Not Started — Phase 4 Complete
+⬜ Not Started — Phase 5 Complete
 
 ---
+
+# Phase 5 — Strategy Library & Engine
+
+Status:
+
+✅ Complete
+
+Phase 5 deliverable summary:
+- Phase 5A: Strategy domain models (`TradeCandidate`, `StrategyResult`)
+- Phase 5B: Abstract `BaseStrategy` interface
+- Phase 5C: `StrategyEngine` orchestrator
+- Phase 5D: `EMATrendPullbackStrategy` (Strategy 01 v2.1)
+- Phase 5E: Pytest Suite for Models, Strategy, and Engine
+- Separated Strategy Selection (Ranking Engine) from Signal Generation (Strategy Engine)
+
+Git tag: v0.6-strategy-engine-foundation
 
 # Phase 4 — Market Intelligence Layer
 
@@ -167,8 +183,8 @@ Create production-ready development environment foundation.
 | 2 | Database Design and Core Data Models | ✅ Complete |
 | 3 | Market Data System | ✅ Complete |
 | 4 | Market Intelligence Layer | ✅ Complete |
-| 5 | Strategy Library | ⬜ Next |
-| 6 | Backtesting Engine | Not Started |
+| 5 | Strategy Library | ✅ Complete |
+| 6 | Risk Management Engine | ⬜ Next |
 | 7 | Strategy Ranking Engine | Not Started |
 | 8 | Paper Trading | Not Started |
 | 9 | Live Trading Execution | Not Started |
@@ -299,15 +315,15 @@ backend/app/
 
 # Next Milestone
 
-Begin Phase 5 — Strategy Library
+Begin Phase 6 — Risk Management Engine
 
-Phase 4 deliverables have been completed and verified:
-- Strict separation between Tier 1 (Math Facts) and Tier 2 (Intelligence Interpretation)
-- Deep resilience built into MarketAnalysisService
-- Strict mathematical validation of Pydantic models
-- Successfully tested across 11 test cases in an isolated Python 3.12 environment
+Phase 5 deliverables have been completed and verified:
+- `BaseStrategy` interface enforcing strict inputs and outputs
+- Completely segregated `TradeCandidate` generation vs selection (Ranking Engine prepared)
+- Robust Strategy 01 implementation filtering noise
+- Passed all tests
 
-Git tag: v0.5-market-intelligence-foundation
+Git tag: v0.6-strategy-engine-foundation
 
 ---
 
