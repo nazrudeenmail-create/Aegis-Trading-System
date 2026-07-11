@@ -14,10 +14,10 @@ class ProviderFactory:
         
         if settings.MARKET_DATA_PROVIDER == "capital_com":
             return CapitalComProvider(
-                api_url=settings.CAPITAL_API_URL,
-                api_key=settings.CAPITAL_API_KEY,
-                username=settings.CAPITAL_USERNAME,
-                password=settings.CAPITAL_PASSWORD
+                api_url=settings.CAPITAL_COM_API_URL,
+                api_key=settings.CAPITAL_COM_API_KEY,
+                username=settings.CAPITAL_COM_USERNAME,
+                password=settings.CAPITAL_COM_PASSWORD
             )
             
         raise ValueError(f"Unknown market data provider: {settings.MARKET_DATA_PROVIDER}")
