@@ -56,7 +56,6 @@ The Market Analysis Engine is responsible for:
 - Detect pullbacks
 - Measure volatility
 - Analyze market structure
-- Calculate market confidence
 
 The engine does **not** decide whether to enter a trade.
 
@@ -134,31 +133,7 @@ Used by the Risk Engine.
 
 ---
 
-# Market Confidence
 
-The engine evaluates the overall quality of the market.
-
-Example:
-
-Trend ............. Strong
-
-Momentum .......... Strong
-
-Volatility ........ Normal
-
-Market Structure .. Healthy
-
-Result:
-
-High Confidence
-
-The confidence level helps strategies filter low-quality setups.
-
-It does **not** increase position size after a trade has been opened.
-
----
-
-# Output
 
 The Market Analysis Engine produces standardized market information.
 
@@ -185,9 +160,6 @@ Normal
 Volume:
 Confirmed
 
-Confidence:
-High
-
 Every strategy receives the same information.
 
 Each strategy applies its own entry and exit rules.
@@ -206,7 +178,6 @@ Uses:
 - Momentum
 - Pullback
 - Volume
-- Confidence
 
 Strategy 2 (Breakout)
 

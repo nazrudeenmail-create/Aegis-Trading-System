@@ -63,6 +63,7 @@ The Strategy Engine is responsible for:
 
 - Evaluate every strategy
 - Check entry conditions
+- Calculate Strategy Confidence Score (weighting objective facts)
 - Generate trade candidates
 - Reject invalid setups
 - Send valid trade candidates to the Risk Engine
@@ -83,8 +84,9 @@ Every strategy follows the same workflow.
 1. Receive market analysis.
 2. Check strategy rules.
 3. Validate entry conditions.
-4. Create Trade Candidate.
-5. Send Trade Candidate to Risk Engine.
+4. Calculate Strategy Confidence (score out of 100).
+5. Create Trade Candidate.
+6. Send Trade Candidate to Risk Engine.
 
 ---
 
@@ -98,6 +100,7 @@ Every strategy should contain:
 - Entry Rules
 - Exit Rules
 - Required Analyzers
+- Confidence Weighting Rules
 
 This keeps all strategies consistent.
 
