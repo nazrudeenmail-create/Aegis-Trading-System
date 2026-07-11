@@ -67,6 +67,12 @@ def run_demo():
     print(f"ATR (14): {snapshot.atr.atr if snapshot.atr else 'N/A'}")
     
     print("\n--- TIER 2: INTELLIGENCE (Context) ---")
+    if snapshot.ema_alignment:
+        print(f"EMA Alignment:    {snapshot.ema_alignment.alignment.name}")
+        print(f"EMA Stack:        {', '.join(snapshot.ema_alignment.stack)}")
+    else:
+        print("EMA Alignment: N/A")
+        
     if snapshot.trend:
         print(f"Trend Direction:  {snapshot.trend.direction.name}")
         print(f"Trend Strength:   {snapshot.trend.strength.name}")

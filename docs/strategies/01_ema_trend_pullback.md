@@ -45,6 +45,7 @@ This strategy uses the shared Market Analysis Engine.
 Required analyzers:
 
 - EMA Analyzer
+- EMA Alignment Analyzer
 - ATR Analyzer
 - ADX Analyzer
 - Volume Analyzer
@@ -103,6 +104,20 @@ Confirmation candle must:
 ## Result
 
 Generate a **BUY Trade Candidate**.
+
+---
+
+# 5A. Multi-Timeframe Trend Alignment
+
+The strategy evaluates EMA structure across higher and lower timeframes.
+
+Higher timeframe determines market bias.
+Lower timeframe determines entry timing.
+
+Daily → Direction
+4H → Trend quality
+1H → Setup
+15M → Entry
 
 ---
 

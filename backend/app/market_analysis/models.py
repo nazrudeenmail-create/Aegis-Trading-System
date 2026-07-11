@@ -58,6 +58,14 @@ from app.market_analysis.enums import (
 
 # --- Tier 2 Models (Intelligence / Interpretation) ---
 
+class EMAAlignmentAnalysis(BaseAnalysis):
+    """Tier 2: Evaluates the relationship between EMAs."""
+    timeframe: str
+    alignment: EMAAlignment
+    stack: List[str]
+    strength: TrendStrength
+
+
 class TrendAnalysis(BaseAnalysis):
     """Tier 2: Interprets trend direction and strength based on EMAs and ADX."""
     direction: TrendDirection
@@ -106,6 +114,7 @@ class MarketSnapshot(BaseModel):
     swing: SwingAnalysis | None = None
     
     # Tier 2 Intelligence
+    ema_alignment: EMAAlignmentAnalysis | None = None
     trend: TrendAnalysis | None = None
     regime: MarketRegimeAnalysis | None = None
     momentum: MomentumAnalysis | None = None

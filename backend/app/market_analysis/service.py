@@ -17,6 +17,7 @@ from app.market_analysis.analyzers.volatility_analyzer import VolatilityAnalyzer
 from app.market_analysis.analyzers.market_regime_analyzer import MarketRegimeAnalyzer
 from app.market_analysis.analyzers.pullback_analyzer import PullbackAnalyzer
 from app.market_analysis.analyzers.momentum_analyzer import MomentumAnalyzer
+from app.market_analysis.analyzers.ema_alignment_analyzer import EMAAlignmentAnalyzer
 
 # Exception
 from app.market_analysis.exceptions import IndicatorCalculationError
@@ -40,6 +41,7 @@ class MarketAnalysisService:
         self.swing = SwingAnalyzer()
         
         # Initialize Tier 2 Analyzers
+        self.ema_alignment = EMAAlignmentAnalyzer()
         self.trend = TrendAnalyzer()
         self.volatility = VolatilityAnalyzer()
         self.regime = MarketRegimeAnalyzer()
@@ -84,6 +86,9 @@ class MarketAnalysisService:
         # Phase B: Tier 2 (Intelligence Engine)
         # ----------------------------------------------------
         # Execution order is strictly enforced based on dependencies
+        
+        # EMA Alignment (Depends on EMA)
+        self._run_analyzer(self.ema_alignment, snapshot, "ema_alignment")
         
         # 1. Trend (Depends on EMA, ADX)
         self._run_analyzer(self.trend, snapshot, "trend")
