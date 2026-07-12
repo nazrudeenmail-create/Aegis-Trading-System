@@ -48,9 +48,9 @@ def candidate():
 def risk_profile():
     return RiskProfile(
         account_balance=Decimal("10000.0"),
-        max_risk_per_trade_percent=Decimal("1.0"),
+        risk_per_trade_percent=Decimal("1.0"),
         max_open_risk_percent=Decimal("3.0"),
-        max_daily_loss_percent=Decimal("5.0")
+        max_daily_drawdown_percent=Decimal("5.0")
     )
 
 
@@ -115,7 +115,17 @@ async def test_execution_engine_risk_rejection(broker, candidate, risk_profile):
         market_conditions={}
     )
     
-    result = await engine.execute(bad_candidate, 90.0, risk_profile, risk_context={"current_open_risk_fiat": Decimal("0.0"), "daily_loss_fiat": Decimal("0.0"), "account_balance": Decimal("10000")})
+    from app.strategy.models.ranking import RankingResult, StrategyScore
+    from app.market_analysis.enums import MarketRegime
+    
+    ranking_res = RankingResult(
+        symbol="TEST", timeframe="15m", timestamp=datetime.now(timezone.utc),
+        market_regime=MarketRegime.TRENDING,
+        rankings=[StrategyScore(strategy_name="Test", historical_score=90.0, market_score=90.0, setup_score=90.0, final_score=90.0)],
+        selected_strategy="Test", selection_reason="Top"
+    )
+    
+    result = await engine.execute(bad_candidate, ranking_res, risk_profile, risk_context={"current_open_risk_fiat": Decimal("0.0"), "daily_loss_fiat": Decimal("0.0"), "account_balance": Decimal("10000")})
     assert result is None
     assert len(broker.positions) == 0
 
@@ -126,8 +136,19 @@ async def test_execution_engine_success(broker, candidate, risk_profile):
     engine = ExecutionEngine(broker, risk_engine)
     
     broker.tick("BTC/USD", price=Decimal("60000.0"), timestamp=datetime.now(timezone.utc))
+    # Create a dummy RankingResult instead of passing float 85.0
+    from app.strategy.models.ranking import RankingResult, StrategyScore
+    from app.market_analysis.enums import MarketRegime
     
-    result = await engine.execute(candidate, 85.0, risk_profile, risk_context={"current_open_risk_fiat": Decimal("0.0"), "daily_loss_fiat": Decimal("0.0"), "account_balance": Decimal("10000")})
+    ranking_res = RankingResult(
+        symbol="BTC/USD", timeframe="15m", timestamp=datetime.now(timezone.utc),
+        market_regime=MarketRegime.TRENDING,
+        rankings=[StrategyScore(strategy_name="EMA Trend Pullback", historical_score=85.0, market_score=85.0, setup_score=85.0, final_score=85.0)],
+        selected_strategy="EMA Trend Pullback", selection_reason="Top"
+    )
+    
+    # 3. Execution
+    result = await engine.execute(candidate, ranking_res, risk_profile, risk_context={"current_open_risk_fiat": Decimal("0.0"), "daily_loss_fiat": Decimal("0.0"), "account_balance": Decimal("10000")})
     
     assert result is not None
     assert result.status == OrderStatus.FILLED

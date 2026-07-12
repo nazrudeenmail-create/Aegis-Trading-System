@@ -21,11 +21,11 @@ class PaperBroker(BrokerInterface):
     Simulates a live broker for paper trading.
     Maintains internal balance, positions, and simulates fills with slippage/commissions.
     """
-    
-    def __init__(self, initial_balance: Decimal, config: ExecutionSimulationConfig):
+    def __init__(self, initial_balance: Decimal, config: ExecutionSimulationConfig, event_bus=None):
         self.balance = initial_balance
         self.config = config
         self.is_active = False
+        self.event_bus = event_bus
         
         # State
         self.positions: Dict[str, Position] = {}  # symbol -> Position
@@ -196,7 +196,7 @@ class PaperBroker(BrokerInterface):
         
         # Create TradeRecord
         record = TradeRecord(
-            trade_id=str(uuid.uuid4()),
+            trade_id=pos.position_id, # Link trade_id directly to the position/order ID to match decision link
             symbol=pos.symbol,
             direction=pos.direction,
             entry_price=pos.entry_price,
@@ -214,6 +214,11 @@ class PaperBroker(BrokerInterface):
         )
         self.closed_trades.append(record)
         del self.positions[pos.symbol]
+        
+        # Emit TradeClosedEvent
+        if hasattr(self, 'event_bus') and self.event_bus:
+            from app.analytics.events import TradeClosedEvent
+            self.event_bus.publish(TradeClosedEvent(trade_record=record))
         
         return OrderResult(
             order_id=str(uuid.uuid4()),
