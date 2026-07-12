@@ -51,3 +51,22 @@ def create_mock_snapshot(
     snapshot.volatility = VolatilityAnalysis(state=VolatilityState.NORMAL)
     
     return snapshot
+
+from app.market.domain.timeframe import Timeframe
+from app.market_analysis.models import MultiTimeframeContext
+
+def create_mock_mtf_context(**kwargs):
+    """
+    Creates a MultiTimeframeContext with identical snapshots for the required timeframes.
+    You can override specific timeframes by passing them into the returned context.
+    """
+    base_snapshot = create_mock_snapshot(**kwargs)
+    
+    context = MultiTimeframeContext()
+    context.snapshots[Timeframe.H4] = base_snapshot.model_copy(deep=True)
+    context.snapshots[Timeframe.H1] = base_snapshot.model_copy(deep=True)
+    context.snapshots[Timeframe.M15] = base_snapshot.model_copy(deep=True)
+    context.snapshots[Timeframe.M5] = base_snapshot.model_copy(deep=True)
+    context.snapshots[Timeframe.D1] = base_snapshot.model_copy(deep=True)
+    
+    return context

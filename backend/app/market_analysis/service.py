@@ -11,6 +11,8 @@ from app.market_analysis.analyzers.volume_analyzer import VolumeAnalyzer
 from app.market_analysis.analyzers.candle_analyzer import CandleAnalyzer
 from app.market_analysis.analyzers.swing_analyzer import SwingAnalyzer
 
+from app.market_analysis.analyzers.donchian_analyzer import DonchianAnalyzer
+
 # Tier 2
 from app.market_analysis.analyzers.trend_analyzer import TrendAnalyzer
 from app.market_analysis.analyzers.volatility_analyzer import VolatilityAnalyzer
@@ -39,6 +41,7 @@ class MarketAnalysisService:
         self.volume = VolumeAnalyzer()
         self.candle = CandleAnalyzer()
         self.swing = SwingAnalyzer()
+        self.donchian = DonchianAnalyzer()
         
         # Initialize Tier 2 Analyzers
         self.ema_alignment = EMAAlignmentAnalyzer()
@@ -81,6 +84,7 @@ class MarketAnalysisService:
         self._run_analyzer(self.volume, snapshot, "volume")
         self._run_analyzer(self.candle, snapshot, "candle")
         self._run_analyzer(self.swing, snapshot, "swing")
+        self._run_analyzer(self.donchian, snapshot, "donchian")
         
         # ----------------------------------------------------
         # Phase B: Tier 2 (Intelligence Engine)

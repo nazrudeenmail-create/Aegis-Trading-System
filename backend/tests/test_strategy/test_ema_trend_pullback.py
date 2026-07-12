@@ -3,10 +3,10 @@ from decimal import Decimal
 from app.market_analysis.enums import MarketRegime, EMAAlignment
 from app.strategy.strategies.ema_trend_pullback import EMATrendPullbackStrategy
 from app.strategy.models import TradeDirection
-from tests.test_strategy.conftest import create_mock_snapshot
+from tests.test_strategy.conftest import create_mock_mtf_context
 
 def test_ema_pullback_long_valid():
-    snapshot = create_mock_snapshot(
+    context = create_mock_mtf_context(
         regime=MarketRegime.TRENDING,
         alignment=EMAAlignment.BULLISH,
         adx_val="30.0",
@@ -22,7 +22,7 @@ def test_ema_pullback_long_valid():
     )
     
     strategy = EMATrendPullbackStrategy()
-    result = strategy.evaluate(snapshot)
+    result = strategy.evaluate(context)
     
     assert result.is_valid is True
     assert result.candidate is not None
@@ -31,7 +31,7 @@ def test_ema_pullback_long_valid():
     assert result.candidate.market_conditions["trend"] == "BULLISH"
 
 def test_ema_pullback_short_valid():
-    snapshot = create_mock_snapshot(
+    context = create_mock_mtf_context(
         regime=MarketRegime.TRENDING,
         alignment=EMAAlignment.BEARISH,
         adx_val="30.0",
@@ -48,7 +48,7 @@ def test_ema_pullback_short_valid():
     )
     
     strategy = EMATrendPullbackStrategy()
-    result = strategy.evaluate(snapshot)
+    result = strategy.evaluate(context)
     
     assert result.is_valid is True
     assert result.candidate is not None
@@ -57,33 +57,33 @@ def test_ema_pullback_short_valid():
     assert result.candidate.market_conditions["trend"] == "BEARISH"
 
 def test_ema_pullback_invalid_regime():
-    snapshot = create_mock_snapshot(regime=MarketRegime.RANGING)
+    context = create_mock_mtf_context(regime=MarketRegime.RANGING)
     strategy = EMATrendPullbackStrategy()
-    result = strategy.evaluate(snapshot)
+    result = strategy.evaluate(context)
     
     assert result.is_valid is False
-    assert result.rejection_reason == "Market is not trending"
+    assert result.rejection_reason == "15M market is not trending"
 
 def test_ema_pullback_weak_adx():
-    snapshot = create_mock_snapshot(adx_val="20.0")
+    context = create_mock_mtf_context(adx_val="20.0")
     strategy = EMATrendPullbackStrategy()
-    result = strategy.evaluate(snapshot)
+    result = strategy.evaluate(context)
     
     assert result.is_valid is False
-    assert result.rejection_reason == "Trend strength (ADX) is weak"
+    assert result.rejection_reason == "15M Trend strength (ADX) is weak"
 
 def test_ema_pullback_invalid_pullback_distance():
-    snapshot = create_mock_snapshot(dist_from_ema="1.5", atr_val="5.0") # max is 1.0
+    context = create_mock_mtf_context(dist_from_ema="1.5", atr_val="5.0") # max is 1.0
     strategy = EMATrendPullbackStrategy()
-    result = strategy.evaluate(snapshot)
+    result = strategy.evaluate(context)
     
     assert result.is_valid is False
     assert "Pullback too far from EMA20" in result.rejection_reason
 
 def test_ema_pullback_invalid_volume():
-    snapshot = create_mock_snapshot(vol_current="90", vol_avg="100")
+    context = create_mock_mtf_context(vol_current="90", vol_avg="100")
     strategy = EMATrendPullbackStrategy()
-    result = strategy.evaluate(snapshot)
+    result = strategy.evaluate(context)
     
     assert result.is_valid is False
-    assert result.rejection_reason == "Insufficient volume confirmation"
+    assert result.rejection_reason == "Insufficient volume confirmation on 15M"

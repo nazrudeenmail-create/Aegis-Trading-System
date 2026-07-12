@@ -51,6 +51,15 @@ class SwingAnalysis(BaseAnalysis):
     swing_high: Decimal | None
     swing_low: Decimal | None
 
+class DonchianAnalysis(BaseAnalysis):
+    """Typed result for the Donchian Channel Analyzer."""
+    upper_band: Decimal | None
+    lower_band: Decimal | None
+    middle_band: Decimal | None
+    channel_width: Decimal | None
+    is_breakout_up: bool = False
+    is_breakout_down: bool = False
+
 from app.market_analysis.enums import (
     TrendDirection, TrendStrength, EMAAlignment,
     MarketRegime, VolatilityState, MomentumState
@@ -112,6 +121,7 @@ class MarketSnapshot(BaseModel):
     volume: VolumeAnalysis | None = None
     candle: CandleAnalysis | None = None
     swing: SwingAnalysis | None = None
+    donchian: DonchianAnalysis | None = None
     
     # Tier 2 Intelligence
     ema_alignment: EMAAlignmentAnalysis | None = None
@@ -124,3 +134,28 @@ class MarketSnapshot(BaseModel):
     @property
     def is_valid(self) -> bool:
         return len(self.candles) > 0
+
+
+from app.market.domain.timeframe import Timeframe
+from typing import Dict
+
+class MultiTimeframeContext(BaseModel):
+    """
+    Pure data container storing MarketSnapshots for multiple timeframes.
+    No embedded alignment logic; strategies interpret this data.
+    """
+    snapshots: Dict[Timeframe, MarketSnapshot] = Field(default_factory=dict)
+    
+    # Optional metadata for backtesting, debugging, and logging
+    instrument: str | None = None
+    timestamp: datetime | None = None
+    primary_timeframe: Timeframe | None = None
+
+    def get(self, timeframe: Timeframe) -> MarketSnapshot | None:
+        """Helper to get a snapshot for a specific timeframe."""
+        return self.snapshots.get(timeframe)
+        
+    def __getitem__(self, timeframe: Timeframe) -> MarketSnapshot:
+        """Helper to access snapshots directly like context[Timeframe.ONE_HOUR]"""
+        return self.snapshots[timeframe]
+
