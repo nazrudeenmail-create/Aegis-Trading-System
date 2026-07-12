@@ -17,6 +17,7 @@ class TradeCandidate(BaseModel):
     direction: TradeDirection
     entry_price: Decimal
     stop_loss: Decimal
+    take_profit: Optional[Decimal] = None
     market_conditions: Dict[str, Any]
 
 class StrategyResult(BaseModel):

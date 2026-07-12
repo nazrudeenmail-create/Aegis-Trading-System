@@ -31,6 +31,7 @@ from app.database.models.trade import Trade
 from app.database.models.setting import Setting
 from app.database.models.system_log import SystemLog
 from app.database.models.decision_log import DecisionLog
+from app.database.models.backtest_run import BacktestRun
 
 __all__ = [
     "Instrument",
@@ -48,4 +49,5 @@ __all__ = [
     "Setting",
     "SystemLog",
     "DecisionLog",
+    "BacktestRun",
 ]

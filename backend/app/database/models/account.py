@@ -6,6 +6,7 @@ References:
 """
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 
 from sqlalchemy import (
     BigInteger,
@@ -81,6 +82,9 @@ class Account(Base):
     )
     trades: Mapped[list["Trade"]] = relationship(
         "Trade", back_populates="account", lazy="selectin"
+    )
+    backtest_run: Mapped[Optional["BacktestRun"]] = relationship(
+        "BacktestRun", back_populates="account", lazy="selectin", uselist=False
     )
 
     # -- Repr -------------------------------------------------------------------

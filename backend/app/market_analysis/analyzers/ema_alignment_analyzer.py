@@ -9,9 +9,16 @@ class EMAAlignmentAnalyzer(BaseTier2Analyzer[EMAAlignmentAnalysis]):
     Requires Tier 1: EMAAnalysis
     """
     
-    def analyze(self, snapshot: MarketSnapshot) -> Optional[EMAAlignmentAnalysis]:
+    def analyze(self, snapshot: MarketSnapshot) -> EMAAlignmentAnalysis:
+        timeframe = snapshot.candles[-1].timeframe if snapshot.candles else "UNKNOWN"
+
         if not snapshot.ema:
-            return None
+            return EMAAlignmentAnalysis(
+                timeframe=timeframe,
+                alignment=EMAAlignment.MIXED,
+                stack=[],
+                strength=TrendStrength.NONE
+            )
             
         timeframe = snapshot.candles[-1].timeframe if snapshot.candles else "UNKNOWN"
         
@@ -27,7 +34,12 @@ class EMAAlignmentAnalyzer(BaseTier2Analyzer[EMAAlignmentAnalysis]):
         valid_emas = {k: v for k, v in emas.items() if v is not None}
         
         if len(valid_emas) < 2:
-            return None
+            return EMAAlignmentAnalysis(
+                timeframe=timeframe,
+                alignment=EMAAlignment.MIXED,
+                stack=list(valid_emas.keys()),
+                strength=TrendStrength.NONE
+            )
             
         sorted_emas = sorted(valid_emas.items(), key=lambda x: x[1], reverse=True)
         stack = [k for k, v in sorted_emas]

@@ -21,10 +21,11 @@ from enum import Enum
 
 
 class AccountType(str, Enum):
-    """Trading account type — paper, demo, or live."""
+    """Trading account type — paper, demo, live, or backtest."""
     PAPER = "PAPER"
     DEMO = "DEMO"
     LIVE = "LIVE"
+    BACKTEST = "BACKTEST"
 
 
 class AssetClass(str, Enum):

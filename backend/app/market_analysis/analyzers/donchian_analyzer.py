@@ -26,7 +26,17 @@ class DonchianAnalyzer(BaseAnalyzer[DonchianAnalysis]):
                 is_breakout_down=False
             )
             
-        df = pd.DataFrame([c.model_dump() for c in candles])
+        data = []
+        for c in candles:
+            data.append({
+                "timestamp": c.timestamp,
+                "open": float(c.open),
+                "high": float(c.high),
+                "low": float(c.low),
+                "close": float(c.close),
+                "volume": float(c.volume)
+            })
+        df = pd.DataFrame(data)
         
         # Calculate Donchian values
         donchian_data = calculate_donchian_channel(df, period=self.period)
