@@ -33,6 +33,7 @@ from app.database.models.setting import Setting
 from app.database.models.system_log import SystemLog
 from app.database.models.decision_log import DecisionLog
 from app.database.models.backtest_run import BacktestRun
+from app.database.models.user import User
 
 __all__ = [
     "Base",
@@ -52,4 +53,5 @@ __all__ = [
     "SystemLog",
     "DecisionLog",
     "BacktestRun",
+    "User",
 ]

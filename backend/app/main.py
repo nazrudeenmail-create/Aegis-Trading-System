@@ -59,6 +59,11 @@ async def lifespan(application: FastAPI):
         settings.APP_VERSION,
     )
 
+    from app.analytics.events import event_bus
+    from app.api.v1.websocket import init_websocket_broadcaster
+    
+    init_websocket_broadcaster(event_bus)
+
     yield  # Application runs here
 
     # ── Shutdown ─────────────────────────────────────────────────────────

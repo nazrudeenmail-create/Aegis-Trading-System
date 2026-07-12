@@ -13,7 +13,7 @@ Adding a new domain router (example — Phase 10):
 
 from fastapi import APIRouter
 
-from app.api.v1 import health
+from app.api.v1 import health, system, market, strategy, journal, websocket
 
 api_router = APIRouter()
 
@@ -24,10 +24,9 @@ api_router.include_router(
     tags=["Health"],
 )
 
-# Future routers — registered here when ready:
-# Phase 10:
-# api_router.include_router(market.router, prefix="/api/v1/market", tags=["Market"])
-# api_router.include_router(trades.router, prefix="/api/v1/trades", tags=["Trades"])
-# api_router.include_router(signals.router, prefix="/api/v1/signals", tags=["Signals"])
-# api_router.include_router(settings.router, prefix="/api/v1/settings", tags=["Settings"])
-# api_router.include_router(performance.router, prefix="/api/v1/performance", tags=["Performance"])
+# Phase 11 Endpoints
+api_router.include_router(websocket.router, prefix="/api/v1", tags=["WebSockets"])
+api_router.include_router(system.router, prefix="/api/v1/system", tags=["System"])
+api_router.include_router(market.router, prefix="/api/v1/market", tags=["Market"])
+api_router.include_router(strategy.router, prefix="/api/v1/strategy", tags=["Strategy"])
+api_router.include_router(journal.router, prefix="/api/v1/journal", tags=["Journal"])

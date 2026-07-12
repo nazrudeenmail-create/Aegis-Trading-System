@@ -5,13 +5,28 @@ Last Updated: 2026-07-11
 
 ---
 
-# Current Phase
-
-Phase 10 — Decision Journaling & Analytics
+Phase 11 — API & Real-Time Communication
 
 Status:
 
 ✅ Complete
+
+Phase 11 deliverable summary:
+- Created Alembic migration for `users` table and `UserRole` ENUM.
+- Implemented `X-API-Key` authentication dependency with RBAC logic.
+- Built strict Pydantic REST API schemas for contracts.
+- Added `GET /api/v1/system/status`, `/market/current`, `/strategy/ranking`, and `/journal/latest`.
+- Constructed WebSocket ConnectionManager broadcasting live EventBus signals.
+- Developed `ats.py` CLI utility for system health and operations.
+- Validated with complete Pytest API contract and WebSocket test suite.
+
+Git tag: v0.11.0-api-layer
+
+---
+
+# Current Phase
+
+Phase 10 — Decision Journaling & Analytics
 
 Phase 10 deliverable summary:
 - Created decoupled EventBus architecture
@@ -236,9 +251,10 @@ Create production-ready development environment foundation.
 | **Phase 8** | Strategy Ranking Engine | ✅ Complete | Ranking by historical performance, regime compatibility, and confidence. |
 | **Phase 9** | Paper Trading Engine | ✅ Complete | Forward-testing orchestration, simulated broker, performance monitor. |
 | **Phase 10** | Decision Journaling & Analytics | ✅ Complete | Trade tagging, win/loss analysis, regime attribution. |
-| **Phase 11** | CLI & Dashboard | ⏳ Pending | Terminal interface, local web UI for monitoring. |
-| **Phase 12** | Live Broker Integration | ⏳ Pending | Interactive Brokers API, order execution, real-time sync. |
-| **Phase 13** | Deployment & Automation | ⏳ Pending | Dockerization, scheduled tasks, failovers. |
+| **Phase 11** | API & Real-Time Communication | ✅ Complete | REST API, WebSockets, API Security, CLI. |
+| **Phase 12** | Frontend Dashboard | ⏳ Pending | Local web UI for monitoring and analytics. |
+| **Phase 13** | Live Trading Execution | ⏳ Pending | Interactive Brokers API, order execution, real-time sync. |
+| **Phase 14** | Deployment & Continuous Intelligence | ⏳ Pending | Dockerization, scheduled tasks, failovers. |
 
 Realistic timeline:
 
@@ -308,11 +324,12 @@ Trading Engine:
 ✅ Phase 7 Complete (Backtesting)
 ✅ Phase 8 Complete (Ranking Engine)
 ✅ Phase 9 Complete (Paper Trading Engine)
-✅ Phase 10 Complete (Decision Journaling & Analytics) — Next
+✅ Phase 10 Complete (Decision Journaling & Analytics)
+✅ Phase 11 Complete (API & Real-Time Communication) — Next
 
 Deployment:
 
-Phase 13
+Phase 14
 
 ---
 
@@ -367,7 +384,7 @@ backend/app/
 
 # Next Milestone
 
-Begin Phase 11 — CLI & Dashboard
+Begin Phase 12 — Frontend Dashboard
 
 ---
 

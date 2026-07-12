@@ -174,3 +174,10 @@ class DecisionOutcome(str, Enum):
     SUCCESS = "SUCCESS"
     FAILURE = "FAILURE"
     EXPIRED = "EXPIRED"
+
+
+class UserRole(str, Enum):
+    """Role-based access control for API security."""
+    READ_ONLY = "READ_ONLY"
+    TRADER = "TRADER"
+    ADMIN = "ADMIN"
