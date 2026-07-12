@@ -37,6 +37,23 @@ class AssetClass(str, Enum):
     STOCK = "STOCK"
 
 
+class InstrumentStatus(str, Enum):
+    """Trading and analysis status of an instrument."""
+    ACTIVE = "ACTIVE"
+    WATCHLIST = "WATCHLIST"
+    PAUSED = "PAUSED"
+    DISABLED = "DISABLED"
+
+
+class MarketType(str, Enum):
+    """Defines the market session schedule for an instrument."""
+    US_STOCK = "US_STOCK"
+    CRYPTO = "CRYPTO"
+    FOREX = "FOREX"
+    INDEX_CFD = "INDEX_CFD"
+    COMMODITY = "COMMODITY"
+
+
 class Timeframe(str, Enum):
     """Candle / analysis timeframes.
 
@@ -49,6 +66,7 @@ class Timeframe(str, Enum):
     M15 = "M15"
     H1 = "H1"
     H4 = "H4"
+    D1 = "D1"
 
 
 class IndicatorType(str, Enum):

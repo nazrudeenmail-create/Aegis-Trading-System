@@ -34,10 +34,10 @@ class BacktestPersistence:
             
         # 2. Create Backtest Account
         account = Account(
-            name=f"Backtest: {config.strategy_id} v{config.strategy_version}",
-            type=AccountType.BACKTEST,
-            initial_balance=config.initial_balance,
-            current_balance=stats["final_balance"],
+            broker_name="Backtest",
+            account_number=f"{config.strategy_id} v{config.strategy_version}",
+            account_type=AccountType.BACKTEST,
+            balance=stats["final_balance"],
             currency="USD"
         )
         db.add(account)
@@ -99,16 +99,18 @@ class BacktestPersistence:
             db.flush()
             
             # Simulated Trade (Round-trip result)
+            from app.database.enums import TradeType
             trade = Trade(
                 account_id=account.id,
                 instrument_id=instrument.id,
                 order_id=order.id,
                 position_id=position.id,
                 direction=direction, 
+                trade_type=TradeType.EXIT,
                 quantity=t.position.position_size,
                 price=t.exit_price,
                 commission=t.commission,
-                realized_pnl=t.pnl,
+                pnl=t.pnl,
                 executed_at=t.closed_at
             )
             db.add(trade)

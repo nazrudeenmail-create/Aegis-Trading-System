@@ -17,6 +17,7 @@ Dependency Order:
 """
 
 from app.database.base import Base
+from app.database.models.instrument_group import InstrumentGroup
 from app.database.models.instrument import Instrument
 from app.database.models.candle import Candle
 from app.database.models.market_session import MarketSession
@@ -37,6 +38,7 @@ from app.database.models.user import User
 
 __all__ = [
     "Base",
+    "InstrumentGroup",
     "Instrument",
     "Candle",
     "MarketSession",

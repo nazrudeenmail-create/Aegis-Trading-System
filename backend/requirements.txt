@@ -24,3 +24,6 @@ responses>=0.25.0
 # Data Analysis
 pandas>=2.2.0
 pandas-ta>=0.3.14b0
+
+# System Monitoring
+psutil>=5.9.0

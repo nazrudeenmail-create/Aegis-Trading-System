@@ -263,22 +263,42 @@ Components:
 
 ---
 
-# Phase 13 — Live Trading Execution
+# Phase 13 — Broker Integration & Demo Trading
 
 Purpose:
 
-Connect to broker APIs and trade with real capital under strict safeguards.
+Connect ATS to real broker APIs and validate the complete system using demo accounts before risking real capital.
 
 Components:
 
-- Order management
-- Broker interface (Capital.com, IBKR, etc.)
-- Real-time execution tracking
-- Gradual risk scaling
+- Broker API interface (Capital.com, IBKR, etc.)
+- Secure authentication
+- Demo account connection
+- Real-time order submission and management
+- Position synchronization and execution tracking
+- Broker event handling
+- End-to-end validation
 
 ---
 
-# Phase 14 — Deployment & Continuous Intelligence
+# Phase 14 — Live Trading Activation
+
+Purpose:
+
+Transition ATS from demo trading to real trading under strict safeguards.
+
+Components:
+
+- Live account connection
+- Multi-step safety confirmation
+- Risk scaling (e.g., 0.25% -> 0.5% -> 1%)
+- Live execution monitoring
+- Emergency stop (Kill Switch)
+- Trade audit logging
+
+---
+
+# Phase 15 — Deployment & Continuous Intelligence
 
 Purpose:
 

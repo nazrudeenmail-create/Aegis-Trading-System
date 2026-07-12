@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     APP_ENV: str = "development"  # development | testing | production
     DEBUG: bool = True
+    GLOBAL_TRADING_MODE: str = "SIMULATION"
 
     # Database
     # URL format for psycopg3 (psycopg[binary]>=3.2):

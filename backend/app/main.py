@@ -58,11 +58,74 @@ async def lifespan(application: FastAPI):
         settings.APP_ENV,
         settings.APP_VERSION,
     )
+    
+    from app.core.config_validator import validate_configuration
+    validate_configuration()
 
-    from app.analytics.events import event_bus
+    from app.analytics.events import event_bus, SystemLogEvent
     from app.api.v1.websocket import init_websocket_broadcaster
+    from app.api.dependencies import get_broker_manager
+    from app.execution.broker.capital.broker import CapitalComBroker
+    from app.market.calendar.session_manager import SessionManager
+    from app.core.state import global_state
+    
+    from app.analytics.journal import DecisionJournal
+    from app.market_analysis.mtf_service import MultiTimeframeService
+    from app.strategy.ranking_engine import StrategyRankingEngine
+    from app.strategy.strategies.ema_trend_pullback import EMATrendPullbackStrategy
+    from app.strategy.strategies.mtf_trend_alignment import MultiTimeframeTrendAlignmentStrategy
+    from app.strategy.strategies.donchian_breakout import DonchianChannelBreakoutStrategy
+    from app.risk.engine import RiskEngine
+    from app.execution.engine import ExecutionEngine
+    from app.execution.broker.paper.broker import PaperBroker
+    from app.execution.models.paper_config import ExecutionSimulationConfig
     
     init_websocket_broadcaster(event_bus)
+    
+    global_state.session_manager = SessionManager(event_bus)
+    global_state.event_bus = event_bus
+    global_state.journal = DecisionJournal(event_bus)
+    global_state.market_service = MultiTimeframeService()
+    global_state.strategy_engine = None # Deprecated? We use ranking_engine now
+    global_state.ranking_engine = StrategyRankingEngine(
+        strategies=[
+            EMATrendPullbackStrategy(),
+            MultiTimeframeTrendAlignmentStrategy(),
+            DonchianChannelBreakoutStrategy()
+        ]
+    )
+    global_state.risk_engine = RiskEngine()
+    
+    event_bus.publish(SystemLogEvent(level="INFO", source="System", message="Decision Journal initialized"))
+    event_bus.publish(SystemLogEvent(level="INFO", source="System", message="Strategy Engine initialized"))
+    event_bus.publish(SystemLogEvent(level="INFO", source="System", message="Risk Engine initialized"))
+    
+    broker_manager = get_broker_manager()
+    global_state.broker_manager = broker_manager
+    from decimal import Decimal
+
+    # Initialize Execution Environment
+    # Always create paper broker for the router
+    paper_broker = PaperBroker(initial_balance=Decimal("100000.0"), config=ExecutionSimulationConfig())
+
+    if settings.GLOBAL_TRADING_MODE in ["BROKER_DEMO", "BROKER_LIVE"]:
+        capital_broker = CapitalComBroker(
+            api_key=settings.CAPITAL_COM_API_KEY,
+            identifier=settings.CAPITAL_COM_USERNAME,
+            password=settings.CAPITAL_COM_PASSWORD,
+            base_url=settings.CAPITAL_COM_API_URL
+        )
+        broker_manager.set_active_broker(capital_broker, settings.GLOBAL_TRADING_MODE)
+        await broker_manager.connect()
+    else:
+        broker_manager.set_active_broker(paper_broker, "SIMULATION")
+        
+    global_state.execution_engine = ExecutionEngine(
+        paper_broker=paper_broker,
+        broker_manager=broker_manager,
+        risk_engine=global_state.risk_engine,
+        event_bus=event_bus
+    )
 
     yield  # Application runs here
 

@@ -9,12 +9,12 @@ class HistoricalScorer:
     """
     Computes the Historical Performance Score (0-100) for a strategy based on its best recent BacktestRun.
     """
-    def __init__(self, db: Session):
-        self.db = db
+    def __init__(self):
+        pass
 
-    def score(self, strategy_name: str) -> float:
+    def score(self, db: Session, strategy_name: str) -> float:
         # Get the latest backtest run for this strategy
-        run = self.db.query(BacktestRun).filter(
+        run = db.query(BacktestRun).filter(
             BacktestRun.strategy_name == strategy_name
         ).order_by(desc(BacktestRun.end_date)).first()
 

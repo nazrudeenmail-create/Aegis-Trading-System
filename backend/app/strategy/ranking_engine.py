@@ -16,12 +16,15 @@ class StrategyRankingEngine:
     Evaluates and ranks multiple strategies based on Historical, Compatibility, and Setup scores.
     Uses the locked 40/30/30 weighting algorithm.
     """
-    def __init__(self, db: Session, strategies: List[BaseStrategy]):
-        self.db = db
+    def __init__(self, strategies: List[BaseStrategy]):
         self.strategies = strategies
-        self.historical_scorer = HistoricalScorer(db)
+        self.historical_scorer = HistoricalScorer()
+        self.latest_rankings: Dict[str, RankingResult] = {}
         
-    def rank(self, symbol: str, timeframe: str, snapshot: MarketSnapshot, strategy_results: Dict[str, StrategyResult]) -> RankingResult:
+    def get_latest_ranking(self, symbol: str) -> RankingResult | None:
+        return self.latest_rankings.get(symbol)
+        
+    def rank(self, db: Session, symbol: str, timeframe: str, snapshot: MarketSnapshot, strategy_results: Dict[str, StrategyResult]) -> RankingResult:
         rankings: List[StrategyScore] = []
         
         for strategy in self.strategies:
@@ -29,7 +32,7 @@ class StrategyRankingEngine:
             profile = strategy.get_profile()
             
             # 1. Historical Score
-            h_score = self.historical_scorer.score(name)
+            h_score = self.historical_scorer.score(db, name)
             
             # 2. Compatibility Score
             c_score = CompatibilityScorer.score(profile, snapshot)
@@ -84,3 +87,6 @@ class StrategyRankingEngine:
             selected_strategy=selection,
             selection_reason=reason
         )
+        
+        self.latest_rankings[symbol] = result
+        return result

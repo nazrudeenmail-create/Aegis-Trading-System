@@ -42,6 +42,15 @@ class TradeClosedEvent(Event):
     """
     trade_record: TradeRecord
 
+@dataclass
+class SystemLogEvent(Event):
+    """
+    Emitted when an engine generates a notable system log for the Glass Box UI.
+    """
+    level: str  # "INFO", "WARN", "ERROR"
+    source: str # e.g. "RiskEngine", "StrategyRanking"
+    message: str
+
 
 class EventBus:
     """

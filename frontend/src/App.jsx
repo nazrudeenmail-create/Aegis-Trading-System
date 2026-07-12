@@ -1,56 +1,40 @@
-import { useEffect, useState } from "react";
-import { checkHealth } from "./api/health";
+import React, { useState } from 'react';
+import { DashboardLayout } from './layouts/DashboardLayout';
+import { DashboardOverview } from './views/DashboardOverview';
+import { InstrumentsView } from './views/InstrumentsView';
+import { StrategiesView } from './views/StrategiesView';
+import { PortfolioView } from './views/PortfolioView';
+import { RiskView } from './views/RiskView';
+import { ConnectionsView } from './views/ConnectionsView';
+import { SettingsView } from './views/SettingsView';
+import { SystemView } from './views/SystemView';
+import { SystemConsole } from './components/SystemConsole';
 
 function App() {
-  const [backendStatus, setBackendStatus] = useState("checking...");
-  const [serviceName, setServiceName] = useState("");
-  const [version, setVersion] = useState("");
-  const [environment, setEnvironment] = useState("");
+  const [currentView, setCurrentView] = useState('overview');
 
-  useEffect(() => {
-    checkHealth()
-      .then((data) => {
-        setBackendStatus(data.status);
-        setServiceName(data.service);
-        setVersion(data.version);
-        setEnvironment(data.environment);
-      })
-      .catch(() => {
-        setBackendStatus("unreachable");
-      });
-  }, []);
+  const renderView = () => {
+    switch (currentView) {
+      case 'overview': return <DashboardOverview />;
+      case 'market': return <div className="text-white p-8">Market Analysis (TBA)</div>;
+      case 'portfolio': return <PortfolioView />;
+      case 'instruments': return <InstrumentsView />;
+      case 'strategies': return <StrategiesView />;
+      case 'risk': return <RiskView />;
+      case 'connections': return <ConnectionsView />;
+      case 'settings': return <SettingsView />;
+      case 'system': return <SystemView />;
+      default: return <DashboardOverview />;
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-10 max-w-lg w-full text-center">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">
-          Aegis Trading System
-        </h1>
-        <p className="text-gray-400 text-sm mb-8">
-          Professional Rule-Based Algorithmic Trading Platform
-        </p>
-
-        <div className="space-y-3 text-left bg-gray-800 rounded-lg p-5 border border-gray-700">
-          <Row label="Backend" value={backendStatus} />
-          <Row label="Service" value={serviceName || "—"} />
-          <Row label="Version" value={version || "—"} />
-          <Row label="Environment" value={environment || "—"} />
-        </div>
-
-        <p className="text-xs text-gray-500 mt-6">
-          Accuracy > Speed > Profit
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Row({ label, value }) {
-  return (
-    <div className="flex justify-between text-sm">
-      <span className="text-gray-400">{label}</span>
-      <span className="text-gray-100 font-mono">{value}</span>
-    </div>
+    <>
+      <DashboardLayout currentView={currentView} setCurrentView={setCurrentView}>
+        {renderView()}
+      </DashboardLayout>
+      <SystemConsole />
+    </>
   );
 }
 

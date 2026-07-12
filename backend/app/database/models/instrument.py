@@ -23,7 +23,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
-from app.database.enums import AssetClass
+from app.database.enums import AssetClass, InstrumentStatus, MarketType
 
 
 class Instrument(Base):
@@ -57,9 +57,22 @@ class Instrument(Base):
 
     currency: Mapped[str] = mapped_column(String(10), nullable=False)
 
-    is_active: Mapped[bool] = mapped_column(
-        Boolean, server_default="true", nullable=False
+    status: Mapped[InstrumentStatus] = mapped_column(
+        Enum(InstrumentStatus, name="instrument_status", create_type=False),
+        server_default="ACTIVE",
+        nullable=False,
     )
+
+    market_type: Mapped[MarketType] = mapped_column(
+        Enum(MarketType, name="market_type", create_type=False),
+        server_default="US_STOCK",
+        nullable=False,
+    )
+
+    trading_enabled: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
+    paper_trading_enabled: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
+    live_trading_enabled: Mapped[bool] = mapped_column(Boolean, server_default="false", nullable=False)
+    allow_new_positions: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -89,6 +102,12 @@ class Instrument(Base):
     )
     decision_logs: Mapped[list["DecisionLog"]] = relationship(
         "DecisionLog", back_populates="instrument", lazy="selectin"
+    )
+    groups: Mapped[list["InstrumentGroup"]] = relationship(
+        "InstrumentGroup",
+        secondary="instrument_group_association",
+        back_populates="instruments",
+        lazy="selectin"
     )
 
     # -- Repr -------------------------------------------------------------------

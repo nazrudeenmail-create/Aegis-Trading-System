@@ -31,7 +31,7 @@ def run_test():
     try:
         # SAFETY CHECK 2: Do NOT auto-create instrument. Require TEST_EURUSD or EURUSD.
         # Check if TEST_EURUSD exists, otherwise check EURUSD.
-        test_symbol = "EURUSD" # Using EURUSD assuming it was seeded in Phase 2
+        test_symbol = "BTCUSD" 
         instrument = db.query(Instrument).filter_by(symbol=test_symbol).first()
         
         if not instrument:
@@ -57,8 +57,8 @@ def run_test():
         service = DataIngestionService(provider, repo)
         
         # We explicitly request M1 here. (We can refactor the service to hardcode this later!)
-        print(f"Fetching 50 M1 candles for {test_symbol}...")
-        inserted = service.fetch_and_store_historical(test_symbol, Timeframe.M1, 50)
+        print(f"Fetching 100 M1 candles for {test_symbol}...")
+        inserted = service.fetch_and_store_historical(test_symbol, Timeframe.M1, 100)
         
         # SAFETY CHECK 4: Verify AFTER counts
         after_count = db.query(CandleModel).count()

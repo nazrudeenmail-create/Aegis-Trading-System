@@ -95,41 +95,53 @@ class PaperBroker(BrokerInterface):
                 if existing_pos.quantity == order.quantity:
                     # Full close
                     return self._close_position(existing_pos, fill_price, timestamp)
+                elif order.quantity < existing_pos.quantity:
+                    # Partial close
+                    return self._partial_close_position(existing_pos, order.quantity, fill_price, timestamp)
                 else:
-                    # Partial close or reverse not supported in simple MVP
-                    return OrderResult(
-                        order_id=str(uuid.uuid4()),
-                        status=OrderStatus.REJECTED,
-                        message="Partial close or position reversal not supported in MVP."
-                    )
+                    # Reversal: Close full position, open new position with remainder
+                    self._close_position(existing_pos, fill_price, timestamp)
+                    remaining_qty = order.quantity - existing_pos.quantity
+                    return await self._open_position(symbol, order.direction, remaining_qty, fill_price, timestamp)
             else:
-                # Add to position
+                # Pyramiding (add to existing position)
+                # Recalculate average entry price
+                total_qty = existing_pos.quantity + order.quantity
+                new_avg_price = ((existing_pos.entry_price * existing_pos.quantity) + (fill_price * order.quantity)) / total_qty
+                existing_pos.entry_price = new_avg_price
+                existing_pos.quantity = total_qty
+                
                 return OrderResult(
                     order_id=str(uuid.uuid4()),
-                    status=OrderStatus.REJECTED,
-                    message="Pyramiding (adding to existing position) not supported in MVP."
+                    status=OrderStatus.FILLED,
+                    filled_price=fill_price,
+                    filled_quantity=order.quantity,
+                    timestamp=timestamp
                 )
         else:
             # Open new position
-            new_pos = Position(
-                position_id=str(uuid.uuid4()),
-                symbol=symbol,
-                direction=order.direction,
-                quantity=order.quantity,
-                entry_price=fill_price,
-                current_price=fill_price,
-                status=PositionStatus.OPEN,
-                opened_at=timestamp
-            )
-            self.positions[symbol] = new_pos
-            
-            return OrderResult(
-                order_id=new_pos.position_id,
-                status=OrderStatus.FILLED,
-                filled_price=fill_price,
-                filled_quantity=order.quantity,
-                timestamp=timestamp
-            )
+            return await self._open_position(symbol, order.direction, order.quantity, fill_price, timestamp)
+
+    async def _open_position(self, symbol: str, direction: OrderDirection, quantity: float, fill_price: Decimal, timestamp: datetime) -> OrderResult:
+        new_pos = Position(
+            position_id=str(uuid.uuid4()),
+            symbol=symbol,
+            direction=direction,
+            quantity=quantity,
+            entry_price=fill_price,
+            current_price=fill_price,
+            status=PositionStatus.OPEN,
+            opened_at=timestamp
+        )
+        self.positions[symbol] = new_pos
+        
+        return OrderResult(
+            order_id=new_pos.position_id,
+            status=OrderStatus.FILLED,
+            filled_price=fill_price,
+            filled_quantity=quantity,
+            timestamp=timestamp
+        )
 
     async def cancel_order(self, order_id: str) -> bool:
         # Since we instantly fill MARKET orders, there are no pending orders to cancel
@@ -228,5 +240,66 @@ class PaperBroker(BrokerInterface):
             timestamp=timestamp
         )
         
+    def _partial_close_position(self, pos: Position, close_quantity: float, fill_price: Decimal, timestamp: datetime) -> OrderResult:
+        # Apply exit slippage
+        if self.config.slippage_enabled:
+            slippage_amt = fill_price * self.config.slippage_percentage
+            if pos.direction == OrderDirection.LONG: # Selling to close
+                fill_price -= slippage_amt
+            else: # Buying to close
+                fill_price += slippage_amt
+                
+        # Exit commission
+        commission = Decimal("0")
+        if self.config.commission_enabled:
+            commission = self.config.commission_rate
+            self.balance -= commission
+
+        # Calculate PnL for the closed portion
+        if pos.direction == OrderDirection.LONG:
+            pnl = (fill_price - pos.entry_price) * close_quantity
+            pnl_percent = (fill_price - pos.entry_price) / pos.entry_price * 100
+        else:
+            pnl = (pos.entry_price - fill_price) * close_quantity
+            pnl_percent = (pos.entry_price - fill_price) / pos.entry_price * 100
+            
+        self.balance += pnl
+        
+        # Create TradeRecord for the partial close
+        record = TradeRecord(
+            trade_id=str(uuid.uuid4()), 
+            symbol=pos.symbol,
+            direction=pos.direction,
+            entry_price=pos.entry_price,
+            exit_price=fill_price,
+            quantity=close_quantity,
+            pnl=pnl,
+            pnl_percent=pnl_percent,
+            entry_time=pos.opened_at,
+            exit_time=timestamp,
+            strategy_name=pos.strategy_name,
+            ranking_score=pos.ranking_score,
+            market_regime=pos.market_regime,
+            entry_reason=pos.entry_reason,
+            exit_reason="PARTIAL_CLOSE"
+        )
+        self.closed_trades.append(record)
+        
+        # Emit TradeClosedEvent
+        if hasattr(self, 'event_bus') and self.event_bus:
+            from app.analytics.events import TradeClosedEvent
+            self.event_bus.publish(TradeClosedEvent(trade_record=record))
+            
+        # Deduct quantity from existing position
+        pos.quantity -= close_quantity
+        
+        return OrderResult(
+            order_id=str(uuid.uuid4()),
+            status=OrderStatus.FILLED,
+            filled_price=fill_price,
+            filled_quantity=close_quantity,
+            timestamp=timestamp
+        )
+
     def get_closed_trades(self) -> List[TradeRecord]:
         return self.closed_trades

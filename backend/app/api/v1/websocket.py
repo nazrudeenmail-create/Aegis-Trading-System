@@ -38,6 +38,17 @@ async def websocket_endpoint(websocket: WebSocket):
     WebSocket endpoint for real-time ATS events.
     """
     await manager.connect(websocket)
+    import time
+    welcome_msg = {
+        "event": "system.log",
+        "data": {
+            "level": "INFO",
+            "source": "System",
+            "message": "Glass Box Console Connected. Awaiting system events...",
+            "timestamp": int(time.time() * 1000)
+        }
+    }
+    await websocket.send_json(welcome_msg)
     try:
         while True:
             # We don't expect messages from the client in this MVP, but we need to keep the connection open
@@ -58,7 +69,7 @@ def init_websocket_broadcaster(event_bus: EventBus):
     Called during application startup.
     """
     # Event types from Phase 10
-    from app.analytics.events import DecisionEvent, ExecutionEvent, TradeClosedEvent
+    from app.analytics.events import DecisionEvent, ExecutionEvent, TradeClosedEvent, SystemLogEvent
     
     # We will wrap the sync publish into an async broadcast
     # Since EventBus handlers are sync right now, we need to schedule the coroutine
@@ -118,10 +129,27 @@ def init_websocket_broadcaster(event_bus: EventBus):
             loop.create_task(manager.broadcast(msg))
         except RuntimeError:
             pass
-            
+    def handle_system_log(event: SystemLogEvent):
+        import time
+        msg = {
+            "event": "system.log",
+            "data": {
+                "level": event.level,
+                "source": event.source,
+                "message": event.message,
+                "timestamp": int(time.time() * 1000)
+            }
+        }
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(manager.broadcast(msg))
+        except RuntimeError:
+            pass
+
     # Note: market.candle.closed and market.regime.changed are not yet explicitly modeled as EventBus events
     # We will add them here when Phase 3/4 gets integrated into the EventBus.
     
     event_bus.subscribe(DecisionEvent, handle_decision)
     event_bus.subscribe(ExecutionEvent, handle_execution)
     event_bus.subscribe(TradeClosedEvent, handle_trade_closed)
+    event_bus.subscribe(SystemLogEvent, handle_system_log)

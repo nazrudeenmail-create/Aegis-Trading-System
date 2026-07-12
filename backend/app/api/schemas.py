@@ -6,9 +6,11 @@ class SystemStatusResponse(BaseModel):
     system: str
     status: str
     mode: str
+    global_trading_mode: str
     broker: str
     balance: float
     open_positions: int
+    engines: Dict[str, str] = {}
     last_update: datetime
 
     model_config = ConfigDict(frozen=True)
