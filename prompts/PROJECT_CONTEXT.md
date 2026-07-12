@@ -56,14 +56,13 @@ Infrastructure
 
 # Quantitative Research Pipeline
 
-The system evaluates the market through a 5-layer pipeline:
+The system evaluates the market through a multi-layer pipeline:
 
 1. **Market Intelligence Layer:** Extracts 165+ objective mathematical analyzers (EMA, MACD, ATR, FVG, etc.) from raw candle data.
-2. **Strategy Library:** Houses a catalog of objective, testable trading strategies (e.g., EMA Pullback, MACD Cross, London Breakout).
-3. **Backtesting Engine:** Simulates the performance of every strategy against years of historical OHLCV data.
-4. **Strategy Ranking Engine:** Dynamically scores and selects the most effective strategy for the current market condition.
+2. **Strategy Library:** Houses a catalog of objective, testable trading strategies (e.g., EMA Pullback, Breakout, Reversal).
+3. **Backtesting & Strategy Intelligence:** Measures how every strategy performs under different market conditions historically.
+4. **Strategy Ranking & Selection Engine:** Chooses the best strategy for the current market using live conditions and historical performance.
 5. **Execution Engine:** Validates the signal against the Risk Engine and communicates with broker APIs for execution.
-
 # Development Rules
 
 1. Backend owns all business logic.
@@ -117,26 +116,14 @@ The project documentation is cleanly separated into modular folders:
 
 # Current Phase
 
-Phase 0
+Phase 5
 
-Project Foundation
+Strategy Library (Drafting Strategies 02 and 03)
 
-Completed
+In Progress
 
-- Git initialized
-- GitHub repository created
-- Project structure created
-- Vision document
-- Technology stack document
-- README
-
-Next Step
-
-Complete System Architecture document.
-
-No backend code has been written.
-
-No frontend code has been written.
+- Phase 6 (Risk Management Engine) is already complete.
+- Drafting additional strategies before moving to Phase 7 (Backtesting & Strategy Intelligence).
 
 ---
 

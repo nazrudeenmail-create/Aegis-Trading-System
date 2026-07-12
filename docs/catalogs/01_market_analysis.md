@@ -34,12 +34,13 @@ This document serves as the master roadmap for the Market Intelligence Layer (Ph
 | :--- | :--- | :--- |
 | **ATR** | Average True Range | ⏳ |
 | Standard Deviation | Statistical volatility measure | ❌ |
-| Bollinger Bands | Price envelope based on standard deviation | ❌ |
+| **Bollinger Bands** | Price envelope based on standard deviation | ⏳ |
 
 ## 4. Volume
 | Analyzer | Description | Status |
 | :--- | :--- | :--- |
 | **VWAP** | Volume Weighted Average Price | ⏳ |
+| **Volume** | Raw trading volume | ⏳ |
 | OBV | On Balance Volume | ❌ |
 | Relative Volume | Current volume compared to historical average | ❌ |
 

@@ -170,25 +170,43 @@ Components:
 
 ---
 
-# Phase 7 — Strategy Ranking Engine
+# Phase 7 — Backtesting & Strategy Intelligence
 
 Purpose:
 
-Dynamically score and select the best strategies for the current market environment.
+Measure how every strategy performs under different market conditions before it is allowed to compete in live trading.
 
 Components:
 
-- Market regime detection (Choppy vs Trending)
-- Real-time scoring matrix
-- Strategy selection logic
+- Historical data replay
+- Multi-timeframe backtesting
+- Strategy validation
+- Performance statistics generation
+- Trade log generation
+- Equity curve analysis
+- Drawdown analysis
 
 ---
 
-# Phase 8 — Paper Trading
+# Phase 8 — Strategy Ranking & Selection Engine
 
 Purpose:
 
-The first complete end-to-end trading environment. Protect simulated capital and execute trades in a risk-free live environment.
+Choose the best strategy for the current market using live market conditions and historical performance.
+
+Components:
+
+- Market regime detection
+- Real-time scoring matrix
+- Strategy selection logic combining historical performance and live conditions
+
+---
+
+# Phase 9 — Paper Trading Engine
+
+Purpose:
+
+Execute strategies in live markets with virtual capital. Protect simulated capital in a risk-free live environment.
 
 Components:
 
@@ -198,11 +216,11 @@ Components:
 
 ---
 
-# Phase 9 — Decision Journal & Monitoring
+# Phase 10 — Decision Journal & Monitoring
 
 Purpose:
 
-Make ATS explainable and measurable before real money is used. Record every decision like a black box recorder.
+Record every decision, reasoning, performance, and execution metrics like a black box recorder.
 
 Components:
 
@@ -214,7 +232,7 @@ Components:
 
 ---
 
-# Phase 10 — API & Real-Time Communication
+# Phase 11 — API & Real-Time Communication
 
 Purpose:
 
@@ -228,7 +246,7 @@ Components:
 
 ---
 
-# Phase 11 — Frontend Dashboard
+# Phase 12 — Frontend Dashboard
 
 Purpose:
 
@@ -245,11 +263,11 @@ Components:
 
 ---
 
-# Phase 12 — Live Trading Execution (Controlled)
+# Phase 13 — Live Trading Execution
 
 Purpose:
 
-Connect to real money Broker APIs starting with very small controlled accounts (e.g. $100-$500).
+Connect to broker APIs and trade with real capital under strict safeguards.
 
 Components:
 
@@ -260,11 +278,11 @@ Components:
 
 ---
 
-# Phase 13 — Deployment + Continuous Intelligence
+# Phase 14 — Deployment & Continuous Intelligence
 
 Purpose:
 
-Prepare production environment and continuous improvement.
+Production deployment, monitoring, backups, AI-assisted strategy improvement.
 
 Components:
 

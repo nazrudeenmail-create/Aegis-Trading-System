@@ -183,15 +183,16 @@ Create production-ready development environment foundation.
 | 2 | Database Design and Core Data Models | ✅ Complete |
 | 3 | Market Data System | ✅ Complete |
 | 4 | Market Intelligence Layer | ✅ Complete |
-| 5 | Strategy Library | ✅ Complete |
+| 5 | Strategy Library | ⬜ In Progress |
 | 6 | Risk Management Engine | ✅ Complete |
-| 7 | Strategy Ranking Engine | ⬜ Next (After adding strategies) |
-| 8 | Paper Trading | Not Started |
-| 9 | Decision Journal & Monitoring | Not Started |
-| 10 | API & Real-Time Communication | Not Started |
-| 11 | Frontend Dashboard | Not Started |
-| 12 | Live Trading Execution (Controlled) | Not Started |
-| 13 | Deployment + Continuous Intelligence | Not Started |
+| 7 | Backtesting & Strategy Intelligence | ⏳ Planned |
+| 8 | Strategy Ranking & Selection Engine | ⏳ Planned |
+| 9 | Paper Trading Engine | ⏳ Planned |
+| 10 | Decision Journal & Monitoring | ⏳ Planned |
+| 11 | API & Real-Time Communication | ⏳ Planned |
+| 12 | Frontend Dashboard | ⏳ Planned |
+| 13 | Live Trading Execution | ⏳ Planned |
+| 14 | Deployment & Continuous Intelligence | ⏳ Planned |
 
 Realistic timeline:
 
