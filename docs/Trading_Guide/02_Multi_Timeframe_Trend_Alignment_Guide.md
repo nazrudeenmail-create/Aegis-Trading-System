@@ -26,8 +26,6 @@ Imagine you are planning a road trip.
 
 You don't only look at the last street before your destination.
 
-You first check:
-
 - The country map
 - The highway
 - The city roads
@@ -67,7 +65,7 @@ Professionals combine both.
 
 Every timeframe has a different job.
 
-## 4H Chart
+## Daily Chart
 
 Think of it as the **Ocean Current**.
 
@@ -79,7 +77,7 @@ Question:
 
 ---
 
-## 1H Chart
+## 4H Chart
 
 Think of it as the **Large Waves**.
 
@@ -87,11 +85,11 @@ It confirms whether the medium-term trend follows the main direction.
 
 Question:
 
-> Is momentum still following the 4H trend?
+> Is momentum still following the Daily trend?
 
 ---
 
-## 15M Chart
+## 1H Chart
 
 Think of it as the **Small Waves**.
 
@@ -103,7 +101,7 @@ Question:
 
 ---
 
-## 5M Chart
+## 15M Chart
 
 Think of it as the **Surfer Catching the Wave**.
 
@@ -120,6 +118,10 @@ Question:
 Imagine four people pulling a rope.
 
 ```
+Daily
+
+↑
+
 4H
 
 ↑
@@ -129,10 +131,6 @@ Imagine four people pulling a rope.
 ↑
 
 15M
-
-↑
-
-5M
 
 ↑
 ```
@@ -144,19 +142,19 @@ The rope moves easily.
 Now imagine this.
 
 ```
-4H
+Daily
 
 ↑
 
-1H
+4H
 
 ↓
 
-15M
+1H
 
 ↑
 
-5M
+15M
 
 ↓
 
@@ -177,6 +175,12 @@ When all timeframes agree, trends tend to continue more smoothly.
 A bullish setup looks like this.
 
 ```
+Daily
+
+Bullish
+
+↓
+
 4H
 
 Bullish
@@ -190,12 +194,6 @@ Bullish
 ↓
 
 15M
-
-Bullish
-
-↓
-
-5M
 
 Bullish Confirmation
 
@@ -215,6 +213,12 @@ This is exactly what we want.
 A bearish setup is simply the opposite.
 
 ```
+Daily
+
+Bearish
+
+↓
+
 4H
 
 Bearish
@@ -228,12 +232,6 @@ Bearish
 ↓
 
 15M
-
-Bearish
-
-↓
-
-5M
 
 Bearish Confirmation
 
@@ -252,7 +250,7 @@ Every timeframe agrees.
 
 ## Step 1
 
-Open the **4H chart**.
+Open the **Daily chart**.
 
 Ask yourself:
 
@@ -270,7 +268,7 @@ Mark
 
 ## Step 2
 
-Switch to **1H**.
+Switch to **4H**.
 
 Ask the same questions.
 
@@ -282,7 +280,7 @@ Continue.
 
 ## Step 3
 
-Switch to **15M**.
+Switch to **1H**.
 
 Look for
 
@@ -298,7 +296,7 @@ Continue.
 
 ## Step 4
 
-Switch to **5M**.
+Switch to **15M**.
 
 Now wait.
 
@@ -319,6 +317,12 @@ Now enter.
 # 8. Good Trade Example
 
 ```
+Daily
+
+Bullish
+
+↓
+
 4H
 
 Bullish
@@ -327,17 +331,11 @@ Bullish
 
 1H
 
-Bullish
-
-↓
-
-15M
-
 Bullish Pullback
 
 ↓
 
-5M
+15M
 
 Bullish Engulfing
 
@@ -359,9 +357,15 @@ High probability trade.
 # 9. Bad Trade Example
 
 ```
-4H
+Daily
 
 Bearish
+
+↓
+
+4H
+
+Bullish
 
 ↓
 
@@ -372,12 +376,6 @@ Bullish
 ↓
 
 15M
-
-Bullish
-
-↓
-
-5M
 
 Bullish
 
@@ -389,13 +387,19 @@ Professionals don't.
 
 The largest timeframe still controls the market.
 
-Eventually price often follows the 4H trend.
+Eventually price often follows the Daily trend.
 
 ---
 
 # 10. Another Bad Example
 
 ```
+Daily
+
+Bullish
+
+↓
+
 4H
 
 Bullish
@@ -404,17 +408,11 @@ Bullish
 
 1H
 
-Bullish
-
-↓
-
-15M
-
 Bearish
 
 ↓
 
-5M
+15M
 
 Bullish
 ```
@@ -447,9 +445,9 @@ When all timeframes work together, trends usually become stronger and smoother.
 
 # 12. Common Mistakes
 
-❌ Looking only at the 5M chart.
+❌ Looking only at the 15M chart.
 
-❌ Ignoring the 4H trend.
+❌ Ignoring the Daily trend.
 
 ❌ Buying against the higher timeframe.
 
@@ -465,15 +463,15 @@ When all timeframes work together, trends usually become stronger and smoother.
 
 Before every trade ask:
 
-✅ Is the 4H trend bullish or bearish?
+✅ Is the Daily trend bullish or bearish?
+
+✅ Does the 4H agree?
 
 ✅ Does the 1H agree?
 
-✅ Does the 15M agree?
-
 ✅ Is there a healthy pullback?
 
-✅ Is there a confirmation candle on the 5M?
+✅ Is there a confirmation candle on the 15M?
 
 ✅ Is Risk : Reward at least 2:1?
 
@@ -493,9 +491,9 @@ Instead of relying on a single chart, professional traders build confidence by c
 
 Remember this simple rule:
 
-- **4H decides the direction.**
-- **1H confirms the direction.**
-- **15M prepares the opportunity.**
-- **5M provides the entry signal.**
+- **Daily decides the direction.**
+- **4H confirms the direction.**
+- **1H prepares the opportunity.**
+- **15M provides the entry signal.**
 
 When all four work together, you are trading with the market—not against it.

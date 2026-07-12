@@ -3,13 +3,19 @@ from decimal import Decimal
 from typing import List, Optional
 from app.market.domain.candle import Candle
 
+from pydantic import ConfigDict
+
 class BaseAnalysis(BaseModel):
     """
     Base class for all analyzer results.
     Every specific analyzer result (e.g. EMAAnalysis, ATRAnalysis) 
     must inherit from this.
     """
-    pass
+    model_config = ConfigDict(
+        json_encoders={
+            Decimal: lambda v: float(v)
+        }
+    )
 
 class EMAAnalysis(BaseAnalysis):
     """

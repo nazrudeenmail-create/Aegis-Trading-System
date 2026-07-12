@@ -29,9 +29,9 @@ The strategies are organized by "Family" to facilitate comparison. Each strategy
 ## 1.2 Multi-Timeframe Trend Alignment
 * **Status:** ❌ Planned
 * **Markets:** Forex, Crypto, Stocks, Indices
-* **Timeframes:** 4H, 1H, 15M, 5M
+* **Timeframes:** Daily, 4H, 1H, 15M
 * **Required Analyzers:** EMA, Swing High/Low, Trend Direction, Multi-Timeframe Analyzer
-* **Entry Rules:** 4H/1H/15M trends align bullish, enter on 5M bullish engulfing.
+* **Entry Rules:** Daily/4H/1H/15M trends align bullish, enter on 15M confirmation.
 * **Exit Rules:** Next Swing High or ATR Trailing Stop.
 
 ## 1.3 Donchian Channel Breakout
