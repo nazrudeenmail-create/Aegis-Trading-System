@@ -17,59 +17,9 @@ Future implementations (Phase 12):
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from enum import Enum
 from typing import Optional
 
-
-class OrderDirection(str, Enum):
-    """Trade direction."""
-    LONG = "LONG"
-    SHORT = "SHORT"
-
-
-class OrderType(str, Enum):
-    """Order execution type."""
-    MARKET = "MARKET"
-    LIMIT = "LIMIT"
-    STOP = "STOP"
-
-
-class OrderStatus(str, Enum):
-    """Current state of an order."""
-    PENDING = "PENDING"
-    FILLED = "FILLED"
-    PARTIALLY_FILLED = "PARTIALLY_FILLED"
-    CANCELLED = "CANCELLED"
-    REJECTED = "REJECTED"
-
-
-@dataclass
-class OrderRequest:
-    """
-    Request to place an order.
-
-    Created by the Execution Engine after Risk approval.
-    Sent to the broker interface for execution.
-    """
-    symbol: str
-    direction: OrderDirection
-    order_type: OrderType
-    quantity: float
-    price: Optional[float] = None        # Required for LIMIT orders
-    stop_price: Optional[float] = None   # Required for STOP orders
-
-
-@dataclass
-class OrderResult:
-    """
-    Result returned after an order is processed by the broker.
-    """
-    order_id: str
-    status: OrderStatus
-    filled_price: Optional[float] = None
-    filled_quantity: Optional[float] = None
-    message: Optional[str] = None
+from app.execution.models.order import OrderRequest, OrderResult
 
 
 class BrokerInterface(ABC):

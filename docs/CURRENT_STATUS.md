@@ -7,11 +7,47 @@ Last Updated: 2026-07-11
 
 # Current Phase
 
-Phase 5 — Strategy Library (Drafting Strategies 02 and 03)
+Phase 9 — Paper Trading / Execution Engine
 
 Status:
 
 ⬜ In Progress
+
+---
+
+# Phase 8 — Strategy Ranking & Selection Engine
+
+Status:
+
+✅ Complete
+
+Phase 8 deliverable summary:
+- Finalized Strategy Selection logic (Historical + Compatibility + Setup)
+- Created Scoring profiles for EMA Pullback, MTF Trend, Donchian Breakout
+- Built `StrategyRankingEngine` to select highest confidence strategy
+- Validated with complete E2E demo pipeline (Phase 0 -> Phase 8) proving successful Strategy selection under mocked conditions.
+
+Git tag: v0.8.0
+
+---
+
+# Phase 7 — Backtesting & Strategy Intelligence
+
+Status:
+
+✅ Complete
+
+Git tag: v0.7-backtesting-engine
+
+---
+
+# Phase 6 — Risk Management Engine
+
+Status:
+
+✅ Complete
+
+Git tag: v0.6-risk-management-engine
 
 ---
 
@@ -25,11 +61,12 @@ Phase 5 deliverable summary:
 - Phase 5A: Strategy domain models (`TradeCandidate`, `StrategyResult`)
 - Phase 5B: Abstract `BaseStrategy` interface
 - Phase 5C: `StrategyEngine` orchestrator
-- Phase 5D: `EMATrendPullbackStrategy` (Strategy 01 v2.1)
+- Phase 5D: `EMATrendPullbackStrategy`, `MultiTimeframeTrendAlignmentStrategy`, `DonchianChannelBreakoutStrategy`
 - Phase 5E: Pytest Suite for Models, Strategy, and Engine
-- Separated Strategy Selection (Ranking Engine) from Signal Generation (Strategy Engine)
 
 Git tag: v0.6-strategy-engine-foundation
+
+---
 
 # Phase 4 — Market Intelligence Layer
 
@@ -176,23 +213,22 @@ Create production-ready development environment foundation.
 
 # Full Project Phase Map
 
-| Phase | Name | Status |
-| ------ | ------------------------------------------ | --------- |
-| 0 | Project Foundation | ✅ Complete |
-| 1 | Development Environment Setup | ✅ Complete |
-| 2 | Database Design and Core Data Models | ✅ Complete |
-| 3 | Market Data System | ✅ Complete |
-| 4 | Market Intelligence Layer | ✅ Complete |
-| 5 | Strategy Library | ✅ Complete |
-| 6 | Risk Management Engine | ✅ Complete |
-| 7 | Backtesting & Strategy Intelligence | ✅ Complete |
-| 8 | Strategy Ranking & Selection Engine | ⬜ In Progress |
-| 9 | Paper Trading Engine | ⏳ Planned |
-| 10 | Decision Journal & Monitoring | ⏳ Planned |
-| 11 | API & Real-Time Communication | ⏳ Planned |
-| 12 | Frontend Dashboard | ⏳ Planned |
-| 13 | Live Trading Execution | ⏳ Planned |
-| 14 | Deployment & Continuous Intelligence | ⏳ Planned |
+| Phase | Component | Status | Notes |
+| :--- | :--- | :--- | :--- |
+| **Phase 0** | Project Setup & Data Modeling | ✅ Complete | Directory structure, Pydantic models. |
+| **Phase 1** | Historical Data Engine | ✅ Complete | Fetching, storing, managing OHLCV data. |
+| **Phase 2** | Market Replay Engine | ✅ Complete | Simulated tick-by-tick environment. |
+| **Phase 3** | Market Analysis Engine | ✅ Complete | Regime detection, support/resistance, volatility. |
+| **Phase 4** | State Management (Message Bus) | ✅ Complete | `MarketSnapshot` event broadcasting. |
+| **Phase 5** | Strategy Engine | ✅ Complete | Abstract `BaseStrategy`, indicators, signal generation. |
+| **Phase 6** | Risk Management Engine | ✅ Complete | Sizing, exposure limits, max drawdown protection. |
+| **Phase 7** | Backtesting Engine | ✅ Complete | Fast historical simulation with basic metrics. |
+| **Phase 8** | Strategy Ranking Engine | ✅ Complete | Ranking by historical performance, regime compatibility, and confidence. |
+| **Phase 9** | Paper Trading Engine | ✅ Complete | Forward-testing orchestration, simulated broker, performance monitor. |
+| **Phase 10** | Decision Journaling & Analytics | ⏳ Pending | Trade tagging, win/loss analysis, regime attribution. |
+| **Phase 11** | CLI & Dashboard | ⏳ Pending | Terminal interface, local web UI for monitoring. |
+| **Phase 12** | Live Broker Integration | ⏳ Pending | Interactive Brokers API, order execution, real-time sync. |
+| **Phase 13** | Deployment & Automation | ⏳ Pending | Dockerization, scheduled tasks, failovers. |
 
 Realistic timeline:
 
@@ -257,7 +293,11 @@ Trading Engine:
 
 ✅ Phase 3 Complete (Market Data Foundation)
 ✅ Phase 4 Complete (Market Intelligence Layer)
-⬜ Phase 5 (Strategy Library) — Next
+✅ Phase 5 Complete (Strategy Library)
+✅ Phase 6 Complete (Risk Management Engine)
+✅ Phase 7 Complete (Backtesting)
+✅ Phase 8 Complete (Ranking Engine)
+⬜ Phase 9 (Paper Trading Engine) — Next
 
 Deployment:
 
@@ -316,15 +356,7 @@ backend/app/
 
 # Next Milestone
 
-Begin Phase 5 — Drafting Strategies 02 and 03 (Prep for Phase 7)
-
-Phase 6 deliverables have been completed and verified:
-- `RiskProfile` and `RiskAssessment` models
-- Pure math `PositionCalculator`
-- Modular `RiskValidator`s handling exposure and daily loss
-- Orchestrator `RiskEngine` evaluating `TradeCandidate` safely
-
-Git tag: v0.7-risk-management-engine
+Begin Phase 9 — Paper Trading Engine
 
 ---
 
