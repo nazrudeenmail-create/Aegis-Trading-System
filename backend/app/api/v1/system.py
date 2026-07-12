@@ -47,10 +47,19 @@ async def get_system_status(
         last_update=datetime.now(timezone.utc)
     )
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from fastapi import HTTPException
 
 class SettingsUpdate(BaseModel):
     global_trading_mode: str
+
+    @field_validator('global_trading_mode')
+    @classmethod
+    def validate_mode(cls, v):
+        allowed = ["BROKER_DEMO", "BROKER_LIVE"]
+        if v not in allowed:
+            raise ValueError(f"Trading mode must be one of {allowed}")
+        return v
 
 @router.patch("/settings")
 def update_settings(
@@ -59,5 +68,5 @@ def update_settings(
 ):
     global_state.global_trading_mode = settings_update.global_trading_mode
     # Note: A full implementation would also trigger BrokerManager to reconnect
-    # if switching between live and paper. For now we just update the state.
+    # if switching between live and demo. For now we just update the state.
     return {"message": "Settings updated", "global_trading_mode": global_state.global_trading_mode}

@@ -19,6 +19,19 @@ class MultiTimeframeService:
     """
     def __init__(self, analysis_service: MarketAnalysisService = None):
         self.analysis_service = analysis_service or MarketAnalysisService()
+        self.latest_contexts: Dict[str, MultiTimeframeContext] = {}
+        self.latest_snapshots: Dict[str, MarketSnapshot] = {}
+
+    def get_latest_snapshot(self, symbol: str, timeframe: str = "15M") -> MarketSnapshot | None:
+        """
+        Returns the most recent MarketSnapshot for a given symbol and timeframe.
+        The API endpoint uses this to serve /market/current data.
+        """
+        tf = Timeframe[timeframe] if timeframe in Timeframe.__members__ else Timeframe.M15
+        context = self.latest_contexts.get(symbol)
+        if context and tf in context.snapshots:
+            return context.snapshots[tf]
+        return self.latest_snapshots.get(symbol)
         
     def build_context(
         self, 

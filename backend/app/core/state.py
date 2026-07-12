@@ -14,7 +14,7 @@ class AppState:
     def __init__(self):
         settings = get_settings()
         self.mode: str = "OFFLINE"
-        self.global_trading_mode: str = settings.GLOBAL_TRADING_MODE # SIMULATION, BROKER_DEMO, BROKER_LIVE
+        self.global_trading_mode: str = settings.GLOBAL_TRADING_MODE # BROKER_DEMO, BROKER_LIVE
         self.event_bus: Optional[EventBus] = None
         self.journal: Optional[DecisionJournal] = None
         

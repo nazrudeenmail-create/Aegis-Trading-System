@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, ShieldAlert, Power } from 'lucide-react';
 import useSWR from 'swr';
-import { api } from '../api';
+import { api, fetcher } from '../api';
 
 export function SettingsView() {
-  const { data, isLoading, mutate } = useSWR('/system/status');
-  const [selectedMode, setSelectedMode] = useState('SIMULATION');
+  const { data, isLoading, mutate } = useSWR('/system/status', fetcher);
+  const [selectedMode, setSelectedMode] = useState('BROKER_DEMO');
   const [isApplying, setIsApplying] = useState(false);
 
   useEffect(() => {
@@ -41,21 +41,6 @@ export function SettingsView() {
         </p>
 
         <div className="space-y-4">
-          <label className={`flex items-start gap-4 p-4 rounded-lg border transition cursor-pointer ${selectedMode === 'SIMULATION' ? 'bg-indigo-500/10 border-indigo-500/50' : 'bg-slate-900 border-slate-700'}`}>
-            <input 
-              type="radio" 
-              name="tradingMode" 
-              value="SIMULATION" 
-              checked={selectedMode === 'SIMULATION'}
-              onChange={(e) => setSelectedMode(e.target.value)}
-              className="mt-1 accent-indigo-500"
-            />
-            <div>
-              <div className="font-semibold text-white">Simulation (Paper Trading)</div>
-              <div className="text-sm text-slate-400 mt-1">Orders are routed to the internal PaperBroker. No real funds are at risk. Data can be historical or real-time.</div>
-            </div>
-          </label>
-
           <label className={`flex items-start gap-4 p-4 rounded-lg border transition cursor-pointer ${selectedMode === 'BROKER_DEMO' ? 'bg-indigo-500/10 border-indigo-500/50' : 'bg-slate-900 border-slate-700'}`}>
             <input 
               type="radio" 

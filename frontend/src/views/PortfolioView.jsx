@@ -1,17 +1,19 @@
 import React from 'react';
 import useSWR from 'swr';
+import { fetcher } from '../api';
 
 export function PortfolioView() {
-  const { data: summary, error } = useSWR('/dashboard/summary');
+  const { data: summary, error: summaryError } = useSWR('/dashboard/summary', fetcher);
+  const { data: positionsData, error: positionsError } = useSWR('/broker/positions/open', fetcher);
 
-  const isLoading = !summary && !error;
+  const isLoading = !summary && !summaryError;
+  const isPositionsLoading = !positionsData && !positionsError;
 
   // Defaults if no data
   const mode = summary?.trading_mode || "Unknown";
   const balance = summary?.account_balance || 0;
   const margin = summary?.available_margin || 0;
   const pnl = summary?.unrealized_pnl || 0;
-  const positions = summary?.open_positions || 0;
 
   return (
     <div className="space-y-6">
@@ -47,11 +49,46 @@ export function PortfolioView() {
         <div className="p-4 border-b border-slate-800">
           <h2 className="font-semibold text-white">Open Positions</h2>
         </div>
-        <div className="p-8 text-center text-slate-500 text-sm">
-          {isLoading ? "Loading positions..." : 
-           positions > 0 ? `${positions} open position(s).` : 
-           `No open positions in ${mode} mode.`}
-        </div>
+        <table className="w-full text-left text-sm">
+          <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
+            <tr>
+              <th className="p-4 font-medium">Symbol</th>
+              <th className="p-4 font-medium">Direction</th>
+              <th className="p-4 font-medium">Size</th>
+              <th className="p-4 font-medium">Entry Price</th>
+              <th className="p-4 font-medium">Current Price</th>
+              <th className="p-4 font-medium text-right">Unrealized PnL</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-800/50">
+            {isPositionsLoading ? (
+              <tr>
+                <td colSpan="6" className="p-8 text-center text-slate-500">Loading positions...</td>
+              </tr>
+            ) : (!positionsData || positionsData.length === 0) ? (
+              <tr>
+                <td colSpan="6" className="p-8 text-center text-slate-500">No open positions.</td>
+              </tr>
+            ) : (
+              positionsData.map((pos, idx) => (
+                <tr key={idx} className="hover:bg-slate-900/50 transition">
+                  <td className="p-4 font-bold text-white">{pos.symbol}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${pos.direction === 'LONG' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                      {pos.direction}
+                    </span>
+                  </td>
+                  <td className="p-4 text-slate-300">{pos.size}</td>
+                  <td className="p-4 text-slate-300">${pos.entry_price?.toFixed(2) || '--'}</td>
+                  <td className="p-4 text-slate-300">${pos.current_price?.toFixed(2) || '--'}</td>
+                  <td className={`p-4 text-right font-bold ${pos.unrealized_pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    ${pos.unrealized_pnl?.toFixed(2) || '0.00'}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

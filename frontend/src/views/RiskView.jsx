@@ -1,9 +1,13 @@
 import React from 'react';
 import useSWR from 'swr';
+import { fetcher } from '../api';
 
 export function RiskView() {
-  const { data: riskProfile, error } = useSWR('/risk/profile');
+  const { data: riskProfile, error } = useSWR('/risk/profile', fetcher);
   const isLoading = !riskProfile && !error;
+
+  if (error) return <div className="p-8 text-rose-400">Failed to load risk profile. Ensure the orchestrator is running.</div>;
+  if (!riskProfile) return <div className="p-8 text-slate-400">Loading risk parameters...</div>;
 
   return (
     <div className="space-y-6">
@@ -14,29 +18,29 @@ export function RiskView() {
         <div className="space-y-4">
           <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
             <div>
-              <div className="font-medium text-white">Max Daily Loss</div>
-              <div className="text-sm text-slate-400">Stop trading if daily loss exceeds this amount</div>
-            </div>
-            <div className="text-xl font-bold text-slate-300">
-              {isLoading ? "..." : `$${riskProfile.max_daily_loss.toLocaleString()}`}
-            </div>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
-            <div>
-              <div className="font-medium text-white">Max Open Positions</div>
-              <div className="text-sm text-slate-400">Maximum concurrent trades allowed</div>
-            </div>
-            <div className="text-xl font-bold text-slate-300">
-              {isLoading ? "..." : riskProfile.max_open_positions}
-            </div>
-          </div>
-          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
-            <div>
-              <div className="font-medium text-white">Max Risk Per Trade</div>
+              <div className="font-medium text-white">Risk Per Trade</div>
               <div className="text-sm text-slate-400">Account percentage to risk per trade</div>
             </div>
             <div className="text-xl font-bold text-slate-300">
-              {isLoading ? "..." : `${(riskProfile.max_risk_per_trade * 100).toFixed(1)}%`}
+              {isLoading ? "..." : `${riskProfile.risk_per_trade_percent.toFixed(1)}%`}
+            </div>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
+            <div>
+              <div className="font-medium text-white">Max Open Risk</div>
+              <div className="text-sm text-slate-400">Total concurrent risk allowed across all positions</div>
+            </div>
+            <div className="text-xl font-bold text-slate-300">
+              {isLoading ? "..." : `${riskProfile.max_open_risk_percent.toFixed(1)}%`}
+            </div>
+          </div>
+          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
+            <div>
+              <div className="font-medium text-white">Max Daily Drawdown</div>
+              <div className="text-sm text-slate-400">Stop trading if daily loss exceeds this percentage</div>
+            </div>
+            <div className="text-xl font-bold text-slate-300">
+              {isLoading ? "..." : `${riskProfile.max_daily_drawdown_percent.toFixed(1)}%`}
             </div>
           </div>
         </div>

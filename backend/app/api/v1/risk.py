@@ -11,9 +11,9 @@ def get_risk_profile(current_user: User = Depends(get_current_user)):
         
     profile = global_state.risk_engine.profile
     return {
-        "max_daily_loss": float(profile.max_daily_loss),
-        "max_open_positions": profile.max_open_positions,
-        "max_risk_per_trade": float(profile.max_risk_per_trade),
-        "max_drawdown": float(profile.max_drawdown_limit),
-        "min_margin_level": float(profile.min_margin_level)
+        "account_balance": float(profile.account_balance),
+        "risk_per_trade_percent": float(profile.risk_per_trade_percent),
+        "max_open_risk_percent": float(profile.max_open_risk_percent),
+        "max_daily_drawdown_percent": float(profile.max_daily_drawdown_percent),
+        "allow_high_risk_mode": profile.allow_high_risk_mode
     }

@@ -12,15 +12,6 @@ async def get_broker_connections(broker_manager: BrokerManager = Depends(get_bro
     Returns detailed stats for the Broker Connections dashboard page.
     """
     
-    # Paper Broker (always available locally)
-    paper_broker = {
-        "id": "paper",
-        "name": "Internal Paper Broker",
-        "type": "SIMULATION",
-        "status": "CONNECTED",
-        "description": "Runs locally, executing simulated orders against historical or live data feed."
-    }
-    
     # Active Broker Manager (e.g. Capital.com)
     active_broker = {
         "id": "capital",
@@ -56,6 +47,31 @@ async def get_broker_connections(broker_manager: BrokerManager = Depends(get_bro
             pass
 
     return {
-        "connections": [paper_broker, active_broker],
+        "connections": [active_broker],
         "active_account": account_details if broker_manager.state == ConnectionState.CONNECTED else None
     }
+
+@router.get("/orders/recent")
+async def get_recent_orders(broker_manager: BrokerManager = Depends(get_broker_manager)):
+    """Returns recent order history from the active broker."""
+    # Since we don't have direct DB integration for orders yet, we would query the broker or DB.
+    # We will return mock or basic info for now depending on broker_manager implementation.
+    return []
+
+@router.get("/positions/open")
+async def get_open_positions(broker_manager: BrokerManager = Depends(get_broker_manager)):
+    """Returns open positions from the active broker."""
+    positions = []
+    if broker_manager._active_broker and hasattr(broker_manager._active_broker, 'positions'):
+        for pos in broker_manager._active_broker.positions:
+            positions.append({
+                "id": pos.id,
+                "symbol": pos.symbol,
+                "direction": pos.direction.value if hasattr(pos.direction, 'value') else pos.direction,
+                "size": float(pos.size),
+                "entry_price": float(pos.entry_price),
+                "current_price": float(pos.current_price),
+                "unrealized_pnl": float(pos.unrealized_pnl) if hasattr(pos, 'unrealized_pnl') else 0.0,
+                "created_at": pos.created_at.isoformat() if pos.created_at else None
+            })
+    return positions

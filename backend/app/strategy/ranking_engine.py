@@ -78,7 +78,7 @@ class StrategyRankingEngine:
             selection = None
             reason = "No strategies met criteria or produced valid setups."
             
-        return RankingResult(
+        ranking_result = RankingResult(
             timestamp=datetime.now(timezone.utc),
             symbol=symbol,
             timeframe=timeframe,
@@ -88,5 +88,5 @@ class StrategyRankingEngine:
             selection_reason=reason
         )
         
-        self.latest_rankings[symbol] = result
-        return result
+        self.latest_rankings[symbol] = ranking_result
+        return ranking_result

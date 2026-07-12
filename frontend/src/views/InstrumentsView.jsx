@@ -120,7 +120,7 @@ export function InstrumentsView() {
               <th className="p-4 font-medium">Symbol</th>
               <th className="p-4 font-medium">Name</th>
               <th className="p-4 font-medium">Market Session</th>
-              <th className="p-4 font-medium">Tracking Status</th>
+              <th className="p-4 font-medium">Component Status</th>
               <th className="p-4 font-medium text-right">Actions</th>
             </tr>
           </thead>
@@ -144,15 +144,19 @@ export function InstrumentsView() {
                     )}
                   </td>
                   <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs font-medium border ${
-                      inst.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 
-                      inst.status === 'WATCHLIST' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-                      'bg-slate-800 text-slate-500 border-slate-700'
-                    }`}>
-                      {inst.status}
-                    </span>
+                    <div className="flex gap-4 text-xs">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-slate-400">Historical Data: <span className="text-emerald-400">✅</span></span>
+                        <span className="text-slate-400">Live Feed: {inst.status === 'ACTIVE' ? <span className="text-emerald-400">🟢 Active</span> : <span className="text-red-400">🔴 Inactive</span>}</span>
+                        <span className="text-slate-400">Analysis: {inst.status === 'ACTIVE' ? <span className="text-emerald-400">🟢 Active</span> : <span className="text-red-400">🔴 Inactive</span>}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-slate-400">Strategies: {inst.trading_enabled ? <span className="text-emerald-400">🟢 Evaluating</span> : <span className="text-red-400">🔴 Disabled</span>}</span>
+                        <span className="text-slate-400">Trading: {inst.allow_new_positions ? <span className="text-emerald-400">🟢 Executing</span> : <span className="text-red-400">🔴 Disabled</span>}</span>
+                      </div>
+                    </div>
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="p-4 text-right flex items-center justify-end gap-2">
                     <button 
                       onClick={() => toggleStatus(inst)}
                       className={`text-xs font-medium px-3 py-1 rounded border ${
@@ -161,7 +165,7 @@ export function InstrumentsView() {
                           : 'text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10'
                       }`}
                     >
-                      {inst.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
+                      {inst.status === 'ACTIVE' ? 'Stop Feed' : 'Start Feed'}
                     </button>
                   </td>
                 </tr>

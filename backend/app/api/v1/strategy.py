@@ -40,3 +40,39 @@ def get_strategy_ranking(symbol: str = "BTCUSD", current_user: User = Depends(ge
             for candidate in ranking.rankings
         ]
     )
+
+from pydantic import BaseModel
+from typing import Dict, Any
+
+class StrategyProfileUpdate(BaseModel):
+    config: Dict[str, Any]
+
+@router.get("/profiles")
+def get_strategy_profiles(current_user: User = Depends(get_current_user)):
+    """Returns profiles of all registered strategies."""
+    if not global_state.ranking_engine:
+        raise HTTPException(status_code=503, detail="Ranking engine is not running")
+    
+    profiles = {}
+    for strategy in global_state.ranking_engine.strategies:
+        profiles[strategy.name] = strategy.profile.__dict__ if hasattr(strategy, 'profile') else {}
+    return profiles
+
+@router.patch("/{name}/profile")
+def update_strategy_profile(name: str, update: StrategyProfileUpdate, current_user: User = Depends(get_current_user)):
+    """Updates the profile configuration for a specific strategy."""
+    if not global_state.ranking_engine:
+        raise HTTPException(status_code=503, detail="Ranking engine is not running")
+        
+    for strategy in global_state.ranking_engine.strategies:
+        if strategy.name == name:
+            if not hasattr(strategy, 'profile'):
+                raise HTTPException(status_code=400, detail="Strategy does not have a configurable profile")
+            
+            for k, v in update.config.items():
+                if hasattr(strategy.profile, k):
+                    setattr(strategy.profile, k, v)
+            
+            return {"status": "success", "strategy": name, "updated_profile": strategy.profile.__dict__}
+            
+    raise HTTPException(status_code=404, detail="Strategy not found")

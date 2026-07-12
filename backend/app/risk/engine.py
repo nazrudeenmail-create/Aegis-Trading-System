@@ -17,6 +17,7 @@ class RiskEngine:
             DailyLossValidator()
         ]
         self.calculator = PositionCalculator()
+        self.profile = RiskProfile(account_balance=Decimal("100000.0"))
 
     def evaluate(self, candidate: TradeCandidate, profile: RiskProfile, context: Dict) -> RiskAssessment:
         """

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useSWR from 'swr';
+import { fetcher } from '../api';
 import { Activity, Database, Server, RefreshCw } from 'lucide-react';
 
 export function SystemView() {
-  const { data: status, error } = useSWR('/system/status');
+  const { data: status, error } = useSWR('/system/status', fetcher);
   const isLoading = !status && !error;
   
   const mktHealth = status?.engines?.market || "Offline";

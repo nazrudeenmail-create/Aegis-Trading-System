@@ -1,26 +1,56 @@
 import React from 'react';
 import { 
   LayoutDashboard, 
-  LineChart, 
-  PieChart, 
-  ListTree, 
-  BrainCircuit, 
-  ShieldAlert, 
-  Link2, 
-  Settings, 
-  Terminal
+  ListTree,
+  Activity,
+  BrainCircuit,
+  ShieldAlert,
+  ShoppingCart,
+  Briefcase,
+  ScrollText,
+  Link2,
+  Settings,
+  Terminal,
+  Radio
 } from 'lucide-react';
 
-const navItems = [
-  { name: 'Overview', icon: LayoutDashboard, id: 'overview' },
-  { name: 'Market', icon: LineChart, id: 'market' },
-  { name: 'Portfolio', icon: PieChart, id: 'portfolio' },
-  { name: 'Instruments', icon: ListTree, id: 'instruments' },
-  { name: 'Strategies', icon: BrainCircuit, id: 'strategies' },
-  { name: 'Risk', icon: ShieldAlert, id: 'risk' },
-  { name: 'Connections', icon: Link2, id: 'connections' },
-  { name: 'Settings', icon: Settings, id: 'settings' },
-  { name: 'System', icon: Terminal, id: 'system' },
+const navGroups = [
+  {
+    label: 'Dashboard',
+    items: [
+      { name: 'Overview', icon: LayoutDashboard, id: 'overview' },
+      { name: 'Pipeline Monitor', icon: Radio, id: 'pipeline' },
+    ]
+  },
+  {
+    label: 'Market',
+    items: [
+      { name: 'Instruments', icon: ListTree, id: 'instruments' },
+      { name: 'Market Analysis', icon: Activity, id: 'market' },
+    ]
+  },
+  {
+    label: 'Strategies',
+    items: [
+      { name: 'Strategy Monitor', icon: BrainCircuit, id: 'strategies' },
+    ]
+  },
+  {
+    label: 'Trading',
+    items: [
+      { name: 'Risk', icon: ShieldAlert, id: 'risk' },
+      { name: 'Orders', icon: ShoppingCart, id: 'orders' },
+      { name: 'Positions', icon: Briefcase, id: 'positions' },
+    ]
+  },
+  {
+    label: 'System',
+    items: [
+      { name: 'Decision Journal', icon: ScrollText, id: 'journal' },
+      { name: 'Health', icon: Terminal, id: 'system' },
+      { name: 'Settings', icon: Settings, id: 'settings' },
+    ]
+  },
 ];
 
 export function Sidebar({ currentView, setCurrentView }) {
@@ -36,27 +66,34 @@ export function Sidebar({ currentView, setCurrentView }) {
       </div>
       
       <div className="flex-1 overflow-y-auto py-4">
-        <nav className="space-y-1 px-3">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = currentView === item.id;
-            
-            return (
-              <button
-                key={item.id}
-                onClick={() => setCurrentView(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${
-                  isActive 
-                    ? 'bg-indigo-500/10 text-indigo-400' 
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-                }`}
-              >
-                <Icon size={18} className={isActive ? 'text-indigo-400' : 'text-slate-500'} />
-                {item.name}
-              </button>
-            );
-          })}
-        </nav>
+        {navGroups.map((group) => (
+          <div key={group.label} className="mb-4">
+            <div className="px-6 py-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              {group.label}
+            </div>
+            <nav className="space-y-1 px-3 mt-1">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentView === item.id;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentView(item.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${
+                      isActive 
+                        ? 'bg-indigo-500/10 text-indigo-400' 
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                    }`}
+                  >
+                    <Icon size={18} className={isActive ? 'text-indigo-400' : 'text-slate-500'} />
+                    {item.name}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        ))}
       </div>
       
       <div className="p-4 border-t border-slate-800">

@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { DashboardLayout } from './layouts/DashboardLayout';
 import { DashboardOverview } from './views/DashboardOverview';
 import { InstrumentsView } from './views/InstrumentsView';
+import { MarketAnalysisView } from './views/MarketAnalysisView';
+import { PipelineMonitor } from './views/PipelineMonitor';
 import { StrategiesView } from './views/StrategiesView';
 import { PortfolioView } from './views/PortfolioView';
 import { RiskView } from './views/RiskView';
+import { OrdersView } from './views/OrdersView';
+import { JournalView } from './views/JournalView';
 import { ConnectionsView } from './views/ConnectionsView';
 import { SettingsView } from './views/SettingsView';
 import { SystemView } from './views/SystemView';
@@ -16,11 +20,15 @@ function App() {
   const renderView = () => {
     switch (currentView) {
       case 'overview': return <DashboardOverview />;
-      case 'market': return <div className="text-white p-8">Market Analysis (TBA)</div>;
+      case 'pipeline': return <PipelineMonitor />;
+      case 'market': return <MarketAnalysisView />;
       case 'portfolio': return <PortfolioView />;
+      case 'positions': return <PortfolioView />;
       case 'instruments': return <InstrumentsView />;
       case 'strategies': return <StrategiesView />;
       case 'risk': return <RiskView />;
+      case 'orders': return <OrdersView />;
+      case 'journal': return <JournalView />;
       case 'connections': return <ConnectionsView />;
       case 'settings': return <SettingsView />;
       case 'system': return <SystemView />;
