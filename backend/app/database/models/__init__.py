@@ -13,9 +13,10 @@ Imports:
 
 Dependency Order:
     Models are imported in dependency order to avoid circular imports.
-    Order: no-FK models → FK-dependent models.
+    Order: no-FK models -> FK-dependent models.
 """
 
+from app.database.base import Base
 from app.database.models.instrument import Instrument
 from app.database.models.candle import Candle
 from app.database.models.market_session import MarketSession
@@ -34,6 +35,7 @@ from app.database.models.decision_log import DecisionLog
 from app.database.models.backtest_run import BacktestRun
 
 __all__ = [
+    "Base",
     "Instrument",
     "Candle",
     "MarketSession",

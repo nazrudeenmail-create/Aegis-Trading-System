@@ -7,8 +7,8 @@ from app.strategy.models import StrategyResult, TradeCandidate, TradeDirection
 
 class DonchianChannelBreakoutStrategy(BaseStrategy):
     name = "Donchian Channel Breakout"
-    version = "1.1"
-    description = "Enters on a breakout of the 20-period Donchian Channel on the 15M timeframe, aligned with Daily and 4H."
+    version = "1.0"
+    description = "Enters on breakout of the 20-period Donchian Channel, filtered by ADX."
     
     primary_timeframe = Timeframe.M15
     required_timeframes = [
@@ -16,6 +16,10 @@ class DonchianChannelBreakoutStrategy(BaseStrategy):
         Timeframe.H4,
         Timeframe.M15
     ]
+
+    def get_profile(self):
+        from app.strategy.profiles.donchian_breakout import get_donchian_breakout_profile
+        return get_donchian_breakout_profile()
 
     def evaluate(self, mtf_context: MultiTimeframeContext) -> StrategyResult:
         daily = mtf_context.get(Timeframe.D1)

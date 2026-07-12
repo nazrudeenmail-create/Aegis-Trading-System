@@ -18,6 +18,7 @@ class TradeCandidate(BaseModel):
     entry_price: Decimal
     stop_loss: Decimal
     take_profit: Optional[Decimal] = None
+    confidence: float = 100.0
     market_conditions: Dict[str, Any]
 
 class StrategyResult(BaseModel):

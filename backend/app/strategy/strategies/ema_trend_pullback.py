@@ -9,8 +9,8 @@ from app.strategy.models import StrategyResult, TradeCandidate, TradeDirection
 
 class EMATrendPullbackStrategy(BaseStrategy):
     name = "EMA Trend Pullback"
-    version = "2.2"
-    description = "Enters in the direction of the trend after a pullback to the EMA20, requiring 4H and 1H alignment."
+    version = "1.0"
+    description = "Trades pullbacks to the 20 EMA in the direction of the 200 EMA trend."
     
     primary_timeframe = Timeframe.M15
     required_timeframes = [
@@ -18,6 +18,10 @@ class EMATrendPullbackStrategy(BaseStrategy):
         Timeframe.H1,
         Timeframe.M15,
     ]
+
+    def get_profile(self):
+        from app.strategy.profiles.ema_pullback import get_ema_pullback_profile
+        return get_ema_pullback_profile()
 
     def evaluate(self, mtf_context: MultiTimeframeContext) -> StrategyResult:
         # Extract required snapshots

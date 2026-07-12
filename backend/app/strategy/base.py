@@ -4,6 +4,7 @@ from typing import List
 from app.market.domain.timeframe import Timeframe
 from app.market_analysis.models import MultiTimeframeContext
 from app.strategy.models import StrategyResult
+from app.strategy.models.ranking import StrategyProfile
 
 class BaseStrategy(ABC):
     """
@@ -18,7 +19,14 @@ class BaseStrategy(ABC):
     
     # All timeframes required by this strategy (ordered highest to lowest)
     required_timeframes: List[Timeframe]
-
+    
+    @abstractmethod
+    def get_profile(self) -> "StrategyProfile":
+        """
+        Return the strategy's profile defining its preferred market conditions.
+        """
+        pass
+    
     @abstractmethod
     def evaluate(self, mtf_context: MultiTimeframeContext) -> StrategyResult:
         """

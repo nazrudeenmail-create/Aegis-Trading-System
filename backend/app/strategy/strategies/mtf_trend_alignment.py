@@ -9,8 +9,8 @@ from app.strategy.models import StrategyResult, TradeCandidate, TradeDirection
 
 class MultiTimeframeTrendAlignmentStrategy(BaseStrategy):
     name = "Multi-Timeframe Trend Alignment"
-    version = "1.1"
-    description = "Requires trend alignment across Daily, 4H, 1H, and 15M."
+    version = "1.0"
+    description = "Enters when Daily, 4H, 1H, and 15M trends align perfectly."
     
     primary_timeframe = Timeframe.M15
     required_timeframes = [
@@ -19,6 +19,10 @@ class MultiTimeframeTrendAlignmentStrategy(BaseStrategy):
         Timeframe.H1,
         Timeframe.M15,
     ]
+
+    def get_profile(self):
+        from app.strategy.profiles.mtf_trend import get_mtf_trend_profile
+        return get_mtf_trend_profile()
 
     def evaluate(self, mtf_context: MultiTimeframeContext) -> StrategyResult:
         daily = mtf_context.get(Timeframe.D1)
