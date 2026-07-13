@@ -125,7 +125,7 @@ export function MarketAnalysisView() {
             <span>Volatility</span>
           </div>
           <div className="stat-value" style={{ color: 'var(--text-primary)' }}>
-            {analysisData.indicators?.atr ? `ATR: ${analysisData.indicators.atr.toFixed(4)}` : 'N/A'}
+            {analysisData.indicators?.atr?.atr != null ? `ATR: ${Number(analysisData.indicators.atr.atr).toFixed(4)}` : 'N/A'}
           </div>
         </div>
       </div>
@@ -146,34 +146,65 @@ export function MarketAnalysisView() {
             </tr>
           </thead>
           <tbody>
-            {analysisData.indicators?.ema20 && (
+            {analysisData.indicators?.ema?.ema_20 != null && (
               <tr>
                 <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>EMA 20</td>
-                <td>{analysisData.indicators.ema20.toFixed(4)}</td>
+                <td>{Number(analysisData.indicators.ema.ema_20).toFixed(4)}</td>
                 <td>-</td>
               </tr>
             )}
-            {analysisData.indicators?.ema50 && (
+            {analysisData.indicators?.ema?.ema_50 != null && (
               <tr>
                 <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>EMA 50</td>
-                <td>{analysisData.indicators.ema50.toFixed(4)}</td>
+                <td>{Number(analysisData.indicators.ema.ema_50).toFixed(4)}</td>
                 <td>-</td>
               </tr>
             )}
-            {analysisData.indicators?.adx !== undefined && (
+            {analysisData.indicators?.adx?.adx != null && (
               <tr>
                 <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>ADX</td>
-                <td>{analysisData.indicators.adx.toFixed(1)}</td>
-                <td style={{ color: analysisData.indicators.adx >= 25 ? 'var(--success)' : 'var(--text-secondary)' }}>
-                  {analysisData.indicators.adx >= 25 ? 'STRONG' : 'WEAK'}
+                <td>{Number(analysisData.indicators.adx.adx).toFixed(1)}</td>
+                <td style={{ color: Number(analysisData.indicators.adx.adx) >= 25 ? 'var(--success)' : 'var(--text-secondary)' }}>
+                  {Number(analysisData.indicators.adx.adx) >= 25 ? 'STRONG' : 'WEAK'}
                 </td>
               </tr>
             )}
-            {analysisData.indicators?.atr !== undefined && (
+            {analysisData.indicators?.atr?.atr != null && (
               <tr>
                 <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>ATR</td>
-                <td>{analysisData.indicators.atr.toFixed(4)}</td>
+                <td>{Number(analysisData.indicators.atr.atr).toFixed(4)}</td>
                 <td>-</td>
+              </tr>
+            )}
+            {analysisData.indicators?.swing?.swing_high != null && (
+              <tr>
+                <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Swing High</td>
+                <td>{Number(analysisData.indicators.swing.swing_high).toFixed(4)}</td>
+                <td>-</td>
+              </tr>
+            )}
+            {analysisData.indicators?.swing?.swing_low != null && (
+              <tr>
+                <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Swing Low</td>
+                <td>{Number(analysisData.indicators.swing.swing_low).toFixed(4)}</td>
+                <td>-</td>
+              </tr>
+            )}
+            {analysisData.indicators?.pullback?.is_pullback && (
+              <tr>
+                <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Pullback Distance</td>
+                <td>{analysisData.indicators.pullback.distance_from_ema20 != null ? Number(analysisData.indicators.pullback.distance_from_ema20).toFixed(4) : '--'}</td>
+                <td style={{ color: 'var(--info)' }}>ACTIVE</td>
+              </tr>
+            )}
+            {analysisData.indicators?.donchian?.channel_width != null && (
+              <tr>
+                <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Donchian Width</td>
+                <td>{Number(analysisData.indicators.donchian.channel_width).toFixed(4)}</td>
+                <td>
+                  {analysisData.indicators.donchian.is_breakout_up ? <span style={{ color: 'var(--success)' }}>BRK UP</span> : 
+                   analysisData.indicators.donchian.is_breakout_down ? <span style={{ color: 'var(--danger)' }}>BRK DOWN</span> : '-'}
+                </td>
               </tr>
             )}
             {!analysisData.indicators && (

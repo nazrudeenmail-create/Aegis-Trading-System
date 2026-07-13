@@ -25,7 +25,7 @@ class MarketSnapshotResponse(BaseModel):
     price: float
     trend: TrendInfo
     regime: str
-    indicators: Dict[str, float]
+    indicators: Dict[str, Any]
 
 class StrategyScoreInfo(BaseModel):
     strategy: str

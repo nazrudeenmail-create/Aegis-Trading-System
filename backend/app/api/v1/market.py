@@ -25,12 +25,26 @@ def get_current_market(symbol: str = "BTCUSD"):
     regime = snapshot.regime.regime.value if snapshot.regime and snapshot.regime.regime else "UNKNOWN"
     
     indicators = {}
-    if snapshot.ema and snapshot.ema.ema_20:
-        indicators["ema_20"] = float(snapshot.ema.ema_20)
-    if snapshot.atr and snapshot.atr.atr:
-        indicators["atr"] = float(snapshot.atr.atr)
-    if snapshot.adx and snapshot.adx.adx:
-        indicators["adx"] = float(snapshot.adx.adx)
+    if snapshot.ema:
+        indicators["ema"] = snapshot.ema.model_dump() if hasattr(snapshot.ema, 'model_dump') else snapshot.ema.dict()
+    if snapshot.atr:
+        indicators["atr"] = snapshot.atr.model_dump() if hasattr(snapshot.atr, 'model_dump') else snapshot.atr.dict()
+    if snapshot.adx:
+        indicators["adx"] = snapshot.adx.model_dump() if hasattr(snapshot.adx, 'model_dump') else snapshot.adx.dict()
+    if snapshot.volume:
+        indicators["volume"] = snapshot.volume.model_dump() if hasattr(snapshot.volume, 'model_dump') else snapshot.volume.dict()
+    if snapshot.candle:
+        indicators["candle"] = snapshot.candle.model_dump() if hasattr(snapshot.candle, 'model_dump') else snapshot.candle.dict()
+    if snapshot.swing:
+        indicators["swing"] = snapshot.swing.model_dump() if hasattr(snapshot.swing, 'model_dump') else snapshot.swing.dict()
+    if snapshot.donchian:
+        indicators["donchian"] = snapshot.donchian.model_dump() if hasattr(snapshot.donchian, 'model_dump') else snapshot.donchian.dict()
+    if snapshot.pullback:
+        indicators["pullback"] = snapshot.pullback.model_dump() if hasattr(snapshot.pullback, 'model_dump') else snapshot.pullback.dict()
+    if snapshot.momentum:
+        indicators["momentum"] = snapshot.momentum.model_dump() if hasattr(snapshot.momentum, 'model_dump') else snapshot.momentum.dict()
+    if snapshot.volatility:
+        indicators["volatility"] = snapshot.volatility.model_dump() if hasattr(snapshot.volatility, 'model_dump') else snapshot.volatility.dict()
         
     return MarketSnapshotResponse(
         symbol=latest_candle.instrument,

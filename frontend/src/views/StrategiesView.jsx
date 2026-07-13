@@ -223,13 +223,16 @@ export function StrategiesView() {
             <thead>
               <tr>
                 <th>Strategy</th>
-                <th className="text-right">Score</th>
+                <th className="text-right">Historical</th>
+                <th className="text-right">Market Match</th>
+                <th className="text-right">Setup</th>
+                <th className="text-right">Total Score</th>
               </tr>
             </thead>
             <tbody>
               {!rankingData && !rankingError ? (
                 <tr>
-                  <td colSpan="2" className="text-center p-8"><div className="skeleton h-4 w-1/2 mx-auto" /></td>
+                  <td colSpan="5" className="text-center p-8"><div className="skeleton h-4 w-1/2 mx-auto" /></td>
                 </tr>
               ) : rankingData?.ranking ? (
                 rankingData.ranking.map((s, i) => (
@@ -240,12 +243,15 @@ export function StrategiesView() {
                         <span className="ml-2 badge-success">Winner</span>
                       )}
                     </td>
+                    <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.historical?.toFixed(1) ?? 0}</td>
+                    <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.compatibility?.toFixed(1) ?? 0}</td>
+                    <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.setup?.toFixed(1) ?? 0}</td>
                     <td className="text-right font-bold" style={{ color: 'var(--accent-primary)' }}>{s.total?.toFixed(1) ?? 0}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2" className="text-center p-8" style={{ color: 'var(--text-tertiary)' }}>
+                  <td colSpan="5" className="text-center p-8" style={{ color: 'var(--text-tertiary)' }}>
                     {selectedSymbol ? 'No ranking data yet for this instrument.' : 'Select an instrument above.'}
                   </td>
                 </tr>

@@ -48,14 +48,26 @@ class StrategyProfileUpdate(BaseModel):
     config: Dict[str, Any]
 
 @router.get("/profiles")
-def get_strategy_profiles(current_user: User = Depends(get_current_user)):
+def get_strategy_profiles():
     """Returns profiles of all registered strategies."""
     if not global_state.ranking_engine:
         raise HTTPException(status_code=503, detail="Ranking engine is not running")
     
     profiles = {}
     for strategy in global_state.ranking_engine.strategies:
-        profiles[strategy.name] = strategy.profile.__dict__ if hasattr(strategy, 'profile') else {}
+        if hasattr(strategy, 'get_profile'):
+            profile = strategy.get_profile()
+            if hasattr(profile, 'model_dump'):
+                dump = profile.model_dump()
+            elif hasattr(profile, 'dict'):
+                dump = profile.dict()
+            else:
+                dump = profile.__dict__
+            # Convert values to strings if they are lists (like regimes) for simple frontend editing
+            # Or just send the dict. Actually, the frontend expects the dict.
+            profiles[strategy.name] = dump
+        else:
+            profiles[strategy.name] = {}
     return profiles
 
 @router.patch("/{name}/profile")
