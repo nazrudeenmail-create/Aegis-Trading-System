@@ -21,74 +21,74 @@ function ProfileEditor({ name, initialConfig, onClose, onSave }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-950 border border-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900">
-          <h2 className="font-semibold text-white">Edit Profile: {name}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={18}/></button>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="glass-card-static w-full max-w-lg overflow-hidden flex flex-col shadow-2xl">
+        <div className="section-header">
+          <h2 className="section-title">Edit Profile: {name}</h2>
+          <button onClick={onClose} style={{ color: 'var(--text-secondary)' }} className="hover:text-white transition"><X size={18}/></button>
         </div>
-        <div className="p-4 flex-1 overflow-y-auto space-y-4 max-h-[60vh]">
+        <div className="p-5 flex-1 overflow-y-auto space-y-4 max-h-[60vh]">
           {Object.entries(config).map(([k, v]) => {
             if (Array.isArray(v)) {
               return (
                 <div key={k}>
-                  <label className="block text-xs text-slate-400 mb-1">{k}</label>
+                  <label className="block text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>{k}</label>
                   <input 
                     type="text"
                     value={v.join(', ')}
                     onChange={(e) => setConfig({ ...config, [k]: e.target.value.split(',').map(s => s.trim()) })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white"
+                    className="input-dark"
                   />
-                  <div className="text-[10px] text-slate-500 mt-1">Comma-separated list</div>
+                  <div className="text-[10px] mt-1" style={{ color: 'var(--text-muted)' }}>Comma-separated list</div>
                 </div>
               );
             }
             if (typeof v === 'boolean') {
               return (
-                <div key={k} className="flex items-center gap-2">
+                <div key={k} className="flex items-center gap-3 metric-row">
+                  <label className="text-sm" style={{ color: 'var(--text-secondary)' }}>{k}</label>
                   <input 
                     type="checkbox"
                     checked={v}
                     onChange={(e) => setConfig({ ...config, [k]: e.target.checked })}
-                    className="accent-indigo-500"
+                    className="accent-indigo-500 w-4 h-4"
                   />
-                  <label className="text-sm text-slate-300">{k}</label>
                 </div>
               );
             }
             if (typeof v === 'number') {
               return (
                 <div key={k}>
-                  <label className="block text-xs text-slate-400 mb-1">{k}</label>
+                  <label className="block text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>{k}</label>
                   <input 
                     type="number"
                     step="0.01"
                     value={v}
                     onChange={(e) => setConfig({ ...config, [k]: parseFloat(e.target.value) })}
-                    className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white"
+                    className="input-dark"
                   />
                 </div>
               );
             }
             return (
               <div key={k}>
-                <label className="block text-xs text-slate-400 mb-1">{k}</label>
+                <label className="block text-xs mb-1" style={{ color: 'var(--text-tertiary)' }}>{k}</label>
                 <input 
                   type="text"
                   value={v}
                   onChange={(e) => setConfig({ ...config, [k]: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white"
+                  className="input-dark"
                 />
               </div>
             );
           })}
         </div>
-        <div className="p-4 border-t border-slate-800 flex justify-end gap-2 bg-slate-900">
-          <button onClick={onClose} className="px-4 py-2 text-slate-400 hover:text-white transition">Cancel</button>
+        <div className="p-4 border-t flex justify-end gap-3" style={{ borderColor: 'var(--border-primary)', background: 'var(--bg-secondary)' }}>
+          <button onClick={onClose} className="btn-ghost">Cancel</button>
           <button 
             onClick={handleSave} 
             disabled={isSaving}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition flex items-center gap-2"
+            className="btn-primary flex items-center gap-2"
           >
             <Save size={16} /> {isSaving ? 'Saving...' : 'Save'}
           </button>
@@ -125,73 +125,75 @@ export function StrategiesView() {
   const [editingProfile, setEditingProfile] = useState(null);
 
   const TREND_ICON = { BULLISH: TrendingUp, BEARISH: TrendingDown, NEUTRAL: Minus };
-  const TREND_COLOR = { BULLISH: 'text-emerald-400', BEARISH: 'text-rose-400', NEUTRAL: 'text-slate-400' };
+  const TREND_COLOR = { BULLISH: 'var(--success)', BEARISH: 'var(--danger)', NEUTRAL: 'var(--text-secondary)' };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white tracking-tight">Strategy Center</h1>
+    <div className="space-y-6 animate-fade-in">
+      <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Strategy Center</h1>
 
       {/* ── Active Scans — all instruments ── */}
-      <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center">
-          <h2 className="font-semibold text-white">Active Scans</h2>
-          <span className="text-xs text-slate-500">{instruments.length} instruments monitored</span>
+      <div className="glass-card-static overflow-hidden">
+        <div className="section-header">
+          <h2 className="section-title">Active Scans</h2>
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>{instruments.length} instruments monitored</span>
         </div>
 
         {instruments.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">
+          <div className="p-8 text-center" style={{ color: 'var(--text-tertiary)' }}>
             {watchError ? 'Failed to load instruments.' : 'No instruments tracked. Add and activate instruments first.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="p-3 font-medium">Symbol</th>
-                  <th className="p-3 font-medium">Trend</th>
-                  <th className="p-3 font-medium">Regime</th>
-                  <th className="p-3 font-medium">ADX</th>
-                  <th className="p-3 font-medium">Top Strategy</th>
-                  <th className="p-3 font-medium text-right">Score</th>
-                  <th className="p-3 font-medium text-right">Signal</th>
+                  <th>Symbol</th>
+                  <th>Trend</th>
+                  <th>Regime</th>
+                  <th>ADX</th>
+                  <th>Top Strategy</th>
+                  <th className="text-right">Score</th>
+                  <th className="text-right">Signal</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody>
                 {instruments.map(inst => {
                   const Icon = TREND_ICON[inst.trend] ?? Minus;
-                  const trendCls = TREND_COLOR[inst.trend] ?? 'text-slate-400';
-                  const signalColors = {
-                    SETUP_FOUND: 'text-emerald-400 bg-emerald-500/10',
-                    NONE: 'text-slate-500 bg-slate-800',
+                  const trendCls = TREND_COLOR[inst.trend] ?? 'var(--text-secondary)';
+                  const signalClasses = {
+                    SETUP_FOUND: 'badge-success',
+                    NONE: 'badge-neutral',
                   };
-                  const signalCls = signalColors[inst.signal] ?? signalColors.NONE;
+                  const signalCls = signalClasses[inst.signal] ?? signalClasses.NONE;
                   const isSelected = inst.symbol === selectedSymbol;
+                  
                   return (
                     <tr
                       key={inst.id}
                       onClick={() => setSelectedSymbol(inst.symbol)}
-                      className={`cursor-pointer transition ${isSelected ? 'bg-indigo-600/10 border-l-2 border-indigo-500' : 'hover:bg-slate-900/50'}`}
+                      className="cursor-pointer"
+                      style={isSelected ? { background: 'var(--accent-primary-dim)', borderLeft: '2px solid var(--accent-primary)' } : {}}
                     >
-                      <td className="p-3 font-bold text-white">{inst.symbol}</td>
-                      <td className="p-3">
-                        <span className={`flex items-center gap-1 font-medium ${trendCls}`}>
+                      <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{inst.symbol}</td>
+                      <td>
+                        <span className="flex items-center gap-1 font-medium" style={{ color: trendCls }}>
                           <Icon size={12} /> {inst.trend}
                         </span>
                       </td>
-                      <td className="p-3 text-slate-300">{inst.regime}</td>
-                      <td className="p-3">
+                      <td>{inst.regime}</td>
+                      <td>
                         {inst.adx != null ? (
-                          <span className={inst.adx >= 25 ? 'text-indigo-400 font-bold' : 'text-slate-400'}>
+                          <span style={{ color: inst.adx >= 25 ? 'var(--accent-primary)' : 'var(--text-secondary)', fontWeight: inst.adx >= 25 ? 600 : 400 }}>
                             {inst.adx}
                           </span>
-                        ) : <span className="text-slate-600">--</span>}
+                        ) : <span>--</span>}
                       </td>
-                      <td className="p-3 text-slate-400">{inst.top_strategy ?? 'No Setup'}</td>
-                      <td className="p-3 text-right font-bold text-indigo-400">
+                      <td>{inst.top_strategy ?? 'No Setup'}</td>
+                      <td className="text-right font-bold" style={{ color: 'var(--accent-primary)' }}>
                         {inst.strategy_score != null ? inst.strategy_score : '--'}
                       </td>
-                      <td className="p-3 text-right">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${signalCls}`}>
+                      <td className="text-right">
+                        <span className={signalCls}>
                           {inst.signal ?? 'NONE'}
                         </span>
                       </td>
@@ -207,43 +209,43 @@ export function StrategiesView() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Detailed Rankings for selected instrument */}
-        <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-800">
-            <h2 className="font-semibold text-white">
+        <div className="glass-card-static overflow-hidden flex flex-col animate-fade-in-delay-1">
+          <div className="section-header flex-col items-start gap-1">
+            <h2 className="section-title">
               Strategy Rankings{' '}
               {selectedSymbol && (
-                <span className="text-indigo-400">— {selectedSymbol}</span>
+                <span style={{ color: 'var(--accent-primary)' }}>— {selectedSymbol}</span>
               )}
             </h2>
-            <p className="text-xs text-slate-500 mt-1">Click any row above to view detailed scores</p>
+            <p className="text-xs" style={{ color: 'var(--text-tertiary)' }}>Click any row above to view detailed scores</p>
           </div>
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
+          <table className="data-table">
+            <thead>
               <tr>
-                <th className="p-4 font-medium">Strategy</th>
-                <th className="p-4 font-medium text-right">Score</th>
+                <th>Strategy</th>
+                <th className="text-right">Score</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50 text-slate-300">
+            <tbody>
               {!rankingData && !rankingError ? (
                 <tr>
-                  <td colSpan="2" className="p-8 text-center text-slate-500">Loading rankings...</td>
+                  <td colSpan="2" className="text-center p-8"><div className="skeleton h-4 w-1/2 mx-auto" /></td>
                 </tr>
               ) : rankingData?.ranking ? (
                 rankingData.ranking.map((s, i) => (
-                  <tr key={i} className="hover:bg-slate-900/50 transition">
-                    <td className="p-4 font-medium text-white">
+                  <tr key={i}>
+                    <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
                       {s.strategy}
                       {rankingData.winner === s.strategy && (
-                        <span className="ml-2 text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">Winner</span>
+                        <span className="ml-2 badge-success">Winner</span>
                       )}
                     </td>
-                    <td className="p-4 text-right font-bold text-indigo-400">{s.total?.toFixed(1) ?? 0}</td>
+                    <td className="text-right font-bold" style={{ color: 'var(--accent-primary)' }}>{s.total?.toFixed(1) ?? 0}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2" className="p-8 text-center text-slate-500">
+                  <td colSpan="2" className="text-center p-8" style={{ color: 'var(--text-tertiary)' }}>
                     {selectedSymbol ? 'No ranking data yet for this instrument.' : 'Select an instrument above.'}
                   </td>
                 </tr>
@@ -253,34 +255,34 @@ export function StrategiesView() {
         </div>
 
         {/* Strategy Configurations */}
-        <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-800">
-            <h2 className="font-semibold text-white">Strategy Configurations</h2>
+        <div className="glass-card-static overflow-hidden flex flex-col animate-fade-in-delay-2">
+          <div className="section-header">
+            <h2 className="section-title">Strategy Configurations</h2>
           </div>
           <div className="p-4 space-y-4 overflow-y-auto">
             {!profilesData ? (
-              <div className="text-center text-slate-500 py-8">Loading profiles...</div>
+              <div className="text-center py-8" style={{ color: 'var(--text-tertiary)' }}>Loading profiles...</div>
             ) : Object.keys(profilesData).length === 0 ? (
-              <div className="text-center text-slate-500 py-8">No profiles found.</div>
+              <div className="text-center py-8" style={{ color: 'var(--text-tertiary)' }}>No profiles found.</div>
             ) : (
               Object.entries(profilesData).map(([name, config]) => (
-                <div key={name} className="bg-slate-900 border border-slate-800 rounded p-4 flex justify-between items-start">
+                <div key={name} className="metric-row">
                   <div>
-                    <h3 className="font-bold text-white mb-1">{name}</h3>
-                    <div className="text-xs text-slate-400 flex flex-wrap gap-2 mt-2">
+                    <h3 className="font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{name}</h3>
+                    <div className="text-xs flex flex-wrap gap-2 mt-2">
                       {Object.keys(config).slice(0, 3).map(k => (
-                        <span key={k} className="bg-slate-800 px-2 py-1 rounded">
+                        <span key={k} className="px-2 py-1 rounded" style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>
                           {k}: {Array.isArray(config[k]) ? config[k].join(', ') : config[k].toString()}
                         </span>
                       ))}
                       {Object.keys(config).length > 3 && (
-                        <span className="bg-slate-800 px-2 py-1 rounded">+{Object.keys(config).length - 3} more</span>
+                        <span className="px-2 py-1 rounded" style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>+{Object.keys(config).length - 3} more</span>
                       )}
                     </div>
                   </div>
                   <button
                     onClick={() => setEditingProfile({ name, config })}
-                    className="p-2 bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white rounded transition"
+                    className="btn-ghost px-3"
                   >
                     <Settings size={16} />
                   </button>

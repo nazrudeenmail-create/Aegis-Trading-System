@@ -1,8 +1,37 @@
 import React from 'react';
-import { Activity, Server, DollarSign, Briefcase, Bell, Eye, TrendingUp, BarChart2, Cpu } from 'lucide-react';
+import { Activity, Server, DollarSign, Briefcase, Bell, Eye, TrendingUp, BarChart2, Cpu, Zap, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import useSWR from 'swr';
 import { fetcher } from '../api';
 import { InstrumentCard } from '../components/InstrumentCard';
+
+function StatCard({ label, value, sub, icon: Icon, color = 'var(--accent-primary)', delay = 0 }) {
+  return (
+    <div className={`glass-card stat-card animate-fade-in animate-fade-in-delay-${delay}`}>
+      <div className="flex justify-between items-start">
+        <div className="stat-label">{label}</div>
+        <div className="p-2 rounded-lg" style={{ background: `color-mix(in srgb, ${color} 12%, transparent)` }}>
+          <Icon size={16} style={{ color }} />
+        </div>
+      </div>
+      <div className="stat-value" style={{ color: color === 'var(--accent-primary)' ? 'var(--text-primary)' : color }}>{value}</div>
+      {sub && <div className="stat-sub">{sub}</div>}
+    </div>
+  );
+}
+
+function EngineCard({ label, value, icon: Icon, color, delay }) {
+  return (
+    <div className={`glass-card p-4 flex items-center gap-4 animate-fade-in animate-fade-in-delay-${delay}`}>
+      <div className="p-2.5 rounded-lg" style={{ background: `color-mix(in srgb, ${color} 12%, transparent)` }}>
+        <Icon size={20} style={{ color }} />
+      </div>
+      <div>
+        <div className="text-xs font-medium" style={{ color: 'var(--text-tertiary)' }}>{label}</div>
+        <div className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{value}</div>
+      </div>
+    </div>
+  );
+}
 
 export function DashboardOverview() {
   const { data: summary } = useSWR('/dashboard/summary', fetcher, {
@@ -14,111 +43,90 @@ export function DashboardOverview() {
     fallbackData: { instruments: [] },
   });
 
-  if (!summary) return <div className="p-8 text-slate-400">Loading Dashboard...</div>;
+  if (!summary) {
+    return (
+      <div className="space-y-6">
+        <div className="skeleton h-8 w-64" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <div key={i} className="skeleton h-32 rounded-xl" />)}
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => <div key={i} className="skeleton h-20 rounded-xl" />)}
+        </div>
+      </div>
+    );
+  }
 
   const { system_status, trading_mode, broker_status, account, portfolio, market, engine } = summary;
+  const dailyPnl = account?.daily_pnl ?? 0;
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white tracking-tight">Dashboard Overview</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Dashboard</h1>
+        <div className="flex items-center gap-2">
+          <div className="pulse-dot" style={{ background: system_status?.backend === 'Running' ? 'var(--success)' : 'var(--danger)' }} />
+          <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>{system_status?.backend || 'Offline'}</span>
+        </div>
+      </div>
 
-      {/* ── Top Stats Row ── */}
+      {/* Top Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-        <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col gap-2">
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="text-sm font-medium">System</span>
-            <Server size={16} />
-          </div>
-          <div className="text-2xl font-semibold text-white">{system_status.backend}</div>
-          <div className="text-xs text-slate-500">
-            CPU: {system_status.cpu_percent}% · Mem: {system_status.memory_mb} MB
-          </div>
-        </div>
-
-        <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col gap-2">
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="text-sm font-medium">Trading Mode</span>
-            <Activity size={16} />
-          </div>
-          <div className="text-2xl font-semibold text-indigo-400">{trading_mode}</div>
-          <div className="text-xs text-slate-500">Broker: {broker_status}</div>
-        </div>
-
-        <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col gap-2">
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="text-sm font-medium">Account Balance</span>
-            <DollarSign size={16} />
-          </div>
-          <div className="text-2xl font-semibold text-emerald-400">
-            ${(account?.balance ?? 0).toLocaleString()}
-          </div>
-          <div className={`text-xs ${(account?.daily_pnl ?? 0) >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-            Daily PnL: ${(account?.daily_pnl ?? 0).toFixed(2)}
-          </div>
-        </div>
-
-        <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col gap-2">
-          <div className="flex justify-between items-center text-slate-400">
-            <span className="text-sm font-medium">Portfolio</span>
-            <Briefcase size={16} />
-          </div>
-          <div className="text-2xl font-semibold text-white">
-            {portfolio?.active_instruments ?? 0}{' '}
-            <span className="text-sm font-normal text-slate-500">instruments</span>
-          </div>
-          <div className="text-xs text-slate-500">
-            {portfolio?.open_positions ?? 0} open · {market?.markets_open ?? 0} markets open
-          </div>
-        </div>
-
+        <StatCard
+          label="System Status"
+          value={system_status?.backend || 'Offline'}
+          sub={`CPU: ${system_status?.cpu_percent || 0}% · Mem: ${system_status?.memory_mb || 0} MB`}
+          icon={Server}
+          delay={1}
+        />
+        <StatCard
+          label="Trading Mode"
+          value={trading_mode || 'Unknown'}
+          sub={`Broker: ${broker_status || 'Disconnected'}`}
+          icon={Activity}
+          color="var(--accent-cyan)"
+          delay={2}
+        />
+        <StatCard
+          label="Account Balance"
+          value={`$${(account?.balance ?? 0).toLocaleString()}`}
+          sub={
+            <span style={{ color: dailyPnl >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+              {dailyPnl >= 0 ? '▲' : '▼'} ${Math.abs(dailyPnl).toFixed(2)} today
+            </span>
+          }
+          icon={DollarSign}
+          color={dailyPnl >= 0 ? 'var(--success)' : 'var(--danger)'}
+          delay={3}
+        />
+        <StatCard
+          label="Portfolio"
+          value={`${portfolio?.active_instruments ?? 0}`}
+          sub={`${portfolio?.open_positions ?? 0} positions · ${market?.markets_open ?? 0} markets`}
+          icon={Briefcase}
+          delay={4}
+        />
       </div>
 
-      {/* ── Engine Stats Row ── */}
+      {/* Engine Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center gap-4">
-          <div className="p-2 bg-indigo-500/10 rounded-lg">
-            <TrendingUp size={20} className="text-indigo-400" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500">Strategies Active</div>
-            <div className="text-xl font-bold text-white">{engine?.strategies_running ?? 0}</div>
-          </div>
-        </div>
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center gap-4">
-          <div className="p-2 bg-emerald-500/10 rounded-lg">
-            <BarChart2 size={20} className="text-emerald-400" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500">Signals Today</div>
-            <div className="text-xl font-bold text-white">{engine?.signals_today ?? 0}</div>
-          </div>
-        </div>
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center gap-4">
-          <div className="p-2 bg-amber-500/10 rounded-lg">
-            <Cpu size={20} className="text-amber-400" />
-          </div>
-          <div>
-            <div className="text-xs text-slate-500">Uptime</div>
-            <div className="text-xl font-bold text-white">{system_status.uptime_hours}h</div>
-          </div>
-        </div>
+        <EngineCard label="Strategies Active" value={engine?.strategies_running ?? 0} icon={TrendingUp} color="var(--accent-primary)" delay={1} />
+        <EngineCard label="Signals Today" value={engine?.signals_today ?? 0} icon={BarChart2} color="var(--success)" delay={2} />
+        <EngineCard label="Uptime" value={`${system_status?.uptime_hours || 0}h`} icon={Cpu} color="var(--warning)" delay={3} />
       </div>
 
-      {/* ── Market Watch — dynamic instrument grid ── */}
+      {/* Market Watch */}
       <div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-white">Market Watch</h2>
-          <span className="text-xs text-slate-500">
-            {watchData?.instruments?.length ?? 0} instruments · refreshes every 15s
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Market Watch</h2>
+          <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+            {watchData?.instruments?.length ?? 0} instruments · auto-refresh
           </span>
         </div>
 
         {(!watchData?.instruments || watchData.instruments.length === 0) ? (
-          <div className="bg-slate-950 rounded-xl border border-slate-800 p-10 text-center text-slate-500">
-            No instruments tracked. Add instruments in the{' '}
-            <strong className="text-slate-300">Instruments</strong> tab and set status to{' '}
-            <strong className="text-slate-300">ACTIVE</strong>.
+          <div className="glass-card-static p-10 text-center" style={{ color: 'var(--text-tertiary)' }}>
+            No instruments tracked. Add instruments in the <strong style={{ color: 'var(--text-secondary)' }}>Instruments</strong> tab.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -129,29 +137,35 @@ export function DashboardOverview() {
         )}
       </div>
 
-      {/* ── Bottom Row ── */}
+      {/* Bottom Panels */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-800 flex items-center gap-2">
-            <Bell size={18} className="text-slate-400" />
-            <h2 className="font-semibold">Recent Activity</h2>
+        <div className="glass-card-static overflow-hidden flex flex-col">
+          <div className="section-header">
+            <div className="section-title">
+              <Bell size={16} style={{ color: 'var(--accent-primary)' }} /> Recent Activity
+            </div>
           </div>
-          <div className="p-4 flex-1 flex items-center justify-center text-sm text-slate-500 min-h-[200px]">
-            No recent notifications
-          </div>
-        </div>
-
-        <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-800 flex items-center gap-2">
-            <Eye size={18} className="text-slate-400" />
-            <h2 className="font-semibold">Decision Inspector</h2>
-          </div>
-          <div className="p-4 flex-1 flex items-center justify-center text-sm text-slate-500 min-h-[200px]">
-            Awaiting trade events...
+          <div className="p-5 flex-1 flex items-center justify-center min-h-[180px]" style={{ color: 'var(--text-muted)' }}>
+            <div className="text-center">
+              <Bell size={28} className="mx-auto mb-3" style={{ color: 'var(--text-muted)' }} />
+              <div className="text-sm">No recent notifications</div>
+            </div>
           </div>
         </div>
 
+        <div className="glass-card-static overflow-hidden flex flex-col">
+          <div className="section-header">
+            <div className="section-title">
+              <Eye size={16} style={{ color: 'var(--accent-primary)' }} /> Decision Inspector
+            </div>
+          </div>
+          <div className="p-5 flex-1 flex items-center justify-center min-h-[180px]" style={{ color: 'var(--text-muted)' }}>
+            <div className="text-center">
+              <Zap size={28} className="mx-auto mb-3" style={{ color: 'var(--text-muted)' }} />
+              <div className="text-sm">Awaiting trade events...</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

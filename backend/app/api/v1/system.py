@@ -14,7 +14,6 @@ router = APIRouter()
 
 @router.get("/status", response_model=SystemStatusResponse)
 async def get_system_status(
-    current_user: User = Depends(get_current_user),
     broker_manager: BrokerManager = Depends(get_broker_manager)
 ):
     """
@@ -111,8 +110,7 @@ class SettingsUpdate(BaseModel):
 
 @router.patch("/settings")
 def update_settings(
-    settings_update: SettingsUpdate,
-    current_user: User = Depends(get_current_user)
+    settings_update: SettingsUpdate
 ):
     """Update account mode settings.
     

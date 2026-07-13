@@ -11,8 +11,8 @@ export function RiskView() {
   });
   const { data: summary } = useSWR('/dashboard/summary', fetcher, { fallbackData: null });
 
-  if (error) return <div className="p-8 text-rose-400">Failed to load risk profile. Ensure the orchestrator is running.</div>;
-  if (!riskProfile) return <div className="p-8 text-slate-400">Loading risk parameters...</div>;
+  if (error) return <div className="p-8" style={{ color: 'var(--danger)' }}>Failed to load risk profile. Ensure the orchestrator is running.</div>;
+  if (!riskProfile) return <div className="p-8" style={{ color: 'var(--text-tertiary)' }}>Loading risk parameters...</div>;
 
   const balance = summary?.account?.balance ?? summary?.account_balance ?? 0;
   const instruments = watchData?.instruments ?? [];
@@ -41,37 +41,37 @@ export function RiskView() {
     });
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white tracking-tight">Risk Management</h1>
+    <div className="space-y-6 animate-fade-in">
+      <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Risk Management</h1>
 
       {/* ── Global Risk Parameters ── */}
-      <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 max-w-2xl">
-        <h2 className="text-lg font-semibold text-white mb-4">Global Risk Parameters</h2>
-        <div className="space-y-4">
-          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
+      <div className="glass-card p-6 max-w-2xl">
+        <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Global Risk Parameters</h2>
+        <div className="space-y-3">
+          <div className="metric-row">
             <div>
-              <div className="font-medium text-white">Risk Per Trade</div>
-              <div className="text-sm text-slate-400">Account percentage to risk per trade</div>
+              <div className="font-medium" style={{ color: 'var(--text-primary)' }}>Risk Per Trade</div>
+              <div className="text-sm" style={{ color: 'var(--text-tertiary)' }}>Account percentage to risk per trade</div>
             </div>
-            <div className="text-xl font-bold text-slate-300">
+            <div className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>
               {riskProfile.risk_per_trade_percent.toFixed(1)}%
             </div>
           </div>
-          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
+          <div className="metric-row">
             <div>
-              <div className="font-medium text-white">Max Open Risk</div>
-              <div className="text-sm text-slate-400">Total concurrent risk across all positions</div>
+              <div className="font-medium" style={{ color: 'var(--text-primary)' }}>Max Open Risk</div>
+              <div className="text-sm" style={{ color: 'var(--text-tertiary)' }}>Total concurrent risk across all positions</div>
             </div>
-            <div className="text-xl font-bold text-slate-300">
+            <div className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>
               {riskProfile.max_open_risk_percent.toFixed(1)}%
             </div>
           </div>
-          <div className="flex justify-between items-center p-4 bg-slate-900 rounded border border-slate-700">
+          <div className="metric-row">
             <div>
-              <div className="font-medium text-white">Max Daily Drawdown</div>
-              <div className="text-sm text-slate-400">Stop trading if daily loss exceeds this</div>
+              <div className="font-medium" style={{ color: 'var(--text-primary)' }}>Max Daily Drawdown</div>
+              <div className="text-sm" style={{ color: 'var(--text-tertiary)' }}>Stop trading if daily loss exceeds this</div>
             </div>
-            <div className="text-xl font-bold text-slate-300">
+            <div className="text-xl font-bold" style={{ color: 'var(--text-secondary)' }}>
               {riskProfile.max_daily_drawdown_percent.toFixed(1)}%
             </div>
           </div>
@@ -79,12 +79,12 @@ export function RiskView() {
       </div>
 
       {/* ── Portfolio Heat ── */}
-      <div className="bg-slate-950 p-6 rounded-xl border border-slate-800">
+      <div className="glass-card p-6 animate-fade-in-delay-1">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-white">Portfolio Heat</h2>
-          <div className="text-xs text-slate-500">
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Portfolio Heat</h2>
+          <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
             Total Exposure:{' '}
-            <span className={`font-bold ${totalExposurePercent > maxRisk * 0.8 ? 'text-rose-400' : 'text-emerald-400'}`}>
+            <span className="font-bold" style={{ color: totalExposurePercent > maxRisk * 0.8 ? 'var(--danger)' : 'var(--success)' }}>
               {totalExposurePercent.toFixed(2)}%
             </span>
             {' '}/ {maxRisk}% max
@@ -93,31 +93,32 @@ export function RiskView() {
 
         {/* Total risk bar */}
         <div className="mb-6">
-          <div className="flex justify-between text-xs text-slate-400 mb-1">
+          <div className="flex justify-between text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>
             <span>Total Portfolio Risk</span>
             <span>{totalExposurePercent.toFixed(2)}% of {maxRisk}%</span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-3">
+          <div className="progress-track">
             <div
-              className={`h-3 rounded-full transition-all ${
-                totalExposurePercent / maxRisk > 0.8 ? 'bg-rose-500' :
-                totalExposurePercent / maxRisk > 0.5 ? 'bg-amber-500' : 'bg-indigo-500'
-              }`}
-              style={{ width: `${Math.min((totalExposurePercent / maxRisk) * 100, 100)}%` }}
+              className="progress-fill"
+              style={{ 
+                width: `${Math.min((totalExposurePercent / maxRisk) * 100, 100)}%`,
+                background: totalExposurePercent / maxRisk > 0.8 ? 'var(--danger)' :
+                            totalExposurePercent / maxRisk > 0.5 ? 'var(--warning)' : 'var(--accent-primary)'
+              }}
             />
           </div>
         </div>
 
         {instrumentExposures.length === 0 ? (
           <div className="space-y-3">
-            <div className="text-xs text-slate-500 mb-3">No open positions — showing watched instruments at 0% exposure.</div>
+            <div className="text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>No open positions — showing watched instruments at 0% exposure.</div>
             {instruments.slice(0, 8).map(inst => (
               <div key={inst.id} className="flex items-center gap-3">
-                <div className="w-24 text-xs font-bold text-slate-400 truncate">{inst.symbol}</div>
-                <div className="flex-1 bg-slate-800 rounded-full h-2">
-                  <div className="h-2 rounded-full bg-slate-700" style={{ width: '0%' }} />
+                <div className="w-24 text-xs font-bold truncate" style={{ color: 'var(--text-secondary)' }}>{inst.symbol}</div>
+                <div className="flex-1 progress-track">
+                  <div className="progress-fill" style={{ width: '0%' }} />
                 </div>
-                <div className="w-16 text-right text-xs text-slate-600">0.00%</div>
+                <div className="w-16 text-right text-xs" style={{ color: 'var(--text-tertiary)' }}>0.00%</div>
               </div>
             ))}
           </div>
@@ -127,16 +128,17 @@ export function RiskView() {
               const pct = Math.min((exposurePercent / maxRisk) * 100, 100);
               return (
                 <div key={symbol} className="flex items-center gap-3">
-                  <div className="w-24 text-xs font-bold text-white truncate">{symbol}</div>
-                  <div className="flex-1 bg-slate-800 rounded-full h-2">
+                  <div className="w-24 text-xs font-bold truncate" style={{ color: 'var(--text-primary)' }}>{symbol}</div>
+                  <div className="flex-1 progress-track">
                     <div
-                      className={`h-2 rounded-full transition-all ${
-                        pct > 80 ? 'bg-rose-500' : pct > 50 ? 'bg-amber-500' : 'bg-indigo-500'
-                      }`}
-                      style={{ width: `${pct}%` }}
+                      className="progress-fill"
+                      style={{ 
+                        width: `${pct}%`,
+                        background: pct > 80 ? 'var(--danger)' : pct > 50 ? 'var(--warning)' : 'var(--accent-primary)'
+                      }}
                     />
                   </div>
-                  <div className="w-16 text-right text-xs text-slate-300">
+                  <div className="w-16 text-right text-xs" style={{ color: 'var(--text-secondary)' }}>
                     {exposurePercent.toFixed(2)}%
                   </div>
                 </div>

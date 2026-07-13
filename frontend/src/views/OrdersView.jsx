@@ -11,62 +11,62 @@ export function OrdersView() {
   const brokerName = brokerStatus?.broker || 'Unknown';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white tracking-tight">Orders</h1>
-        <span className="text-sm text-slate-400 bg-slate-900 px-3 py-1 rounded border border-slate-700">
-          Broker: <span className="text-indigo-400">{brokerName}</span>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Orders</h1>
+        <span className="text-sm font-medium px-3 py-1 rounded" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+          Broker: <span style={{ color: 'var(--accent-primary)' }}>{brokerName}</span>
         </span>
       </div>
 
-      <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden">
-        <div className="p-4 border-b border-slate-800">
-          <h2 className="font-semibold text-white flex items-center gap-2">
-            <ShoppingCart size={18} className="text-indigo-400"/> Recent Orders
+      <div className="glass-card-static overflow-hidden animate-fade-in-delay-1">
+        <div className="section-header">
+          <h2 className="section-title">
+            <ShoppingCart size={18} style={{ color: 'var(--accent-primary)' }}/> Recent Orders
           </h2>
         </div>
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
+        <table className="data-table">
+          <thead>
             <tr>
-              <th className="p-4 font-medium">Order ID</th>
-              <th className="p-4 font-medium">Symbol</th>
-              <th className="p-4 font-medium">Direction</th>
-              <th className="p-4 font-medium">Type</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Fill Price</th>
-              <th className="p-4 font-medium">Quantity</th>
+              <th>Order ID</th>
+              <th>Symbol</th>
+              <th>Direction</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Fill Price</th>
+              <th>Quantity</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/50">
+          <tbody>
             {isOrdersLoading ? (
               <tr>
-                <td colSpan="7" className="p-8 text-center text-slate-500">Loading orders...</td>
+                <td colSpan="7" className="text-center p-8"><div className="skeleton h-4 w-1/2 mx-auto" /></td>
               </tr>
             ) : (!ordersData || ordersData.length === 0) ? (
               <tr>
-                <td colSpan="7" className="p-8 text-center text-slate-500">
-                  <Clock size={24} className="mx-auto mb-2 text-slate-600" />
+                <td colSpan="7" className="text-center p-8" style={{ color: 'var(--text-tertiary)' }}>
+                  <Clock size={24} className="mx-auto mb-2" style={{ color: 'var(--text-muted)' }} />
                   No orders found for this session.
                 </td>
               </tr>
             ) : (
               ordersData.map((order, idx) => (
-                <tr key={idx} className="hover:bg-slate-900/50 transition">
-                  <td className="p-4 text-slate-300 font-mono text-xs">{order.id}</td>
-                  <td className="p-4 font-bold text-white">{order.symbol}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${order.direction === 'BUY' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                <tr key={idx}>
+                  <td className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>{order.id}</td>
+                  <td style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>{order.symbol}</td>
+                  <td>
+                    <span className={order.direction === 'BUY' ? 'badge-success' : 'badge-danger'}>
                       {order.direction}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-300">{order.type}</td>
-                  <td className="p-4">
-                    <span className="text-indigo-400 font-medium text-xs px-2 py-1 rounded border border-indigo-500/20 bg-indigo-500/10">
+                  <td style={{ color: 'var(--text-secondary)' }}>{order.type}</td>
+                  <td>
+                    <span className="badge-info">
                       {order.status}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-300">{order.fill_price ? `$${order.fill_price.toFixed(2)}` : '--'}</td>
-                  <td className="p-4 text-slate-300">{order.quantity}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{order.fill_price ? `$${order.fill_price.toFixed(2)}` : '--'}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{order.quantity}</td>
                 </tr>
               ))
             )}

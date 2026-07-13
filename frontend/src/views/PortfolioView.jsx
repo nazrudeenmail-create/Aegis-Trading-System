@@ -16,72 +16,72 @@ export function PortfolioView() {
   const pnl     = summary?.account?.unrealized_pnl   ?? summary?.unrealized_pnl   ?? 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white tracking-tight">Portfolio</h1>
-        <div className="text-sm font-medium text-slate-400 bg-slate-900 px-3 py-1 rounded border border-slate-700">
-          Current Account: <span className="text-indigo-400">{mode}</span>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>Portfolio</h1>
+        <div className="text-sm font-medium px-3 py-1 rounded" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-primary)', color: 'var(--text-secondary)' }}>
+          Current Account: <span style={{ color: 'var(--accent-primary)' }}>{mode}</span>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800">
-          <h2 className="text-sm font-medium text-slate-400 mb-2">Total Equity</h2>
-          <div className="text-3xl font-bold text-white">
+        <div className="glass-card stat-card animate-fade-in-delay-1">
+          <h2 className="stat-label">Total Equity</h2>
+          <div className="stat-value">
             {isLoading ? "..." : `$${balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
           </div>
         </div>
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800">
-          <h2 className="text-sm font-medium text-slate-400 mb-2">Available Margin</h2>
-          <div className="text-3xl font-bold text-white">
+        <div className="glass-card stat-card animate-fade-in-delay-2">
+          <h2 className="stat-label">Available Margin</h2>
+          <div className="stat-value">
             {isLoading ? "..." : `$${margin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
           </div>
         </div>
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800">
-          <h2 className="text-sm font-medium text-slate-400 mb-2">Unrealized PnL</h2>
-          <div className={`text-3xl font-bold ${pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <div className="glass-card stat-card animate-fade-in-delay-3">
+          <h2 className="stat-label">Unrealized PnL</h2>
+          <div className="stat-value" style={{ color: pnl >= 0 ? 'var(--success)' : 'var(--danger)' }}>
             {isLoading ? "..." : `$${pnl.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
           </div>
         </div>
       </div>
 
-      <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden mt-6">
-        <div className="p-4 border-b border-slate-800">
-          <h2 className="font-semibold text-white">Open Positions</h2>
+      <div className="glass-card-static overflow-hidden mt-6 animate-fade-in-delay-4">
+        <div className="section-header">
+          <h2 className="section-title">Open Positions</h2>
         </div>
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
+        <table className="data-table">
+          <thead>
             <tr>
-              <th className="p-4 font-medium">Symbol</th>
-              <th className="p-4 font-medium">Direction</th>
-              <th className="p-4 font-medium">Size</th>
-              <th className="p-4 font-medium">Entry Price</th>
-              <th className="p-4 font-medium">Current Price</th>
-              <th className="p-4 font-medium text-right">Unrealized PnL</th>
+              <th>Symbol</th>
+              <th>Direction</th>
+              <th>Size</th>
+              <th>Entry Price</th>
+              <th>Current Price</th>
+              <th className="text-right">Unrealized PnL</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/50">
+          <tbody>
             {isPositionsLoading ? (
               <tr>
-                <td colSpan="6" className="p-8 text-center text-slate-500">Loading positions...</td>
+                <td colSpan="6" className="text-center p-8"><div className="skeleton h-4 w-1/2 mx-auto" /></td>
               </tr>
             ) : (!positionsData || positionsData.length === 0) ? (
               <tr>
-                <td colSpan="6" className="p-8 text-center text-slate-500">No open positions.</td>
+                <td colSpan="6" className="text-center p-8" style={{ color: 'var(--text-tertiary)' }}>No open positions.</td>
               </tr>
             ) : (
               positionsData.map((pos, idx) => (
-                <tr key={idx} className="hover:bg-slate-900/50 transition">
-                  <td className="p-4 font-bold text-white">{pos.symbol}</td>
-                  <td className="p-4">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${pos.direction === 'LONG' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                <tr key={idx}>
+                  <td style={{ color: 'var(--text-primary)', fontWeight: 'bold' }}>{pos.symbol}</td>
+                  <td>
+                    <span className={pos.direction === 'LONG' ? 'badge-success' : 'badge-danger'}>
                       {pos.direction}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-300">{pos.size}</td>
-                  <td className="p-4 text-slate-300">${pos.entry_price?.toFixed(2) || '--'}</td>
-                  <td className="p-4 text-slate-300">${pos.current_price?.toFixed(2) || '--'}</td>
-                  <td className={`p-4 text-right font-bold ${pos.unrealized_pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <td>{pos.size}</td>
+                  <td>${pos.entry_price?.toFixed(2) || '--'}</td>
+                  <td>${pos.current_price?.toFixed(2) || '--'}</td>
+                  <td className="text-right font-bold" style={{ color: pos.unrealized_pnl >= 0 ? 'var(--success)' : 'var(--danger)' }}>
                     ${pos.unrealized_pnl?.toFixed(2) || '0.00'}
                   </td>
                 </tr>
