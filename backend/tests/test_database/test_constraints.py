@@ -59,7 +59,7 @@ def _instrument(db: Session, symbol: str = "CSTR_TEST") -> Instrument:
 def _account(db: Session, broker: str = "CSTR_BRK", number: str = "CSTR-001") -> Account:
     acct = Account(
         broker_name=broker, account_number=number,
-        account_type=AccountType.PAPER, currency="USD",
+        account_type=AccountType.DEMO, currency="USD",
     )
     db.add(acct)
     db.flush()

@@ -21,11 +21,10 @@ from enum import Enum
 
 
 class AccountType(str, Enum):
-    """Trading account type — paper, demo, live, or backtest."""
-    PAPER = "PAPER"
+    """Trading account type — backtest, demo, or live."""
+    BACKTEST = "BACKTEST"
     DEMO = "DEMO"
     LIVE = "LIVE"
-    BACKTEST = "BACKTEST"
 
 
 class AssetClass(str, Enum):
@@ -43,6 +42,13 @@ class InstrumentStatus(str, Enum):
     WATCHLIST = "WATCHLIST"
     PAUSED = "PAUSED"
     DISABLED = "DISABLED"
+
+
+class ExecutionMode(str, Enum):
+    """Execution environment for an instrument."""
+    BACKTEST = "BACKTEST"
+    DEMO = "DEMO"
+    LIVE = "LIVE"
 
 
 class MarketType(str, Enum):

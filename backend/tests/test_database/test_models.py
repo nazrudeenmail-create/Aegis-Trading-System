@@ -73,7 +73,7 @@ def _create_account(db: Session) -> Account:
     acct = Account(
         broker_name="TestBroker",
         account_number="TEST-001",
-        account_type=AccountType.PAPER,
+        account_type=AccountType.DEMO,
         currency="USD",
         balance=Decimal("100000.00"),
         is_default=True,
@@ -541,13 +541,13 @@ class TestAccount:
         acct = _create_account(db_session)
         r = repr(acct)
         assert "TestBroker" in r
-        assert "PAPER" in r
+        assert "DEMO" in r
 
     def test_balance_default(self, db_session: Session):
         acct = Account(
             broker_name="MinBroker",
             account_number="MIN-001",
-            account_type=AccountType.PAPER,
+            account_type=AccountType.DEMO,
             currency="USD",
         )
         db_session.add(acct)

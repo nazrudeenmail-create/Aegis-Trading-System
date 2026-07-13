@@ -3,21 +3,21 @@ Aegis Trading System — Abstract Broker Interface
 
 Responsibility:
     Define the interface that all broker implementations must follow.
-    Concrete implementations are created in Phase 12.
+    Concrete implementations are created in Phase 13.
 
 Architecture rule:
     The Strategy Engine and Risk Engine never call a broker directly.
-    They call broker_interface methods. The actual broker is a
-    configuration choice — not hardcoded anywhere.
+    They emit TradeCandidates. The ExecutionEngine and BrokerManager
+    translate those into broker-specific order calls.
 
-Future implementations (Phase 12):
-    - PaperBroker: simulated execution for paper trading (first implementation)
-    - IBKRBroker: Interactive Brokers live trading
-    - AlpacaBroker: Alpaca live trading
+Execution modes:
+    - BACKTEST -> app.backtest.simulated_broker.SimulatedBroker
+    - DEMO     -> CapitalComBroker (demo endpoint)
+    - LIVE     -> CapitalComBroker (live endpoint)
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 from app.execution.models.order import OrderRequest, OrderResult
 
@@ -58,12 +58,38 @@ class BrokerInterface(ABC):
         pass
 
     @abstractmethod
-    async def place_order(self, order: OrderRequest) -> OrderResult:
+    async def place_market_order(self, order: OrderRequest) -> OrderResult:
         """
-        Submit an order to the broker.
+        Submit a market order for immediate execution.
 
         Args:
-            order: OrderRequest with symbol, direction, quantity, type.
+            order: OrderRequest with symbol, direction, quantity.
+
+        Returns:
+            OrderResult: Result of the order submission including fill data.
+        """
+        pass
+
+    @abstractmethod
+    async def place_limit_order(self, order: OrderRequest) -> OrderResult:
+        """
+        Submit a limit (pending) order.
+
+        Args:
+            order: OrderRequest with symbol, direction, quantity, price.
+
+        Returns:
+            OrderResult: Result of the order submission.
+        """
+        pass
+
+    @abstractmethod
+    async def place_stop_order(self, order: OrderRequest) -> OrderResult:
+        """
+        Submit a stop (pending) order.
+
+        Args:
+            order: OrderRequest with symbol, direction, quantity, stop_price.
 
         Returns:
             OrderResult: Result of the order submission.
@@ -80,6 +106,29 @@ class BrokerInterface(ABC):
 
         Returns:
             bool: True if cancelled successfully, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    async def get_order_status(self, order_id: str) -> Optional[OrderResult]:
+        """
+        Retrieve the current status of an order from the broker.
+
+        Args:
+            order_id: The broker-assigned order identifier.
+
+        Returns:
+            OrderResult or None: Latest order status with fill data if available.
+        """
+        pass
+
+    @abstractmethod
+    async def sync_positions(self) -> List[Dict[str, Any]]:
+        """
+        Fetch and return open positions from the broker.
+
+        Returns:
+            List of position dictionaries with broker-native fields.
         """
         pass
 

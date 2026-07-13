@@ -1,18 +1,28 @@
+import hmac
 from datetime import datetime, timezone
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, DateTime, Enum, Boolean
 from app.database.base import Base
 from app.database.enums import UserRole
 
+# API key prefix constant
+API_KEY_PREFIX = "ats_"
+
+
 class User(Base):
     """
     User account for API access and authentication.
+    
+    API Key format: ats_<key_prefix>_<secret>
+    - key_prefix: stored in database for fast lookups
+    - secret: stored as HMAC-SHA256 hash for security
     """
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
-    api_key_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    key_prefix: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False)  # HMAC-SHA256 produces 64 hex chars
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole, name="user_role", create_type=True),
         default=UserRole.READ_ONLY,
@@ -24,3 +34,13 @@ class User(Base):
 
     def __repr__(self) -> str:
         return f"<User {self.username} ({self.role.value})>"
+
+    @staticmethod
+    def hash_secret(secret: str) -> str:
+        """Hash a secret using HMAC-SHA256 for secure storage."""
+        # Using a fixed key suffix for the HMAC - in production this should be from settings
+        return hmac.new(
+            b"ats_internal_hmac_key",
+            secret.encode(),
+            "sha256"
+        ).hexdigest()

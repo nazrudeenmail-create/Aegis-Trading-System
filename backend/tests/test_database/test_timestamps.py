@@ -68,7 +68,7 @@ class TestCreatedAt:
     def test_account_created_at(self, db_session: Session):
         acct = Account(
             broker_name="TS_BKR", account_number="TS-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -217,7 +217,7 @@ class TestCreatedAt:
         db_session.flush()
         acct = Account(
             broker_name="TS_ORD_BRK", account_number="TS-ORD-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -241,7 +241,7 @@ class TestCreatedAt:
         db_session.flush()
         acct = Account(
             broker_name="TS_POS_BRK", account_number="TS-POS-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -266,7 +266,7 @@ class TestCreatedAt:
         db_session.flush()
         acct = Account(
             broker_name="TS_TRD_BRK", account_number="TS-TRD-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -358,7 +358,7 @@ class TestUpdatedAtOnCreate:
     def test_account_updated_at_on_create(self, db_session: Session):
         acct = Account(
             broker_name="UA_BKR", account_number="UA-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -394,7 +394,7 @@ class TestUpdatedAtOnCreate:
         db_session.flush()
         acct = Account(
             broker_name="UA_ORD_BRK", account_number="UA-ORD-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -418,7 +418,7 @@ class TestUpdatedAtOnCreate:
         db_session.flush()
         acct = Account(
             broker_name="UA_POS_BRK", account_number="UA-POS-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()
@@ -468,7 +468,7 @@ class TestUpdatedAtOnUpdate:
     def test_account_updated_at_changes(self, db_session: Session):
         acct = Account(
             broker_name="UU_BKR", account_number="UU-001",
-            account_type=AccountType.PAPER, currency="USD",
+            account_type=AccountType.DEMO, currency="USD",
         )
         db_session.add(acct)
         db_session.flush()

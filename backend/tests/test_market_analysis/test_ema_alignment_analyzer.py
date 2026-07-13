@@ -1,3 +1,4 @@
+from app.market.domain.timeframe import Timeframe
 import pytest
 from decimal import Decimal
 from datetime import datetime, timezone
@@ -11,7 +12,7 @@ def test_ema_alignment_bullish():
     snapshot = MarketSnapshot(
         candles=[
             Candle(
-                timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe="4H", source="test",
+                timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe=Timeframe.H4, source="test",
                 open=Decimal("100"), high=Decimal("105"), low=Decimal("95"), close=Decimal("100"), volume=Decimal("10")
             )
         ]
@@ -32,7 +33,7 @@ def test_ema_alignment_bullish():
     assert result is not None
     assert result.alignment == EMAAlignment.BULLISH
     assert result.strength == TrendStrength.STRONG
-    assert result.timeframe == "4H"
+    assert result.timeframe == Timeframe.H4.value
     assert result.stack == ["EMA9", "EMA20", "EMA50", "EMA100", "EMA200"]
 
 def test_ema_alignment_bearish():
@@ -40,7 +41,7 @@ def test_ema_alignment_bearish():
     snapshot = MarketSnapshot(
         candles=[
             Candle(
-                timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe="1H", source="test",
+                timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe=Timeframe.H1, source="test",
                 open=Decimal("100"), high=Decimal("105"), low=Decimal("95"), close=Decimal("100"), volume=Decimal("10")
             )
         ]
@@ -68,7 +69,7 @@ def test_ema_alignment_mixed():
     snapshot = MarketSnapshot(
         candles=[
             Candle(
-                timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe="1M", source="test",
+                timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe=Timeframe.M1, source="test",
                 open=Decimal("100"), high=Decimal("105"), low=Decimal("95"), close=Decimal("100"), volume=Decimal("10")
             )
         ]

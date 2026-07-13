@@ -1,4 +1,7 @@
-# Aegis Trading System (ATS) — Project Roadmap
+# Aegis Trading System (ATS) — Project Roadmap — ARCHIVED
+
+> ⚠️ **This file is archived. See [`PROJECT_STATUS.md`](../PROJECT_STATUS.md) for the current single source of truth.**
+> This roadmap was accurate through Phase 11. Phase 13.0 status is in PROJECT_STATUS.md.
 
 Version: 1.0
 

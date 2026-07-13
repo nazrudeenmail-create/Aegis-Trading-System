@@ -1,3 +1,4 @@
+import hmac
 from fastapi import Security, HTTPException, status, Depends
 from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy.orm import Session
@@ -9,22 +10,49 @@ from app.database.enums import UserRole
 API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
+# HMAC key for hashing - in production this comes from settings
+_HMAC_SECRET = b"ats_internal_hmac_key"
+
+
 def get_current_user(
     api_key: str = Security(api_key_header),
     db: Session = Depends(get_db)
 ) -> User:
     """
-    Validates the API key from the header and returns the active User.
-    For this MVP, we match the raw api_key string. In production, this should compare hashes.
+    Validates the API key from the header using HMAC-based authentication.
+    
+    API Key format: ats_<key_prefix>_<secret>
+    - Extracts the prefix for fast database lookup
+    - Hashes the provided secret with HMAC-SHA256
+    - Uses constant-time comparison to prevent timing attacks
     """
     if not api_key:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing API Key",
         )
-        
-    user = db.query(User).filter(User.api_key_hash == api_key).first()
+    
+    # Extract prefix from API key (format: ats_<prefix>_<secret>)
+    parts = api_key.split("_")
+    if len(parts) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API Key format",
+        )
+    
+    key_prefix = "_".join(parts[:2]) if len(parts) >= 3 else parts[1]
+    
+    # Fast lookup by prefix
+    user = db.query(User).filter(User.key_prefix == key_prefix).first()
     if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid API Key",
+        )
+    
+    # Hash the incoming secret and compare with stored hash
+    key_hash = hmac.new(_HMAC_SECRET, api_key.encode(), "sha256").hexdigest()
+    if not hmac.compare_digest(user.key_hash, key_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API Key",

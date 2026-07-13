@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.auth import get_current_user, User
 from app.core.state import global_state
 
-router = APIRouter(prefix="/risk", tags=["risk"])
+router = APIRouter(prefix="/risk")
 
 @router.get("/profile")
 def get_risk_profile(current_user: User = Depends(get_current_user)):

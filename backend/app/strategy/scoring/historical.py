@@ -14,6 +14,8 @@ class HistoricalScorer:
 
     def score(self, db: Session, strategy_name: str) -> float:
         # Get the latest backtest run for this strategy
+        if db is None:
+            return 0.0
         run = db.query(BacktestRun).filter(
             BacktestRun.strategy_name == strategy_name
         ).order_by(desc(BacktestRun.end_date)).first()

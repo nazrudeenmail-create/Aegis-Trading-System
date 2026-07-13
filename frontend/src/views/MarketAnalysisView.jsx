@@ -7,7 +7,7 @@ import { Chart } from '../components/Chart';
 const timeframes = ['1m', '5m', '15m', '1h', '4h', '1d'];
 
 export function MarketAnalysisView() {
-  const [symbol, setSymbol] = useState('BTCUSD');
+  const [symbol, setSymbol] = useState('');
   const [timeframe, setTimeframe] = useState('1h');
   
   const { data: instruments = [] } = useSWR('/instruments/', fetcher);
@@ -19,8 +19,8 @@ export function MarketAnalysisView() {
     }
   }, [activeInstruments, symbol]);
 
-  const { data: analysisData, error: analysisError, isLoading: isAnalysisLoading } = useSWR(`/market/current?symbol=${symbol}`, fetcher, { refreshInterval: 15000 });
-  const { data: candlesData, error: candlesError } = useSWR(`/market/candles?symbol=${symbol}&timeframe=${timeframe}&limit=200`, fetcher, { refreshInterval: 60000 });
+  const { data: analysisData, error: analysisError, isLoading: isAnalysisLoading } = useSWR(symbol ? `/market/current?symbol=${symbol}` : null, fetcher, { refreshInterval: 15000 });
+  const { data: candlesData, error: candlesError } = useSWR(symbol ? `/market/candles?symbol=${symbol}&timeframe=${timeframe}&limit=200` : null, fetcher, { refreshInterval: 60000 });
 
   if (isAnalysisLoading) return <div className="p-8 text-slate-400">Loading market analysis for {symbol}...</div>;
   if (analysisError) {

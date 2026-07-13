@@ -3,11 +3,11 @@ from enum import Enum
 class Timeframe(str, Enum):
     """
     Domain representation of supported timeframes.
-    Values align with the system's standard definitions.
+    Values align with the database ENUM type 'timeframe'.
     """
-    M1 = "1M"
-    M5 = "5M"
-    M15 = "15M"
-    H1 = "1H"
-    H4 = "4H"
-    D1 = "1D"
+    M1 = "M1"
+    M5 = "M5"
+    M15 = "M15"
+    H1 = "H1"
+    H4 = "H4"
+    D1 = "D1"

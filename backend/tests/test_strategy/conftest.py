@@ -2,10 +2,11 @@ import pytest
 from decimal import Decimal
 from datetime import datetime, timezone
 from app.market.domain.candle import Candle
+from app.market.domain.timeframe import Timeframe
 from app.market_analysis.models import (
     MarketSnapshot, EMAAnalysis, ATRAnalysis, ADXAnalysis, VolumeAnalysis, 
     CandleAnalysis, SwingAnalysis, TrendAnalysis, MarketRegimeAnalysis, 
-    MomentumAnalysis, PullbackAnalysis, VolatilityAnalysis
+    MomentumAnalysis, PullbackAnalysis, VolatilityAnalysis, MultiTimeframeContext
 )
 from app.market_analysis.enums import (
     TrendDirection, TrendStrength, EMAAlignment, MarketRegime, VolatilityState, MomentumState
@@ -28,7 +29,7 @@ def create_mock_snapshot(
     ema20_val="100.0"
 ):
     candle = Candle(
-        timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe="1H", source="test",
+        timestamp=datetime.now(timezone.utc), instrument="BTC/USD", timeframe=Timeframe.H1, source="test",
         open=Decimal("100"), high=Decimal("110"), low=Decimal("95"), close=Decimal(close_price), volume=Decimal(vol_current)
     )
     
@@ -52,8 +53,6 @@ def create_mock_snapshot(
     
     return snapshot
 
-from app.market.domain.timeframe import Timeframe
-from app.market_analysis.models import MultiTimeframeContext
 
 def create_mock_mtf_context(**kwargs):
     """

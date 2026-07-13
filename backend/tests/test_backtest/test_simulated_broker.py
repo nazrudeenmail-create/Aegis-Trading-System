@@ -6,6 +6,7 @@ from app.backtest.models import BacktestConfig
 from app.backtest.simulated_broker import SimulatedBroker
 from app.strategy.models import TradeCandidate, TradeDirection
 from app.market.domain.candle import Candle
+from app.market.domain.timeframe import Timeframe
 from app.risk.models import RiskProfile
 
 def test_entry_price_includes_slippage():
@@ -78,7 +79,7 @@ def test_intra_bar_sl_execution():
     # Simulate a 1M candle that hits SL
     candle = Candle(
         instrument="BTC/USD",
-        timeframe="1M",
+        timeframe=Timeframe.M1,
         timestamp=datetime(2025, 1, 1, 10, 3),
         open=Decimal("100.5"),
         high=Decimal("103.0"),

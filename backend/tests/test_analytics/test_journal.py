@@ -1,3 +1,4 @@
+from app.market.domain.timeframe import Timeframe
 import pytest
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -33,14 +34,14 @@ def test_decision_is_immutable(journal, event_bus):
     """Verify that old decisions cannot be arbitrarily mutated by users/process"""
     dec_id = str(uuid.uuid4())
     ranking = RankingResult(
-        symbol="BTC/USD", timeframe="1H", timestamp=datetime.now(timezone.utc),
+        symbol="BTC/USD", timeframe=Timeframe.H1, timestamp=datetime.now(timezone.utc),
         market_regime=MarketRegime.TRENDING,
         rankings=[StrategyScore(strategy_name="EMA", historical_score=50.0, market_score=50.0, setup_score=50.0, final_score=50.0)],
         selected_strategy="EMA", selection_reason="Top"
     )
     
     event_bus.publish(DecisionEvent(
-        decision_id=dec_id, symbol="BTC/USD", timeframe="1H",
+        decision_id=dec_id, symbol="BTC/USD", timeframe=Timeframe.H1,
         ranking_result=ranking, risk_assessment=RiskAssessment(candidate=get_dummy_candidate(), is_approved=True, position_size=Decimal("1.0"))
     ))
     
@@ -62,14 +63,14 @@ def test_decision_journal_logs_rejections(journal, event_bus):
     """Verify that trades blocked by the Risk Engine are logged with their rejection reason."""
     dec_id = str(uuid.uuid4())
     ranking = RankingResult(
-        symbol="ETH/USD", timeframe="15M", timestamp=datetime.now(timezone.utc),
+        symbol="ETH/USD", timeframe=Timeframe.M15, timestamp=datetime.now(timezone.utc),
         market_regime=MarketRegime.RANGING,
         rankings=[StrategyScore(strategy_name="EMA", historical_score=50.0, market_score=50.0, setup_score=50.0, final_score=50.0)],
         selected_strategy="EMA", selection_reason="Top"
     )
     
     event_bus.publish(DecisionEvent(
-        decision_id=dec_id, symbol="ETH/USD", timeframe="15M",
+        decision_id=dec_id, symbol="ETH/USD", timeframe=Timeframe.M15,
         ranking_result=ranking, risk_assessment=RiskAssessment(candidate=get_dummy_candidate(), is_approved=False, position_size=Decimal("0"), rejection_reason="Max exposure exceeded.")
     ))
     
@@ -85,14 +86,14 @@ def test_decision_journal_links_trades(journal, event_bus):
     ord_id = str(uuid.uuid4())
     
     ranking = RankingResult(
-        symbol="SOL/USD", timeframe="4H", timestamp=datetime.now(timezone.utc),
+        symbol="SOL/USD", timeframe=Timeframe.H4, timestamp=datetime.now(timezone.utc),
         market_regime=MarketRegime.BREAKOUT,
         rankings=[StrategyScore(strategy_name="Breakout", historical_score=50.0, market_score=50.0, setup_score=50.0, final_score=50.0)],
         selected_strategy="Breakout", selection_reason="Top"
     )
     
     event_bus.publish(DecisionEvent(
-        decision_id=dec_id, symbol="SOL/USD", timeframe="4H",
+        decision_id=dec_id, symbol="SOL/USD", timeframe=Timeframe.H4,
         ranking_result=ranking, risk_assessment=RiskAssessment(candidate=get_dummy_candidate(), is_approved=True, position_size=Decimal("1.0"))
     ))
     

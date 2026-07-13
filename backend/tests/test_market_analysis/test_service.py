@@ -1,3 +1,4 @@
+from app.market.domain.timeframe import Timeframe
 import pytest
 from app.market_analysis.service import MarketAnalysisService
 from app.market.domain.candle import Candle
@@ -13,7 +14,7 @@ def generate_candles(count: int, base_price: float = 100.0, trend: float = 0.1) 
             Candle(
                 timestamp=datetime.utcnow(),
                 instrument="BTC/USD",
-                timeframe="1M",
+                timeframe=Timeframe.M1,
                 open=Decimal(str(current_price)),
                 high=Decimal(str(max(current_price, close) + 1.0)),
                 low=Decimal(str(min(current_price, close) - 1.0)),

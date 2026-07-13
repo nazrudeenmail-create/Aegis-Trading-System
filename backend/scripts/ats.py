@@ -45,8 +45,8 @@ def run_backtest(args):
     print(f"To: {args.end}")
     print("(Not connected to live engine in this MVP phase)")
 
-def run_paper_trade(args):
-    print(f"--- Starting Paper Trading ---")
+def run_demo_trade(args):
+    print(f"--- Starting Demo Trading ---")
     print(f"Duration: {args.duration} days")
     print("(Not connected to live engine in this MVP phase)")
 
@@ -94,9 +94,9 @@ def main():
     backtest_parser.add_argument("--start", type=str, default="2023-01-01", help="Start date (YYYY-MM-DD)")
     backtest_parser.add_argument("--end", type=str, default="2023-12-31", help="End date (YYYY-MM-DD)")
 
-    # Paper Trade
-    paper_parser = subparsers.add_parser("paper-trade", help="Start paper trading")
-    paper_parser.add_argument("--duration", type=int, default=30, help="Duration in days")
+    # Demo Trade
+    demo_parser = subparsers.add_parser("demo-trade", help="Start demo trading")
+    demo_parser.add_argument("--duration", type=int, default=30, help="Duration in days")
 
     # Report
     subparsers.add_parser("report", help="Generate Strategy Intelligence Report")
@@ -113,8 +113,8 @@ def main():
         run_health()
     elif args.command == "backtest":
         run_backtest(args)
-    elif args.command == "paper-trade":
-        run_paper_trade(args)
+    elif args.command == "demo-trade":
+        run_demo_trade(args)
     elif args.command == "report":
         run_report()
     elif args.command == "logs":

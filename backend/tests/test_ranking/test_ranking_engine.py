@@ -52,8 +52,8 @@ def test_low_trade_count_penalty(db_session):
             end_date=datetime.now(timezone.utc)
         )
     ]
-    scorer = HistoricalScorer(db_session)
-    score_20 = scorer.score("A")
+    scorer = HistoricalScorer()
+    score_20 = scorer.score(db_session, "A")
     
     db_session.runs = [
         BacktestRun(
@@ -66,7 +66,7 @@ def test_low_trade_count_penalty(db_session):
             end_date=datetime.now(timezone.utc)
         )
     ]
-    score_2000 = scorer.score("B")
+    score_2000 = scorer.score(db_session, "B")
     
     # Even though A has better raw stats, B should have a higher score due to sample size.
     assert score_20 < score_2000
@@ -84,8 +84,8 @@ def test_historical_recency(db_session):
             end_date=datetime.now(timezone.utc)
         )
     ]
-    scorer = HistoricalScorer(db_session)
-    score_recent = scorer.score("Recent")
+    scorer = HistoricalScorer()
+    score_recent = scorer.score(db_session, "Recent")
     
     db_session.runs = [
         BacktestRun(
@@ -98,7 +98,7 @@ def test_historical_recency(db_session):
             end_date=datetime.now(timezone.utc) - timedelta(days=1200) # > 3 years
         )
     ]
-    score_old = scorer.score("Old")
+    score_old = scorer.score(db_session, "Old")
     
     assert score_recent > score_old
     assert score_old == score_recent * 0.5 # Since penalty is 0.5 for > 3 years
@@ -144,7 +144,7 @@ def test_ranking_explainability(db_session):
         volatility_preference=""
     )
     strategy = MockStrategy("Trend", profile)
-    engine = StrategyRankingEngine(db_session, [strategy])
+    engine = StrategyRankingEngine(strategies=[strategy])
     
     # Mock DB run
     db_session.runs = [
@@ -178,7 +178,7 @@ def test_ranking_explainability(db_session):
     
     results = {"Trend": StrategyResult(is_valid=True, candidate=candidate)}
     
-    ranking = engine.rank("BTC/USD", "1H", snapshot, results)
+    ranking = engine.rank(db_session, "BTC/USD", "H1", snapshot, results)
     
     assert ranking.selected_strategy == "Trend"
     assert "Historical:" in ranking.selection_reason

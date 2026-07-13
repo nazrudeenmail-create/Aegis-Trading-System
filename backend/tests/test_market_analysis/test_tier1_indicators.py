@@ -1,3 +1,4 @@
+from app.market.domain.timeframe import Timeframe
 import pytest
 from datetime import datetime
 from decimal import Decimal
@@ -20,7 +21,7 @@ def generate_candles(count: int, base_price: float = 100.0, trend: float = 0.1) 
             Candle(
                 timestamp=datetime.utcnow(),
                 instrument="BTC/USD",
-                timeframe="1M",
+                timeframe=Timeframe.M1,
                 open=Decimal(str(current_price)),
                 high=Decimal(str(max(current_price, close) + 1.0)),
                 low=Decimal(str(min(current_price, close) - 1.0)),
@@ -74,11 +75,11 @@ def test_adx_calculation():
 def test_candle_analysis_bullish_engulfing():
     candles = [
         Candle(
-            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe="1M", source="test",
+            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe=Timeframe.M1, source="test",
             open=Decimal("100.0"), high=Decimal("101.0"), low=Decimal("99.0"), close=Decimal("99.5"), volume=Decimal("10")
         ), # Bearish candle
         Candle(
-            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe="1M", source="test",
+            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe=Timeframe.M1, source="test",
             open=Decimal("99.0"), high=Decimal("102.0"), low=Decimal("98.0"), close=Decimal("101.5"), volume=Decimal("20")
         ) # Bullish engulfing
     ]
@@ -94,7 +95,7 @@ def test_swing_detection():
     prices = [100, 102, 105, 103, 101]
     for p in prices:
         candles.append(Candle(
-            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe="1M", source="test",
+            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe=Timeframe.M1, source="test",
             open=Decimal(str(p)), high=Decimal(str(p)), low=Decimal(str(p)), close=Decimal(str(p)), volume=Decimal("10")
         ))
         

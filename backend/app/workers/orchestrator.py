@@ -139,9 +139,9 @@ class SystemOrchestrator:
         self._log_event("DEBUG", "Orchestrator", f"Scanning {symbol}...")
 
         # ---- Step 1: Session Check ----
-        if not self.session_manager.is_market_open(instrument.market_type):
-            self._log_event("DEBUG", "Orchestrator", f"{symbol}: Market closed, skipping")
-            return
+        market_open = self.session_manager.is_market_open(instrument.market_type)
+        if not market_open:
+            self._log_event("DEBUG", "Orchestrator", f"{symbol}: Market closed — analyzing existing data, skipping execution")
 
         # ---- Step 2: Market Data Fetch ----
         candles = self._fetch_recent_candles(db, symbol)
@@ -222,6 +222,14 @@ class SystemOrchestrator:
             self._log_event(
                 "DEBUG", "Orchestrator",
                 f"{symbol}: {ranking_result.selected_strategy} won ranking but produced no valid trade",
+            )
+            return
+
+        # Skip execution when market is closed (analysis still runs above)
+        if not market_open:
+            self._log_event(
+                "DEBUG", "Orchestrator",
+                f"{symbol}: Market closed — skipping execution",
             )
             return
 

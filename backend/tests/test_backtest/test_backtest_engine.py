@@ -15,11 +15,16 @@ from app.strategy.base import BaseStrategy
 class DummyStrategy(BaseStrategy):
     name = "Dummy"
     version = "1.0"
+    description = "Dummy strategy for backtest engine tests"
     primary_timeframe = Timeframe.M15
     required_timeframes = [Timeframe.M15]
     
     def __init__(self):
         self.evaluation_times = []
+        
+    def get_profile(self):
+        from app.strategy.models.ranking import StrategyProfile
+        return StrategyProfile()
         
     def evaluate(self, context):
         self.evaluation_times.append(context.timestamp)
@@ -46,7 +51,7 @@ def test_strategy_cannot_use_future_candle():
     for i in range(16): # 10:00 to 10:15 inclusive
         candles.append(Candle(
             instrument="BTC/USD",
-            timeframe="1M",
+            timeframe=Timeframe.M1,
             timestamp=datetime(2025, 1, 1, 10, i),
             open=Decimal("100.0"),
             high=Decimal("100.0"),

@@ -22,7 +22,6 @@ def test_instrument(db_session: Session) -> str:
         tick_size=Decimal("0.0001"),
         contract_size=Decimal("1.0"),
         currency="USD",
-        is_active=True
     )
     db_session.add(instrument)
     db_session.commit()
@@ -34,7 +33,7 @@ def test_repository_only_accepts_1m_candles(db_session: Session, test_instrument
     Repository must store ONLY 1M truth candles, with NO timeframe column logic.
     """
     repo = CandleRepository(db_session)
-    
+
     candles = []
     base_time = datetime(2026, 7, 10, 10, 0, 0, tzinfo=timezone.utc)
     for i in range(100):
@@ -49,12 +48,15 @@ def test_repository_only_accepts_1m_candles(db_session: Session, test_instrument
             volume=Decimal("100"),
             source="test"
         ))
-        
+
     inserted_count = repo.save_many(candles)
     assert inserted_count == 100
-    
-    # Retrieve directly from DB using raw SQL to verify schema
-    result = db_session.execute(text("SELECT * FROM candles")).fetchall()
+
+    # Retrieve directly from DB using raw SQL to verify schema for this instrument
+    result = db_session.execute(
+        text("SELECT * FROM candles WHERE instrument_id = (SELECT id FROM instruments WHERE symbol = :symbol)"),
+        {"symbol": test_instrument}
+    ).fetchall()
     assert len(result) == 100
     
     # Ensure there is NO 'timeframe' column in the returned row keys

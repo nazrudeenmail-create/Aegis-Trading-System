@@ -6,8 +6,8 @@ class SystemStatusResponse(BaseModel):
     system: str
     status: str
     mode: str
-    global_trading_mode: str
     broker: str
+    account_mode: str
     balance: float
     open_positions: int
     engines: Dict[str, str] = {}

@@ -11,7 +11,7 @@ from app.core.state import global_state
 from app.api.dependencies import get_broker_manager
 from app.execution.broker.manager import BrokerManager
 
-router = APIRouter(prefix="/dashboard", tags=["dashboard"])
+router = APIRouter(prefix="/dashboard")
 
 @router.get("/summary")
 def get_dashboard_summary(
@@ -37,8 +37,10 @@ def get_dashboard_summary(
         "uptime_hours": uptime_hours
     }
     
-    # 2. Broker Status & Trading Mode
-    trading_mode = global_state.global_trading_mode
+    # 2. Broker Status & Trading Mode (read from settings, not state)
+    from app.core.config import get_settings
+    settings = get_settings()
+    trading_mode = settings.account_mode_display
     broker_status = broker_manager.state.value if broker_manager else "DISCONNECTED"
     
     # 3. Account Balance & Open Positions

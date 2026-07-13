@@ -69,7 +69,7 @@ def _account(db: Session, suffix: str = "") -> Account:
     acct = Account(
         broker_name=f"EnumBroker{suffix}",
         account_number=f"ENUM-ACC-{suffix}",
-        account_type=AccountType.PAPER,
+        account_type=AccountType.DEMO,
         currency="USD",
     )
     db.add(acct)

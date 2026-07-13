@@ -1,5 +1,6 @@
 """Aegis Trading System - Application Entry Point"""
 import logging
+import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,17 +12,35 @@ setup_logging()
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
+
+def print_startup_banner():
+    """Print a safety banner on startup showing broker, mode, and endpoint."""
+    border = "=" * 50
+    dash = "-" * 50
+    print(f"\n{border}")
+    print(f"  {settings.APP_NAME}")
+    print(dash)
+    print(f"  Version     : ATS {settings.APP_VERSION}")
+    print(f"  Environment : {settings.APP_ENV}")
+    print(f"  Broker      : {settings.broker_display_name}")
+    print(f"  Mode        : {settings.account_mode_display}")
+    print(f"  Endpoint    : {settings.capital_api_url}")
+    print(f"  Database    : {settings.DATABASE_URL.split('@')[-1] if '@' in settings.DATABASE_URL else settings.DATABASE_URL}")
+    print(f"{border}\n")
+
+
 @asynccontextmanager
 async def lifespan(application: FastAPI):
+    print_startup_banner()
     logger.info("ATS backend starting | env=%s | version=%s", settings.APP_ENV, settings.APP_VERSION)
     from app.core.config_validator import validate_configuration
     validate_configuration()
     from app.analytics.events import event_bus, SystemLogEvent
     from app.api.v1.websocket import init_websocket_broadcaster
     from app.api.dependencies import get_broker_manager
-    from app.execution.broker.capital.broker import CapitalComBroker
+    from app.market.broker_factory import BrokerFactory
     from app.market.calendar.session_manager import SessionManager
-    from app.core.state import global_state
+    from app.core.state import global_state, SystemState
     from app.analytics.journal import DecisionJournal
     from app.market_analysis.mtf_service import MultiTimeframeService
     from app.strategy.ranking_engine import StrategyRankingEngine
@@ -30,9 +49,6 @@ async def lifespan(application: FastAPI):
     from app.strategy.strategies.donchian_breakout import DonchianChannelBreakoutStrategy
     from app.risk.engine import RiskEngine
     from app.execution.engine import ExecutionEngine
-    from app.execution.broker.paper.broker import PaperBroker
-    from app.execution.models.paper_config import ExecutionSimulationConfig
-    from decimal import Decimal
 
     init_websocket_broadcaster(event_bus)
     global_state.session_manager = SessionManager(event_bus)
@@ -41,29 +57,28 @@ async def lifespan(application: FastAPI):
     global_state.market_service = MultiTimeframeService()
     global_state.ranking_engine = StrategyRankingEngine(strategies=[EMATrendPullbackStrategy(), MultiTimeframeTrendAlignmentStrategy(), DonchianChannelBreakoutStrategy()])
     global_state.risk_engine = RiskEngine()
+    global_state.system_state = SystemState()
     event_bus.publish(SystemLogEvent(level="INFO", source="System", message="Engines initialized"))
 
+    # ── Infrastructure Layer: Create broker and provider via BrokerFactory ──
     broker_manager = get_broker_manager()
     global_state.broker_manager = broker_manager
-    paper_broker = PaperBroker(initial_balance=Decimal("100000.0"), config=ExecutionSimulationConfig())
-    capital_broker = CapitalComBroker(api_key=settings.CAPITAL_COM_API_KEY, identifier=settings.CAPITAL_COM_USERNAME, password=settings.CAPITAL_COM_PASSWORD, base_url=settings.CAPITAL_COM_API_URL)
-    broker_manager.set_active_broker(capital_broker, settings.GLOBAL_TRADING_MODE)
-    await broker_manager.connect()
-    logger.info(f"Broker connected: {settings.GLOBAL_TRADING_MODE}")
 
-    global_state.execution_engine = ExecutionEngine(paper_broker=paper_broker, broker_manager=broker_manager, risk_engine=global_state.risk_engine, event_bus=event_bus)
+    # Use BrokerFactory to create the broker (selects demo/live URL automatically)
+    capital_broker = BrokerFactory.create_broker()
+    broker_manager.set_active_broker(capital_broker, settings.account_mode_display)
+    await broker_manager.connect()
+    logger.info(f"Broker connected: {settings.broker_display_name} ({settings.account_mode_display})")
+
+    global_state.execution_engine = ExecutionEngine(broker_manager=broker_manager, risk_engine=global_state.risk_engine, event_bus=event_bus)
 
     from app.workers.orchestrator import SystemOrchestrator
     from app.workers.market_data_engine import MarketDataEngine
     from app.market.synchronizer import DataSynchronizer
-    from app.market.providers.capital_com_provider import CapitalComProvider
     
-    # 1. Start Market Data Engine
+    # 1. Start Market Data Engine — use BrokerFactory to get the provider
     synchronizer = DataSynchronizer(event_bus=event_bus)
-    market_provider = CapitalComProvider(
-        api_url=settings.CAPITAL_COM_API_URL, api_key=settings.CAPITAL_COM_API_KEY,
-        username=settings.CAPITAL_COM_USERNAME, password=settings.CAPITAL_COM_PASSWORD
-    )
+    market_provider = BrokerFactory.create_provider()
     market_data_engine = MarketDataEngine(
         event_bus=event_bus,
         provider=market_provider,

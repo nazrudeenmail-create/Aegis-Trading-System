@@ -73,7 +73,8 @@ class SessionManager:
                 # If no explicit rule, and it's weekend, assume closed.
                 if day_of_week >= 5:
                     return MarketSessionState.WEEKEND
-                return MarketSessionState.CLOSED
+                # No rule but weekday — assume open (fallback for unconfigured exchanges)
+                return MarketSessionState.REGULAR
                 
             # Convert current UTC time to a simple time object to compare with DB
             # We assume open_time and close_time in DB are normalized to UTC for simplicity here

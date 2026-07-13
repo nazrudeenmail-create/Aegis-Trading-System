@@ -1,3 +1,4 @@
+from app.market.domain.timeframe import Timeframe
 import pytest
 from decimal import Decimal
 
@@ -67,7 +68,7 @@ def test_pullback_analyzer_optimal():
     # EMA 20 = 90. Close = 89. Distance = 1. Max distance = 2.0.
     snapshot.candles = [
         Candle(
-            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe="1M", source="test",
+            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe=Timeframe.M1, source="test",
             open=Decimal("95"), high=Decimal("96"), low=Decimal("88"), close=Decimal("89"), volume=Decimal("100")
         )
     ]
@@ -102,7 +103,7 @@ def test_pullback_analyzer_too_far():
     # EMA 20 = 90. Close = 80. Distance = 10. Max distance = 2.0. Too far.
     snapshot.candles = [
         Candle(
-            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe="1M", source="test",
+            timestamp=datetime.utcnow(), instrument="BTC/USD", timeframe=Timeframe.M1, source="test",
             open=Decimal("95"), high=Decimal("96"), low=Decimal("79"), close=Decimal("80"), volume=Decimal("100")
         )
     ]

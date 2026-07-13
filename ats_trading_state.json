@@ -1,0 +1,54 @@
+{
+    "settings": [
+        {
+            "id": 206.0,
+            "key": "SYSTEM_LIVE_TRADING_ENABLED",
+            "value": "false",
+            "value_type": "BOOLEAN",
+            "description": "Master switch for live trading. If false, system stays in DEMO.",
+            "category": "system",
+            "created_at": "2026-07-13T13:37:38.894291+00:00",
+            "updated_at": "2026-07-13T13:37:38.894291+00:00"
+        },
+        {
+            "id": 207.0,
+            "key": "MAX_OPEN_POSITIONS",
+            "value": "5",
+            "value_type": "INTEGER",
+            "description": "Maximum number of allowed open positions concurrently.",
+            "category": "risk",
+            "created_at": "2026-07-13T13:37:38.894291+00:00",
+            "updated_at": "2026-07-13T13:37:38.894291+00:00"
+        },
+        {
+            "id": 208.0,
+            "key": "DEFAULT_RISK_PER_TRADE",
+            "value": "1.0",
+            "value_type": "FLOAT",
+            "description": "Default risk percentage per trade (e.g., 1.0 = 1%).",
+            "category": "risk",
+            "created_at": "2026-07-13T13:37:38.894291+00:00",
+            "updated_at": "2026-07-13T13:37:38.894291+00:00"
+        }
+    ],
+    "instruments": [
+        {
+            "id": 1.0,
+            "symbol": "OIL_CRUDE",
+            "name": "Crude Oil Spot",
+            "asset_class": "COMMODITY",
+            "exchange": "CAPITAL",
+            "tick_size": 0.01,
+            "contract_size": 1.0,
+            "currency": "USD",
+            "status": "ACTIVE",
+            "market_type": "COMMODITY",
+            "trading_enabled": 0.0,
+            "execution_mode": "DEMO",
+            "live_trading_enabled": 0.0,
+            "allow_new_positions": 0.0,
+            "created_at": "2026-07-13T06:41:20.499840+00:00",
+            "updated_at": "2026-07-13T06:41:20.499840+00:00"
+        }
+    ]
+}

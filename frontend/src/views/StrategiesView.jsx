@@ -99,7 +99,11 @@ function ProfileEditor({ name, initialConfig, onClose, onSave }) {
 }
 
 export function StrategiesView() {
-  const { data: rankingData, error: rankingError } = useSWR('/strategy/ranking?symbol=BTCUSD', fetcher);
+  const { data: instruments = [] } = useSWR('/instruments/', fetcher);
+  const activeInstruments = instruments.filter(i => ['ACTIVE', 'WATCHLIST'].includes(i.status));
+  const symbol = activeInstruments.length > 0 ? activeInstruments[0].symbol : '';
+  
+  const { data: rankingData, error: rankingError } = useSWR(symbol ? `/strategy/ranking?symbol=${symbol}` : null, fetcher);
   const { data: profilesData, mutate: mutateProfiles } = useSWR('/strategy/profiles', fetcher);
   
   const [editingProfile, setEditingProfile] = useState(null);
@@ -113,7 +117,7 @@ export function StrategiesView() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
           <div className="p-4 border-b border-slate-800">
-            <h2 className="font-semibold text-white">Live Strategy Rankings (BTCUSD)</h2>
+            <h2 className="font-semibold text-white">Live Strategy Rankings ({symbol || 'No Instrument'})</h2>
           </div>
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">

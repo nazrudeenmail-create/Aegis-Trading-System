@@ -1,4 +1,7 @@
-# CURRENT STATUS
+# CURRENT STATUS — ARCHIVED
+
+> ⚠️ **This file is archived. See [`PROJECT_STATUS.md`](../PROJECT_STATUS.md) for the current single source of truth.**
+> Last updated for Phase 11. Phase 13.0 status is in PROJECT_STATUS.md.
 
 Version: 1.6
 Last Updated: 2026-07-11

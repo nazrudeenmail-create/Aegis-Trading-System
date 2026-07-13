@@ -10,6 +10,10 @@ from datetime import datetime, timezone
 def test_websocket_connection_and_echo():
     client = TestClient(app)
     with client.websocket_connect("/api/v1/ws") as websocket:
+        # Server sends a welcome JSON message on connect.
+        welcome = websocket.receive_text()
+        assert "Glass Box Console Connected" in welcome
+
         websocket.send_text("ping")
         data = websocket.receive_text()
         assert data == "pong"

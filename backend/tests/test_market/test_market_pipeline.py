@@ -24,7 +24,6 @@ def test_instrument(db_session: Session) -> str:
         tick_size=Decimal("0.0001"),
         contract_size=Decimal("1.0"),
         currency="USD",
-        is_active=True
     )
     db_session.add(instrument)
     db_session.commit()
@@ -81,8 +80,11 @@ def test_end_to_end_market_data_pipeline(db_session: Session, test_instrument: s
     inserted_count = ingestion_service.fetch_and_store_historical("EURUSD", Timeframe.M1, 6000)
     assert inserted_count == 6000
     
-    # 4. Verify Database Integrity (Strict 1M storage)
-    result = db_session.execute(text("SELECT COUNT(*) FROM candles")).scalar()
+    # 4. Verify Database Integrity (Strict 1M storage for this instrument)
+    result = db_session.execute(
+        text("SELECT COUNT(*) FROM candles WHERE instrument_id = (SELECT id FROM instruments WHERE symbol = :symbol)"),
+        {"symbol": test_instrument}
+    ).scalar()
     assert result == 6000
     
     # 5. Query Aggregated Data (Strategy asks for 100 1H candles)

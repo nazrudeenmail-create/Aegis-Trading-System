@@ -4,7 +4,7 @@ from app.api.dependencies import get_broker_manager
 from app.execution.broker.manager import BrokerManager
 from app.execution.broker.models import ConnectionState
 
-router = APIRouter(prefix="/broker", tags=["broker"])
+router = APIRouter(prefix="/broker")
 
 @router.get("/connections")
 async def get_broker_connections(broker_manager: BrokerManager = Depends(get_broker_manager)):

@@ -23,7 +23,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
-from app.database.enums import AssetClass, InstrumentStatus, MarketType
+from app.database.enums import AssetClass, ExecutionMode, InstrumentStatus, MarketType
 
 
 class Instrument(Base):
@@ -70,9 +70,13 @@ class Instrument(Base):
     )
 
     trading_enabled: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
-    paper_trading_enabled: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
+    execution_mode: Mapped[ExecutionMode] = mapped_column(
+        Enum(ExecutionMode, name="execution_mode", create_type=False),
+        server_default="DEMO",
+        nullable=False,
+    )
     live_trading_enabled: Mapped[bool] = mapped_column(Boolean, server_default="false", nullable=False)
-    allow_new_positions: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
+    allow_new_positions: Mapped[bool] = mapped_column(Boolean, server_default="false", nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

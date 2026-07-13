@@ -61,6 +61,13 @@ services:
       DEBUG: "True"
       SECRET_KEY: dev-secret-key-change-in-production
       ALLOWED_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173"]'
+      # Broker & Account Mode (read from .env if not set here)
+      BROKER: capital
+      ACCOUNT_MODE: demo
+      CAPITAL_COM_DEMO_URL: https://demo-api-capital.backend-capital.com/api/v1
+      CAPITAL_COM_LIVE_URL: https://api-capital.backend-capital.com/api/v1
+      # CAPITAL_COM_API_KEY, CAPITAL_COM_USERNAME, CAPITAL_COM_PASSWORD
+      # are read from backend/.env (mounted via volume)
     ports:
       - "8000:8000"
     volumes:

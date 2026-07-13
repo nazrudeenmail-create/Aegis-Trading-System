@@ -45,9 +45,9 @@ def run_test():
         before_count = db.query(CandleModel).count()
         print(f"📊 BEFORE RUN: Total candles in DB = {before_count}")
         
-        print("\nConnecting to Capital.com...")
+        print(f"\nConnecting to Capital.com ({settings.account_mode_display} mode)...")
         provider = CapitalComProvider(
-            api_url=settings.CAPITAL_COM_API_URL,
+            api_url=settings.capital_api_url,
             api_key=settings.CAPITAL_COM_API_KEY,
             username=settings.CAPITAL_COM_USERNAME,
             password=settings.CAPITAL_COM_PASSWORD

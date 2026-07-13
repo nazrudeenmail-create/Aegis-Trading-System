@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.database.models.instrument import Instrument
 from app.database.models.instrument_group import InstrumentGroup
-from app.database.enums import InstrumentStatus, MarketType
+from app.database.enums import InstrumentStatus, MarketType, ExecutionMode
 from app.core.state import global_state
 
-router = APIRouter(prefix="/instruments", tags=["instruments"])
+router = APIRouter(prefix="/instruments")
 
 @router.get("/")
 def list_instruments(db: Session = Depends(get_db)):
@@ -24,7 +24,7 @@ def list_instruments(db: Session = Depends(get_db)):
             "status": i.status.value,
             "market_type": i.market_type.value,
             "trading_enabled": i.trading_enabled,
-            "paper_trading_enabled": i.paper_trading_enabled,
+            "execution_mode": i.execution_mode.value,
             "live_trading_enabled": i.live_trading_enabled,
             "allow_new_positions": i.allow_new_positions
         }
@@ -66,7 +66,7 @@ def create_instrument(instrument: InstrumentCreate, background_tasks: Background
         asset_class=asset_map.get(instrument.market_type, AssetClass.STOCK),
         exchange="CAPITAL", tick_size=0.01, contract_size=1.0, currency="USD",
         status=InstrumentStatus.ACTIVE, trading_enabled=False,
-        paper_trading_enabled=True, live_trading_enabled=False, allow_new_positions=False
+        execution_mode=ExecutionMode.DEMO, live_trading_enabled=False, allow_new_positions=False
     )
     db.add(new_instrument)
     db.commit()
@@ -92,30 +92,32 @@ def update_instrument(instrument_id: int, updates: Dict[str, Any], db: Session =
 
 @router.post("/{instrument_id}/fetch-candles")
 def fetch_historical_candles(instrument_id: int, db: Session = Depends(get_db)):
-    """Download historical 1M candles from Capital.com and store in DB."""
+    """Download historical 1M candles from the broker and store in DB.
+    
+    Uses MarketDataService → BrokerFactory → CapitalComProvider.
+    This endpoint does NOT construct provider/broker objects directly.
+    """
     instrument = db.execute(select(Instrument).where(Instrument.id == instrument_id)).scalar_one_or_none()
     if not instrument:
         raise HTTPException(status_code=404, detail="Instrument not found")
     try:
-        from app.market.providers.capital_com_provider import CapitalComProvider
         from app.market.domain.timeframe import Timeframe as DomainTimeframe
-        from app.database.repositories.candle_repository import CandleRepository
+        from app.market.broker_factory import BrokerFactory
+        from app.services.market_data_service import MarketDataService
         from app.core.config import get_settings
         settings = get_settings()
-        provider = CapitalComProvider(
-            api_url=settings.CAPITAL_COM_API_URL, api_key=settings.CAPITAL_COM_API_KEY,
-            username=settings.CAPITAL_COM_USERNAME, password=settings.CAPITAL_COM_PASSWORD
+        
+        # Get provider from BrokerFactory (cached singleton)
+        provider = BrokerFactory.create_provider()
+        service = MarketDataService(provider=provider)
+        
+        result = service.fetch_and_store_historical_candles(
+            symbol=instrument.symbol,
+            timeframe=DomainTimeframe.M1,
+            limit=settings.INITIAL_HISTORY_CANDLES,
+            db=db
         )
-        provider.authenticate()
-        candles = provider.fetch_historical_candles(
-            instrument=instrument.symbol, timeframe=DomainTimeframe.M1, limit=settings.INITIAL_HISTORY_CANDLES
-        )
-        provider.close()
-        if not candles:
-            return {"status": "warning", "message": "No candles returned", "count": 0}
-        repo = CandleRepository(db)
-        count = repo.save_many(candles)
-        return {"status": "success", "symbol": instrument.symbol, "candles_fetched": len(candles), "candles_stored": count}
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch candles: {str(e)}")
 

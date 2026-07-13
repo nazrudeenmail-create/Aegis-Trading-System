@@ -1,3 +1,4 @@
+from app.market.domain.timeframe import Timeframe
 import pytest
 from datetime import datetime, timezone
 from decimal import Decimal
@@ -12,7 +13,7 @@ def mock_decisions():
     
     # 1. EMA Win (Trending) - 90% confidence
     d1 = DecisionRecord(
-        decision_id="1", timestamp=ts, symbol="BTC/USD", timeframe="1H", market_regime="trending",
+        decision_id="1", timestamp=ts, symbol="BTC/USD", timeframe=Timeframe.H1, market_regime="trending",
         strategies_considered=[], selected_strategy="EMA",
         confidence_score=90.0,
         outcome_status="WIN", profit_loss=Decimal("100")
@@ -20,7 +21,7 @@ def mock_decisions():
     
     # 2. EMA Loss (Trending) - 60% confidence
     d2 = DecisionRecord(
-        decision_id="2", timestamp=ts, symbol="BTC/USD", timeframe="1H", market_regime="trending",
+        decision_id="2", timestamp=ts, symbol="BTC/USD", timeframe=Timeframe.H1, market_regime="trending",
         strategies_considered=[], selected_strategy="EMA",
         confidence_score=60.0,
         outcome_status="LOSS", profit_loss=Decimal("-50")
@@ -28,7 +29,7 @@ def mock_decisions():
     
     # 3. Donchian Win (Ranging) - 80% confidence
     d3 = DecisionRecord(
-        decision_id="3", timestamp=ts, symbol="ETH/USD", timeframe="1H", market_regime="ranging",
+        decision_id="3", timestamp=ts, symbol="ETH/USD", timeframe=Timeframe.H1, market_regime="ranging",
         strategies_considered=[], selected_strategy="Donchian",
         confidence_score=80.0,
         outcome_status="WIN", profit_loss=Decimal("200")
@@ -36,7 +37,7 @@ def mock_decisions():
     
     # 4. Rejected Trade (No outcome)
     d4 = DecisionRecord(
-        decision_id="4", timestamp=ts, symbol="ETH/USD", timeframe="1H", market_regime="ranging",
+        decision_id="4", timestamp=ts, symbol="ETH/USD", timeframe=Timeframe.H1, market_regime="ranging",
         strategies_considered=[], selected_strategy="Donchian",
         confidence_score=80.0,
         outcome_status="REJECTED", profit_loss=None

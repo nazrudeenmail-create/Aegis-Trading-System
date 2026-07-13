@@ -63,7 +63,7 @@ class OrderResult:
 @dataclass
 class TradeRecord:
     """
-    Record of a completed trade for PaperTradingMonitor and Phase 10 Decision Journal.
+    Record of a completed trade for the Decision Journal and performance analytics.
     """
     trade_id: str
     symbol: str

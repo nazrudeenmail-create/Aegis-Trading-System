@@ -146,13 +146,14 @@ export function InstrumentsView() {
                   <td className="p-4">
                     <div className="flex gap-4 text-xs">
                       <div className="flex flex-col gap-1">
-                        <span className="text-slate-400">Historical Data: <span className="text-emerald-400">✅</span></span>
-                        <span className="text-slate-400">Live Feed: {inst.status === 'ACTIVE' ? <span className="text-emerald-400">🟢 Active</span> : <span className="text-red-400">🔴 Inactive</span>}</span>
-                        <span className="text-slate-400">Analysis: {inst.status === 'ACTIVE' ? <span className="text-emerald-400">🟢 Active</span> : <span className="text-red-400">🔴 Inactive</span>}</span>
+                        <span className="text-slate-400">Data Feed: {inst.status === 'ACTIVE' ? <span className="text-emerald-400">🟢 Running</span> : <span className="text-red-400">🔴 Stopped</span>}</span>
+                        <span className="text-slate-400">Analysis: {inst.status === 'ACTIVE' ? <span className="text-emerald-400">🟢 Running</span> : <span className="text-red-400">🔴 Stopped</span>}</span>
+                        <span className="text-slate-400">Strategies: {inst.status === 'ACTIVE' ? <span className="text-amber-400">🟡 Monitoring</span> : <span className="text-slate-500">⚪ Inactive</span>}</span>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-slate-400">Strategies: {inst.trading_enabled ? <span className="text-emerald-400">🟢 Evaluating</span> : <span className="text-red-400">🔴 Disabled</span>}</span>
-                        <span className="text-slate-400">Trading: {inst.allow_new_positions ? <span className="text-emerald-400">🟢 Executing</span> : <span className="text-red-400">🔴 Disabled</span>}</span>
+                        <span className="text-slate-400">Signals: <span className="text-slate-500">⚪ No Signal</span></span>
+                        <span className="text-slate-400">Execution: {inst.execution_mode === 'DEMO' ? <span className="text-emerald-400">🟢 Demo Enabled</span> : inst.execution_mode === 'LIVE' ? <span className="text-emerald-400">🟢 Live</span> : <span className="text-slate-500">⚪ Backtest</span>}</span>
+                        <span className="text-slate-400">Live Trading: {inst.live_trading_enabled ? <span className="text-emerald-400">🟢 Enabled</span> : <span className="text-amber-400">🔒 Locked</span>}</span>
                       </div>
                     </div>
                   </td>
