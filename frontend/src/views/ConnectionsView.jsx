@@ -7,14 +7,13 @@ export function ConnectionsView() {
   const { data, error, isLoading } = useSWR('/broker/connections', async (url) => {
     const res = await api.get(url);
     return res.data;
-  }, { refreshInterval: 5000 });
+  }, { refreshInterval: 30000 });
 
   if (isLoading) return <div className="text-slate-400">Loading connections...</div>;
   if (error) return <div className="text-red-400">Failed to load connection data</div>;
 
   const { connections, active_account } = data || {};
   const capital = connections?.find(c => c.id === 'capital');
-  const paper = connections?.find(c => c.id === 'paper');
 
   return (
     <div className="space-y-6">
@@ -49,24 +48,7 @@ export function ConnectionsView() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Paper Broker */}
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col">
-          <div className="flex justify-between items-start mb-4">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Link2 size={18} className="text-indigo-400"/> {paper?.name}
-            </h2>
-            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-medium">
-              {paper?.status}
-            </span>
-          </div>
-          <p className="text-sm text-slate-400 mb-6 flex-grow">{paper?.description}</p>
-          <div className="flex justify-between items-center border-t border-slate-800 pt-4">
-            <div className="text-xs text-slate-500">Latency: 0 ms</div>
-            <button className="text-indigo-400 text-sm hover:underline">Configure</button>
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
         {/* Capital.com Broker */}
         <div className={`bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col ${capital?.status !== 'CONNECTED' ? 'opacity-80' : ''}`}>
           <div className="flex justify-between items-start mb-4">

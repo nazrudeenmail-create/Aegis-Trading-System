@@ -30,8 +30,6 @@ from app.market.domain.timeframe import Timeframe
 
 from app.market_analysis.mtf_service import MultiTimeframeService
 
-from app.strategy.base import BaseStrategy
-from app.strategy.engine import StrategyEngine
 from app.strategy.ranking_engine import StrategyRankingEngine
 from app.strategy.models import TradeCandidate, StrategyResult
 
@@ -289,7 +287,11 @@ class SystemOrchestrator:
         """
         Fetch the most recent 1-minute candles from the database.
         1440 candles = 24 hours of 1M data.
-        Falls back to generating synthetic candles if DB is empty.
+        
+        Returns an empty list if no candles exist in the database.
+        The orchestrator will log a warning and skip this instrument cycle.
+        NEVER generates synthetic/fake data — trading decisions must be
+        based on real market data only.
         """
         from app.database.models.candle import Candle as DBCandle
 
@@ -303,7 +305,8 @@ class SystemOrchestrator:
         db_candles = list(result.scalars().all())
 
         if not db_candles:
-            return self._generate_synthetic_candles(symbol, min(count, 200))
+            logger.warning(f"{symbol}: No candle data in database. Cannot perform analysis.")
+            return []
 
         # Convert DB candles to domain candles (chronological order)
         domain_candles: List[Candle] = []
@@ -326,40 +329,6 @@ class SystemOrchestrator:
                 logger.warning(f"Failed to convert DB candle for {symbol}: {e}")
 
         return domain_candles
-
-    def _generate_synthetic_candles(self, symbol: str, count: int = 50) -> List[Candle]:
-        """Generate simple synthetic candles when DB has no data."""
-        import random
-
-        candles = []
-        base_price = 100.0
-        now = datetime.now(timezone.utc)
-
-        for i in range(count):
-            price_change = random.uniform(-0.5, 0.5)
-            open_price = base_price
-            close_price = base_price + price_change
-            high_price = max(open_price, close_price) * (1 + abs(random.uniform(0, 0.002)))
-            low_price = min(open_price, close_price) * (1 - abs(random.uniform(0, 0.002)))
-            volume = random.uniform(100, 10000)
-
-            candles.append(
-                Candle(
-                    instrument=symbol,
-                    timeframe=Timeframe.M1,
-                    timestamp=now.replace(second=0, microsecond=0),
-                    open=Decimal(str(round(open_price, 5))),
-                    high=Decimal(str(round(high_price, 5))),
-                    low=Decimal(str(round(low_price, 5))),
-                    close=Decimal(str(round(close_price, 5))),
-                    volume=Decimal(str(round(volume, 2))),
-                    source="synthetic",
-                )
-            )
-            base_price = close_price
-            now = now.replace(minute=(now.minute - 1) % 60)
-
-        return candles
 
     def _log_event(self, level: str, source: str, message: str):
         """Publish a system log event and also log locally."""

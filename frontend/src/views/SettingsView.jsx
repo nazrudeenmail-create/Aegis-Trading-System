@@ -9,15 +9,16 @@ export function SettingsView() {
   const [isApplying, setIsApplying] = useState(false);
 
   useEffect(() => {
-    if (data?.global_trading_mode) {
-      setSelectedMode(data.global_trading_mode);
+    if (data?.account_mode) {
+      // Map backend's "Demo" / "Live" to our radio button values
+      setSelectedMode(data.account_mode.toLowerCase() === 'live' ? 'BROKER_LIVE' : 'BROKER_DEMO');
     }
-  }, [data]);
-
-  const handleApply = async () => {
+  }, [data]);    const handleApply = async () => {
     setIsApplying(true);
     try {
-      await api.patch('/system/settings', { global_trading_mode: selectedMode });
+      // The backend expects 'account_mode' (e.g. "demo" or "live")
+      const modeValue = selectedMode === 'BROKER_LIVE' ? 'live' : 'demo';
+      await api.patch('/system/settings', { account_mode: modeValue });
       await mutate();
     } catch (e) {
       console.error(e);

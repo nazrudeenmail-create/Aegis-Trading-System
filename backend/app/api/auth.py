@@ -5,13 +5,29 @@ from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.database.models.user import User
 from app.database.enums import UserRole
+from app.core.config import get_settings
 
 # Define the API Key header scheme
 API_KEY_NAME = "X-API-Key"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
-# HMAC key for hashing - in production this comes from settings
-_HMAC_SECRET = b"ats_internal_hmac_key"
+
+def _get_hmac_secret() -> bytes:
+    """
+    Return the HMAC key used for API key hashing.
+    
+    Reads from settings.SECRET_KEY. If the default value is detected,
+    logs a warning encouraging a production secret to be set.
+    """
+    settings = get_settings()
+    secret = settings.SECRET_KEY
+    if secret == "change-this-in-production":
+        import logging
+        logging.getLogger(__name__).warning(
+            "HMAC authentication is using the default SECRET_KEY. "
+            "Set a strong SECRET_KEY in .env for production use."
+        )
+    return secret.encode()
 
 
 def get_current_user(
@@ -51,7 +67,8 @@ def get_current_user(
         )
     
     # Hash the incoming secret and compare with stored hash
-    key_hash = hmac.new(_HMAC_SECRET, api_key.encode(), "sha256").hexdigest()
+    _hmac_secret = _get_hmac_secret()
+    key_hash = hmac.new(_hmac_secret, api_key.encode(), "sha256").hexdigest()
     if not hmac.compare_digest(user.key_hash, key_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

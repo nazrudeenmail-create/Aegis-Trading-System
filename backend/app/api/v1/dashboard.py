@@ -1,7 +1,7 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy.ext.asyncio import AsyncSession
 import psutil
 
 from app.database.connection import get_db
@@ -14,7 +14,7 @@ from app.execution.broker.manager import BrokerManager
 router = APIRouter(prefix="/dashboard")
 
 @router.get("/summary")
-def get_dashboard_summary(
+async def get_dashboard_summary(
     db: Session = Depends(get_db),
     broker_manager: BrokerManager = Depends(get_broker_manager)
 ):
@@ -43,11 +43,10 @@ def get_dashboard_summary(
     trading_mode = settings.account_mode_display
     broker_status = broker_manager.state.value if broker_manager else "DISCONNECTED"
     
-    # 3. Account Balance & Open Positions
-    import asyncio
+    # 3. Account Balance & Open Positions — use await since this is async
     try:
-        account_balance = float(asyncio.run(broker_manager.get_account_balance()))
-    except RuntimeError: # if loop is running
+        account_balance = float(await broker_manager.get_account_balance())
+    except Exception:
         account_balance = 0.0
         
     open_positions_count = 0
@@ -90,5 +89,5 @@ def get_dashboard_summary(
         "open_positions": open_positions_count,
         "active_instruments_count": active_count,
         "market_sessions": market_sessions,
-        "last_market_update": "N/A"
+        "last_market_update": datetime.now(timezone.utc).isoformat()
     }

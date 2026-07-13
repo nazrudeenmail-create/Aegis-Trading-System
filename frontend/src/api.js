@@ -7,8 +7,12 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  // Read from localStorage or environment if dynamic, but hardcoding for demo
-  config.headers['X-API-Key'] = 'dev-secret-key';
+  // Read API key from environment variable
+  // In production, set VITE_API_KEY in your .env file
+  const apiKey = import.meta.env.VITE_API_KEY || '';
+  if (apiKey) {
+    config.headers['X-API-Key'] = apiKey;
+  }
   return config;
 });
 

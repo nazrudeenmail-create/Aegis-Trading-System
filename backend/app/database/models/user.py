@@ -36,11 +36,18 @@ class User(Base):
         return f"<User {self.username} ({self.role.value})>"
 
     @staticmethod
-    def hash_secret(secret: str) -> str:
-        """Hash a secret using HMAC-SHA256 for secure storage."""
-        # Using a fixed key suffix for the HMAC - in production this should be from settings
+    def hash_secret(secret: str, hmac_key: bytes = b"ats_internal_hmac_key") -> str:
+        """
+        Hash a secret using HMAC-SHA256 for secure storage.
+        
+        Args:
+            secret: The secret to hash.
+            hmac_key: The HMAC key bytes. Must match auth.py at runtime.
+                      Defaults to a fallback for backward compatibility;
+                      production deployments should pass settings.SECRET_KEY.encode().
+        """
         return hmac.new(
-            b"ats_internal_hmac_key",
+            hmac_key,
             secret.encode(),
             "sha256"
         ).hexdigest()

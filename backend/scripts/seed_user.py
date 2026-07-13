@@ -5,13 +5,22 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import text
 from app.core.config import get_settings
 
-# HMAC key for hashing (must match auth.py)
-_HMAC_SECRET = b"ats_internal_hmac_key"
+
+def _get_hmac_secret() -> bytes:
+    """
+    Return the HMAC key for API key hashing.
+    Must match the key used by auth.py at runtime.
+    Uses settings.SECRET_KEY as the HMAC key.
+    """
+    settings = get_settings()
+    return settings.SECRET_KEY.encode()
+
 
 def generate_api_key(key_prefix: str, secret: str) -> str:
     """Generate a full API key with HMAC hash for storage."""
     full_key = f"ats_{key_prefix}_{secret}"
-    key_hash = hmac.new(_HMAC_SECRET, full_key.encode(), "sha256").hexdigest()
+    hmac_secret = _get_hmac_secret()
+    key_hash = hmac.new(hmac_secret, full_key.encode(), "sha256").hexdigest()
     return full_key, key_hash
 
 

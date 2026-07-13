@@ -47,7 +47,14 @@ def validate_configuration():
     if not settings.DATABASE_URL or "postgresql" not in settings.DATABASE_URL:
         errors.append("DATABASE_URL must be a valid PostgreSQL connection string.")
 
-    # 6. Safety warning: Live mode with debug enabled
+    # 6. LIVE mode requires SYSTEM_LIVE_TRADING_ENABLED=True
+    if settings.is_live and not settings.SYSTEM_LIVE_TRADING_ENABLED:
+        errors.append(
+            "SYSTEM_LIVE_TRADING_ENABLED is False but ACCOUNT_MODE=live. "
+            "Set SYSTEM_LIVE_TRADING_ENABLED=True or switch to demo mode."
+        )
+
+    # 7. Safety warning: Live mode with debug enabled
     if settings.is_live and settings.DEBUG:
         logger.warning(
             "⚠  WARNING: ACCOUNT_MODE=live with DEBUG=True. "
