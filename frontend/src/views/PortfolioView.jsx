@@ -9,11 +9,11 @@ export function PortfolioView() {
   const isLoading = !summary && !summaryError;
   const isPositionsLoading = !positionsData && !positionsError;
 
-  // Defaults if no data
-  const mode = summary?.trading_mode || "Unknown";
-  const balance = summary?.account_balance || 0;
-  const margin = summary?.available_margin || 0;
-  const pnl = summary?.unrealized_pnl || 0;
+  // Defaults if no data — support both new nested structure and legacy flat keys
+  const mode    = summary?.trading_mode || "Unknown";
+  const balance = summary?.account?.balance   ?? summary?.account_balance   ?? 0;
+  const margin  = summary?.account?.available_margin ?? summary?.available_margin ?? 0;
+  const pnl     = summary?.account?.unrealized_pnl   ?? summary?.unrealized_pnl   ?? 0;
 
   return (
     <div className="space-y-6">

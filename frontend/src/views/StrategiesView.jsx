@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useSWR from 'swr';
 import { fetcher, api } from '../api';
-import { Settings, Save, X } from 'lucide-react';
+import { Settings, Save, X, TrendingUp, TrendingDown, Minus, Activity } from 'lucide-react';
 
 function ProfileEditor({ name, initialConfig, onClose, onSave }) {
   const [config, setConfig] = useState(initialConfig);
@@ -99,25 +99,123 @@ function ProfileEditor({ name, initialConfig, onClose, onSave }) {
 }
 
 export function StrategiesView() {
-  const { data: instruments = [] } = useSWR('/instruments/', fetcher);
-  const activeInstruments = instruments.filter(i => ['ACTIVE', 'WATCHLIST'].includes(i.status));
-  const symbol = activeInstruments.length > 0 ? activeInstruments[0].symbol : '';
-  
-  const { data: rankingData, error: rankingError } = useSWR(symbol ? `/strategy/ranking?symbol=${symbol}` : null, fetcher);
+  // Multi-instrument scanner — all instruments from dashboard endpoint
+  const { data: watchData, error: watchError } = useSWR('/dashboard/instruments', fetcher, {
+    refreshInterval: 15000,
+    fallbackData: { instruments: [] },
+  });
+
+  // Detailed ranking for a selected instrument
+  const [selectedSymbol, setSelectedSymbol] = useState('');
+  const instruments = watchData?.instruments ?? [];
+
+  // Auto-select first instrument for detail view
+  React.useEffect(() => {
+    if (instruments.length > 0 && !instruments.find(i => i.symbol === selectedSymbol)) {
+      setSelectedSymbol(instruments[0].symbol);
+    }
+  }, [instruments, selectedSymbol]);
+
+  const { data: rankingData, error: rankingError } = useSWR(
+    selectedSymbol ? `/strategy/ranking?symbol=${selectedSymbol}` : null,
+    fetcher
+  );
   const { data: profilesData, mutate: mutateProfiles } = useSWR('/strategy/profiles', fetcher);
-  
+
   const [editingProfile, setEditingProfile] = useState(null);
 
-  const isRankingLoading = !rankingData && !rankingError;
+  const TREND_ICON = { BULLISH: TrendingUp, BEARISH: TrendingDown, NEUTRAL: Minus };
+  const TREND_COLOR = { BULLISH: 'text-emerald-400', BEARISH: 'text-rose-400', NEUTRAL: 'text-slate-400' };
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-white tracking-tight">Strategy Center</h1>
-      
+
+      {/* ── Active Scans — all instruments ── */}
+      <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden">
+        <div className="p-4 border-b border-slate-800 flex justify-between items-center">
+          <h2 className="font-semibold text-white">Active Scans</h2>
+          <span className="text-xs text-slate-500">{instruments.length} instruments monitored</span>
+        </div>
+
+        {instruments.length === 0 ? (
+          <div className="p-8 text-center text-slate-500">
+            {watchError ? 'Failed to load instruments.' : 'No instruments tracked. Add and activate instruments first.'}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
+                <tr>
+                  <th className="p-3 font-medium">Symbol</th>
+                  <th className="p-3 font-medium">Trend</th>
+                  <th className="p-3 font-medium">Regime</th>
+                  <th className="p-3 font-medium">ADX</th>
+                  <th className="p-3 font-medium">Top Strategy</th>
+                  <th className="p-3 font-medium text-right">Score</th>
+                  <th className="p-3 font-medium text-right">Signal</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/50">
+                {instruments.map(inst => {
+                  const Icon = TREND_ICON[inst.trend] ?? Minus;
+                  const trendCls = TREND_COLOR[inst.trend] ?? 'text-slate-400';
+                  const signalColors = {
+                    SETUP_FOUND: 'text-emerald-400 bg-emerald-500/10',
+                    NONE: 'text-slate-500 bg-slate-800',
+                  };
+                  const signalCls = signalColors[inst.signal] ?? signalColors.NONE;
+                  const isSelected = inst.symbol === selectedSymbol;
+                  return (
+                    <tr
+                      key={inst.id}
+                      onClick={() => setSelectedSymbol(inst.symbol)}
+                      className={`cursor-pointer transition ${isSelected ? 'bg-indigo-600/10 border-l-2 border-indigo-500' : 'hover:bg-slate-900/50'}`}
+                    >
+                      <td className="p-3 font-bold text-white">{inst.symbol}</td>
+                      <td className="p-3">
+                        <span className={`flex items-center gap-1 font-medium ${trendCls}`}>
+                          <Icon size={12} /> {inst.trend}
+                        </span>
+                      </td>
+                      <td className="p-3 text-slate-300">{inst.regime}</td>
+                      <td className="p-3">
+                        {inst.adx != null ? (
+                          <span className={inst.adx >= 25 ? 'text-indigo-400 font-bold' : 'text-slate-400'}>
+                            {inst.adx}
+                          </span>
+                        ) : <span className="text-slate-600">--</span>}
+                      </td>
+                      <td className="p-3 text-slate-400">{inst.top_strategy ?? 'No Setup'}</td>
+                      <td className="p-3 text-right font-bold text-indigo-400">
+                        {inst.strategy_score != null ? inst.strategy_score : '--'}
+                      </td>
+                      <td className="p-3 text-right">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${signalCls}`}>
+                          {inst.signal ?? 'NONE'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {/* Detailed Rankings for selected instrument */}
         <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
           <div className="p-4 border-b border-slate-800">
-            <h2 className="font-semibold text-white">Live Strategy Rankings ({symbol || 'No Instrument'})</h2>
+            <h2 className="font-semibold text-white">
+              Strategy Rankings{' '}
+              {selectedSymbol && (
+                <span className="text-indigo-400">— {selectedSymbol}</span>
+              )}
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">Click any row above to view detailed scores</p>
           </div>
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-900/50 text-slate-400 border-b border-slate-800">
@@ -127,7 +225,7 @@ export function StrategiesView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50 text-slate-300">
-              {isRankingLoading ? (
+              {!rankingData && !rankingError ? (
                 <tr>
                   <td colSpan="2" className="p-8 text-center text-slate-500">Loading rankings...</td>
                 </tr>
@@ -135,21 +233,26 @@ export function StrategiesView() {
                 rankingData.ranking.map((s, i) => (
                   <tr key={i} className="hover:bg-slate-900/50 transition">
                     <td className="p-4 font-medium text-white">
-                      {s.strategy} 
-                      {rankingData.winner === s.strategy && <span className="ml-2 text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">Winner</span>}
+                      {s.strategy}
+                      {rankingData.winner === s.strategy && (
+                        <span className="ml-2 text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">Winner</span>
+                      )}
                     </td>
-                    <td className="p-4 text-right font-bold text-indigo-400">{s.total?.toFixed(1) || 0}</td>
+                    <td className="p-4 text-right font-bold text-indigo-400">{s.total?.toFixed(1) ?? 0}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="2" className="p-8 text-center text-slate-500">No strategy ranking available.</td>
+                  <td colSpan="2" className="p-8 text-center text-slate-500">
+                    {selectedSymbol ? 'No ranking data yet for this instrument.' : 'Select an instrument above.'}
+                  </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
 
+        {/* Strategy Configurations */}
         <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex flex-col">
           <div className="p-4 border-b border-slate-800">
             <h2 className="font-semibold text-white">Strategy Configurations</h2>
@@ -166,12 +269,16 @@ export function StrategiesView() {
                     <h3 className="font-bold text-white mb-1">{name}</h3>
                     <div className="text-xs text-slate-400 flex flex-wrap gap-2 mt-2">
                       {Object.keys(config).slice(0, 3).map(k => (
-                        <span key={k} className="bg-slate-800 px-2 py-1 rounded">{k}: {Array.isArray(config[k]) ? config[k].join(', ') : config[k].toString()}</span>
+                        <span key={k} className="bg-slate-800 px-2 py-1 rounded">
+                          {k}: {Array.isArray(config[k]) ? config[k].join(', ') : config[k].toString()}
+                        </span>
                       ))}
-                      {Object.keys(config).length > 3 && <span className="bg-slate-800 px-2 py-1 rounded">+{Object.keys(config).length - 3} more</span>}
+                      {Object.keys(config).length > 3 && (
+                        <span className="bg-slate-800 px-2 py-1 rounded">+{Object.keys(config).length - 3} more</span>
+                      )}
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setEditingProfile({ name, config })}
                     className="p-2 bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white rounded transition"
                   >
@@ -182,12 +289,13 @@ export function StrategiesView() {
             )}
           </div>
         </div>
+
       </div>
 
       {editingProfile && (
-        <ProfileEditor 
-          name={editingProfile.name} 
-          initialConfig={editingProfile.config} 
+        <ProfileEditor
+          name={editingProfile.name}
+          initialConfig={editingProfile.config}
           onClose={() => setEditingProfile(null)}
           onSave={() => {
             setEditingProfile(null);
