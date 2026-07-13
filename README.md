@@ -1,4 +1,4 @@
-# Aegis Trading System (ATS)
+ # Aegis Trading System (ATS)
 
 > A professional rule-based algorithmic trading platform built with Python, FastAPI, React, and PostgreSQL.
 
