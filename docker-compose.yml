@@ -28,10 +28,10 @@ services:
       POSTGRES_PASSWORD: ats_password
       POSTGRES_DB: ats_development
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       # Persist database data between container restarts
-      - ats_postgres_data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
       # Run initialization SQL on first start
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
@@ -106,9 +106,9 @@ services:
 # ─────────────────────────────────────────────
 # Volumes
 # ─────────────────────────────────────────────
-volumes:
-  ats_postgres_data:
-    driver: local
+# volumes:
+#   ats_postgres_data:
+#     driver: local
 
 # ─────────────────────────────────────────────
 # Networks
