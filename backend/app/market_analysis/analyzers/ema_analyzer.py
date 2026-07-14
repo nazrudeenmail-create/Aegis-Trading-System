@@ -15,13 +15,16 @@ class EMAAnalyzer(BaseAnalyzer[EMAAnalysis]):
         lengths = [9, 20, 21, 50, 100, 200]
         results = calculate_emas(snapshot.candles, lengths)
         
-        # 2. Extract values safely
+        # 2. Extract values safely. 
+        # Fallback to Phase 4.5 Live Cache if pandas-ta couldn't compute it (due to insufficient candles)
+        ctx = snapshot.live_context
+        
         ema_9 = results.get(9)
-        ema_20 = results.get(20)
+        ema_20 = results.get(20) or ctx.ema_20_live
         ema_21 = results.get(21)
-        ema_50 = results.get(50)
+        ema_50 = results.get(50) or ctx.ema_50_live
         ema_100 = results.get(100)
-        ema_200 = results.get(200)
+        ema_200 = results.get(200) or ctx.ema_200_live
         
         # 3. Return the strictly typed Pydantic model (Facts only)
         return EMAAnalysis(

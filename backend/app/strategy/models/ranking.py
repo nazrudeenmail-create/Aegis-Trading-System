@@ -20,6 +20,8 @@ class SetupScore(BaseModel):
     has_setup: bool
     confidence: float
     rejection_reason: Optional[str] = None
+    setup_progress: float = 0.0
+    failed_rule: Optional[dict] = None
 
 class StrategyScore(BaseModel):
     strategy_name: str
@@ -27,6 +29,9 @@ class StrategyScore(BaseModel):
     market_score: float
     setup_score: float
     final_score: float
+    rejection_reason: Optional[str] = None
+    setup_progress: float = 0.0
+    failed_rule: Optional[dict] = None
 
 class RankingResult(BaseModel):
     timestamp: datetime

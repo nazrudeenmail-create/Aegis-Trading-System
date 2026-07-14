@@ -26,70 +26,92 @@ class DonchianChannelBreakoutStrategy(BaseStrategy):
         h4 = mtf_context.get(Timeframe.H4)
         m15 = mtf_context.get(Timeframe.M15)
         
+        passed_rules = []
+        total_rules = 5
+        
+        def fail(rule: str, reason: str) -> StrategyResult:
+            from app.strategy.models import RuleFailure
+            return StrategyResult(
+                is_valid=False,
+                total_rules=total_rules,
+                passed_rules=passed_rules,
+                failed_rule=RuleFailure(rule=rule, reason=reason)
+            )
+        
         if not all([daily, h4, m15]):
-            return StrategyResult(is_valid=False, rejection_reason="Missing or invalid timeframes")
+            return fail("Data Availability", "Missing or invalid timeframes")
             
         if not m15.is_valid or not m15.candles:
-            return StrategyResult(is_valid=False, rejection_reason="Invalid primary snapshot or no candles")
+            return fail("Data Availability", "Invalid primary snapshot or no candles")
             
         latest_daily_candle = daily.candles[-1]
         latest_m15_candle = m15.candles[-1]
 
         # 1. Daily Trend
         if not daily.ema or daily.ema.ema_200 is None:
-            return StrategyResult(is_valid=False, rejection_reason="Daily EMA200 missing")
+            return fail("Daily Trend", "Daily EMA200 missing")
             
         is_long_macro = latest_daily_candle.close > daily.ema.ema_200
         is_short_macro = latest_daily_candle.close < daily.ema.ema_200
         
         if not is_long_macro and not is_short_macro:
-             return StrategyResult(is_valid=False, rejection_reason="Daily close exactly equals EMA200")
+             return fail("Daily Trend", "Daily close exactly equals EMA200")
              
+        passed_rules.append("Daily Trend")
         intended_direction = TradeDirection.LONG if is_long_macro else TradeDirection.SHORT
         
         # 2. 4H Trend Confirmation
         if not h4.ema or h4.ema.ema_20 is None or h4.ema.ema_50 is None or h4.ema.ema_200 is None:
-             return StrategyResult(is_valid=False, rejection_reason="4H EMA data missing")
+             return fail("4H Trend", "4H EMA data missing")
              
         if intended_direction == TradeDirection.LONG:
              if not (h4.ema.ema_20 > h4.ema.ema_50 and h4.ema.ema_50 > h4.ema.ema_200):
-                 return StrategyResult(is_valid=False, rejection_reason="4H EMA structure not bullish")
+                 return fail("4H Trend", "4H EMA structure not bullish")
         else:
              if not (h4.ema.ema_20 < h4.ema.ema_50 and h4.ema.ema_50 < h4.ema.ema_200):
-                 return StrategyResult(is_valid=False, rejection_reason="4H EMA structure not bearish")
+                 return fail("4H Trend", "4H EMA structure not bearish")
                  
+        passed_rules.append("4H Trend")
+                 
+        # 3. 4H Trend Strength
         if h4.adx is None or h4.adx.adx is None or h4.adx.adx < Decimal("25"):
-             return StrategyResult(is_valid=False, rejection_reason="4H ADX is weak")
+             return fail("4H Trend Strength", "4H ADX is weak (<25)")
              
-        # 3. 15M Breakout Execution
+        passed_rules.append("4H Trend Strength")
+             
+        # 4. 15M Breakout Execution
         if not m15.donchian:
-            return StrategyResult(is_valid=False, rejection_reason="Donchian analysis is missing on 15M")
+            return fail("15M Breakout Execution", "Donchian analysis is missing on 15M")
             
         if intended_direction == TradeDirection.LONG:
             if not m15.donchian.is_breakout_up:
-                return StrategyResult(is_valid=False, rejection_reason="No Donchian breakout UP")
+                return fail("15M Breakout Execution", "No Donchian breakout UP")
             if m15.donchian.upper_band is None or latest_m15_candle.close <= m15.donchian.upper_band:
-                return StrategyResult(is_valid=False, rejection_reason="Close is not above upper band")
+                return fail("15M Breakout Execution", "Close is not above upper band")
             if not m15.candle or not m15.candle.is_bullish:
-                return StrategyResult(is_valid=False, rejection_reason="15M breakout candle is not bullish")
+                return fail("15M Breakout Execution", "15M breakout candle is not bullish")
         else:
             if not m15.donchian.is_breakout_down:
-                return StrategyResult(is_valid=False, rejection_reason="No Donchian breakout DOWN")
+                return fail("15M Breakout Execution", "No Donchian breakout DOWN")
             if m15.donchian.lower_band is None or latest_m15_candle.close >= m15.donchian.lower_band:
-                return StrategyResult(is_valid=False, rejection_reason="Close is not below lower band")
+                return fail("15M Breakout Execution", "Close is not below lower band")
             if not m15.candle or not m15.candle.is_bearish:
-                return StrategyResult(is_valid=False, rejection_reason="15M breakout candle is not bearish")
+                return fail("15M Breakout Execution", "15M breakout candle is not bearish")
                 
-        # Volume Confirmation
+        passed_rules.append("15M Breakout Execution")
+                
+        # 5. Volume Confirmation
         if not m15.volume or m15.volume.current_volume is None or m15.volume.average_volume is None:
-             return StrategyResult(is_valid=False, rejection_reason="15M Volume data missing")
+             return fail("Volume Confirmation", "15M Volume data missing")
              
         if m15.volume.current_volume <= m15.volume.average_volume:
-             return StrategyResult(is_valid=False, rejection_reason="15M Volume confirmation failed")
+             return fail("Volume Confirmation", "15M Volume confirmation failed (Current <= Avg)")
+             
+        passed_rules.append("Volume Confirmation")
 
         # Stop Loss at breakout candle extreme
         if not m15.atr or m15.atr.atr is None:
-            return StrategyResult(is_valid=False, rejection_reason="Missing ATR for stop loss buffer")
+            return fail("Risk Management", "Missing ATR for stop loss buffer")
             
         atr_buffer = Decimal("0.5") * m15.atr.atr
         
@@ -110,4 +132,9 @@ class DonchianChannelBreakoutStrategy(BaseStrategy):
                 "daily_trend": "BULLISH" if intended_direction == TradeDirection.LONG else "BEARISH"
             }
         )
-        return StrategyResult(is_valid=True, candidate=candidate)
+        return StrategyResult(
+            is_valid=True,
+            candidate=candidate,
+            total_rules=total_rules,
+            passed_rules=passed_rules
+        )

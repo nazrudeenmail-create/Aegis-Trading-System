@@ -33,6 +33,9 @@ class StrategyScoreInfo(BaseModel):
     historical: Optional[float] = None
     compatibility: Optional[float] = None
     setup: Optional[float] = None
+    rejection_reason: Optional[str] = None
+    setup_progress: float = 0.0
+    failed_rule: Optional[Dict[str, Any]] = None
 
 class RankingResponse(BaseModel):
     winner: str

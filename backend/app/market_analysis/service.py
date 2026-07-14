@@ -66,7 +66,7 @@ class MarketAnalysisService:
             logger.error(f"Unexpected error in {field.upper()} analyzer", exc_info=e)
             snapshot.analysis_errors.append(f"{field}: {str(e)}")
             
-    def analyze(self, candles: List[Candle]) -> MarketSnapshot:
+    def analyze(self, candles: List[Candle], tf=None, db=None) -> MarketSnapshot:
         """
         Executes the 2-Tier analysis pipeline safely.
         """
@@ -74,6 +74,12 @@ class MarketAnalysisService:
         
         if not snapshot.is_valid:
             return snapshot
+            
+        # Phase 4.5 Cache Injection
+        from app.market_analysis.cache_service import IndicatorCacheService
+        if db:
+            symbol = candles[-1].instrument
+            snapshot.live_context = IndicatorCacheService.populate_live_context(db, symbol, tf, candles[-1])
             
         # ----------------------------------------------------
         # Phase A: Tier 1 (Indicator Engine)

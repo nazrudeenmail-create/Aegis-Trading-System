@@ -37,11 +37,12 @@ class MultiTimeframeService:
         self, 
         base_1m_candles: List[Candle], 
         required_timeframes: List[Timeframe],
-        primary_timeframe: Timeframe = None
+        primary_timeframe: Timeframe = None,
+        db=None
     ) -> MultiTimeframeContext:
         """
         Builds a MultiTimeframeContext from a base list of 1-minute candles.
-        For a live system, this might fetch directly from a MarketDataRepository.
+        Passes db session to MarketAnalysisService to fetch cached IndicatorState.
         """
         if not base_1m_candles:
             return MultiTimeframeContext()
@@ -59,7 +60,17 @@ class MultiTimeframeService:
         for tf in required_timeframes:
             try:
                 aggregated_candles = TimeframeBuilder.aggregate(base_1m_candles, tf)
-                snapshot = self.analysis_service.analyze(aggregated_candles)
+                
+                from app.market_analysis.quality import DataQualityValidator
+                is_valid, reason = DataQualityValidator.validate(aggregated_candles, expected_count=50)
+                
+                if not is_valid:
+                    logger.warning(f"Data quality validation failed for {tf} on {instrument}: {reason}")
+                    snapshot = MarketSnapshot(candles=aggregated_candles, is_valid=False)
+                    snapshot.analysis_errors.append(f"Data Quality: {reason}")
+                else:
+                    snapshot = self.analysis_service.analyze(candles=aggregated_candles, tf=tf, db=db)
+                    
                 context.snapshots[tf] = snapshot
             except Exception as e:
                 logger.error(f"Failed to build analysis for timeframe {tf}: {e}")

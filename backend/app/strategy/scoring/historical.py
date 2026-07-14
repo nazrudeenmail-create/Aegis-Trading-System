@@ -12,7 +12,7 @@ class HistoricalScorer:
     def __init__(self):
         pass
 
-    def score(self, db: Session, strategy_name: str) -> float:
+    def score(self, db: Session, strategy_name: str, symbol: str = None) -> float:
         # Get the latest backtest run for this strategy
         if db is None:
             return 0.0
@@ -70,4 +70,17 @@ class HistoricalScorer:
 
         # Final Historical Score
         final_score = base_score * sample_confidence * recency_factor
-        return float(max(0.0, final_score))
+        
+        # 5. Asset-Specific Adjustments (Future-proofing for instrument-level backtests)
+        if symbol:
+            # Note: In the future, this should query an AssetStrategyAdjustment table 
+            # or rely on instrument-specific BacktestRuns. For now, we apply basic logic.
+            symbol_upper = symbol.upper()
+            if "DONCHIAN" in strategy_name.upper() and ("OIL" in symbol_upper or "GOLD" in symbol_upper):
+                final_score *= 1.10  # 10% bonus for Donchian breakout on trending commodities
+            elif "TREND" in strategy_name.upper() and ("BTC" in symbol_upper or "ETH" in symbol_upper):
+                final_score *= 1.05  # 5% bonus for Trend on Crypto
+            elif "PULLBACK" in strategy_name.upper() and "EURUSD" in symbol_upper:
+                final_score *= 1.08  # 8% bonus for pullbacks on forex pairs
+                
+        return float(max(0.0, min(100.0, final_score)))

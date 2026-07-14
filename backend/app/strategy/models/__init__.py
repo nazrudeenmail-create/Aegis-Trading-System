@@ -21,6 +21,11 @@ class TradeCandidate(BaseModel):
     confidence: float = 100.0
     market_conditions: Dict[str, Any]
 
+class RuleFailure(BaseModel):
+    rule: str
+    status: str = "FAILED"
+    reason: str
+
 class StrategyResult(BaseModel):
     """
     The outcome of a strategy evaluating a MarketSnapshot.
@@ -28,4 +33,20 @@ class StrategyResult(BaseModel):
     """
     is_valid: bool
     candidate: Optional[TradeCandidate] = None
-    rejection_reason: Optional[str] = None
+    
+    # Progress and Diagnostics
+    total_rules: int = 0
+    passed_rules: list[str] = []
+    failed_rule: Optional[RuleFailure] = None
+    
+    @property
+    def setup_progress(self) -> float:
+        if self.total_rules == 0:
+            return 0.0
+        return (len(self.passed_rules) / self.total_rules) * 100.0
+        
+    @property
+    def rejection_reason(self) -> Optional[str]:
+        if self.failed_rule:
+            return f"{self.failed_rule.rule}: {self.failed_rule.reason}"
+        return None

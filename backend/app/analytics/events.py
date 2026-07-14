@@ -3,7 +3,8 @@ Aegis Trading System - Analytics Event Bus
 """
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Tuple
+from datetime import datetime
 from app.strategy.models.ranking import RankingResult
 from app.risk.models import RiskAssessment
 from app.execution.models.order import OrderResult, TradeRecord
@@ -51,6 +52,18 @@ class SystemLogEvent(Event):
     source: str # e.g. "RiskEngine", "StrategyRanking"
     message: str
 
+@dataclass
+class PipelineMetricsEvent(Event):
+    """
+    Structured event for engine monitoring.
+    """
+    engine: str
+    instrument: str
+    event_name: str
+    timestamp: str
+    duration_ms: float
+    status: str
+
 
 class EventBus:
     """
@@ -59,6 +72,8 @@ class EventBus:
     """
     def __init__(self):
         self.subscribers: Dict[str, List[Callable[[Event], None]]] = {}
+        self.history: List[Tuple[datetime, Event]] = []
+        self.max_history = 50
 
     def subscribe(self, event_type: type, handler: Callable[[Event], None]):
         event_name = event_type.__name__
@@ -67,6 +82,11 @@ class EventBus:
         self.subscribers[event_name].append(handler)
 
     def publish(self, event: Event):
+        # Store in history with timestamp
+        self.history.append((datetime.now(), event))
+        if len(self.history) > self.max_history:
+            self.history.pop(0)
+
         event_name = event.__class__.__name__
         handlers = self.subscribers.get(event_name, [])
         for handler in handlers:

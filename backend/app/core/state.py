@@ -53,6 +53,7 @@ class AppState:
         self.event_bus: Optional[EventBus] = None
         self.journal: Optional[DecisionJournal] = None
         self.system_state: Optional[SystemState] = None
+        self.telemetry: Optional[Any] = None
 
         # References to engines that will be populated when ATS starts
         self.market_service = None

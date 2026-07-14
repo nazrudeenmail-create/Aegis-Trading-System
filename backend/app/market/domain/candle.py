@@ -15,7 +15,7 @@ class Candle(BaseModel):
     Pure domain model for a Market Candle.
     Isolates the ATS engine from broker-specific API payloads.
     """
-    model_config = ConfigDict(frozen=True)  # Domain models should be immutable to prevent accidental mutation
+    model_config = ConfigDict(frozen=True, from_attributes=True)  # Domain models should be immutable to prevent accidental mutation
 
     instrument: str = Field(..., description="Instrument symbol, e.g., EURUSD")
     timeframe: Timeframe = Field(..., description="Candle timeframe")

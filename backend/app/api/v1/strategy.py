@@ -35,7 +35,10 @@ def get_strategy_ranking(symbol: str = "BTCUSD", current_user: User = Depends(ge
                 total=candidate.final_score,
                 historical=candidate.historical_score,
                 compatibility=candidate.market_score,
-                setup=candidate.setup_score
+                setup=candidate.setup_score,
+                rejection_reason=candidate.rejection_reason,
+                setup_progress=candidate.setup_progress,
+                failed_rule=candidate.failed_rule
             )
             for candidate in ranking.rankings
         ]

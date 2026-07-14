@@ -58,6 +58,13 @@ async def lifespan(application: FastAPI):
     global_state.ranking_engine = StrategyRankingEngine(strategies=[EMATrendPullbackStrategy(), MultiTimeframeTrendAlignmentStrategy(), DonchianChannelBreakoutStrategy()])
     global_state.risk_engine = RiskEngine()
     global_state.system_state = SystemState()
+    
+    from app.analytics.telemetry import TelemetryService
+    global_state.telemetry = TelemetryService(event_bus)
+    global_state.telemetry.heartbeat("Broker", "Initializing")
+    global_state.telemetry.heartbeat("MarketData", "Initializing")
+    
+    # Example: Record a system log that we started
     event_bus.publish(SystemLogEvent(level="INFO", source="System", message="Engines initialized"))
 
     # ── Infrastructure Layer: Create broker and provider via BrokerFactory ──

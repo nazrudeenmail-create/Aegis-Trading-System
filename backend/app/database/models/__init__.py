@@ -23,6 +23,7 @@ from app.database.models.candle import Candle
 from app.database.models.market_session import MarketSession
 from app.database.models.market_holiday import MarketHoliday
 from app.database.models.indicator_value import IndicatorValue
+from app.database.models.indicator_state import IndicatorState
 from app.database.models.market_analysis import MarketAnalysis
 from app.database.models.signal import Signal
 from app.database.models.risk_check import RiskCheck
@@ -44,6 +45,7 @@ __all__ = [
     "MarketSession",
     "MarketHoliday",
     "IndicatorValue",
+    "IndicatorState",
     "MarketAnalysis",
     "Signal",
     "RiskCheck",

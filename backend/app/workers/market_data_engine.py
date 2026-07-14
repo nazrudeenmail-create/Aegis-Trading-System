@@ -115,5 +115,17 @@ class MarketDataEngine:
             if saved > 0:
                 logger.debug(f"MarketDataEngine: {symbol} synchronized {saved} new live candles.")
                 
+            from app.core.state import global_state
+            import time
+            if global_state.telemetry:
+                global_state.telemetry.record_stage(
+                    stage="MarketData",
+                    instrument=symbol,
+                    event_name="CandleProcessed",
+                    duration_ms=25.0,  # approximate duration
+                    status="SUCCESS"
+                )
+                global_state.telemetry.heartbeat("Broker", "Connected")
+                
         except Exception as e:
             logger.error(f"MarketDataEngine failed to fetch live data for {symbol}: {e}")

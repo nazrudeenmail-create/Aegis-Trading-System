@@ -19,8 +19,8 @@ export function MarketAnalysisView() {
     }
   }, [activeInstruments, symbol]);
 
-  const { data: analysisData, error: analysisError, isLoading: isAnalysisLoading } = useSWR(symbol ? `/market/current?symbol=${symbol}` : null, fetcher, { refreshInterval: 15000 });
-  const { data: candlesData, error: candlesError } = useSWR(symbol ? `/market/candles?symbol=${symbol}&timeframe=${timeframe}&limit=200` : null, fetcher, { refreshInterval: 60000 });
+  const { data: analysisData, error: analysisError, isLoading: isAnalysisLoading } = useSWR(symbol ? `/market/current?symbol=${symbol}` : null, fetcher, { refreshInterval: 5000 });
+  const { data: candlesData, error: candlesError } = useSWR(symbol ? `/market/candles?symbol=${symbol}&timeframe=${timeframe}&limit=200` : null, fetcher, { refreshInterval: 15000 });
 
   if (isAnalysisLoading) return <div className="p-8" style={{ color: 'var(--text-secondary)' }}>Loading market analysis for {symbol}...</div>;
   if (analysisError) {

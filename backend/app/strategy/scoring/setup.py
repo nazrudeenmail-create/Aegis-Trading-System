@@ -7,22 +7,25 @@ class SetupScorer:
     """
     @staticmethod
     def score(strategy_name: str, result: StrategyResult) -> SetupScore:
+        failed_rule_dict = result.failed_rule.model_dump() if getattr(result, 'failed_rule', None) else None
+        
         if not result.is_valid or not result.candidate:
             return SetupScore(
                 strategy_name=strategy_name,
                 has_setup=False,
                 confidence=0.0,
-                rejection_reason=result.rejection_reason or "No candidate generated"
+                rejection_reason=result.rejection_reason or "No candidate generated",
+                setup_progress=result.setup_progress,
+                failed_rule=failed_rule_dict
             )
             
-        # Assuming we eventually add confidence to TradeCandidate, 
-        # or we just assume 100.0 for a valid setup for now.
-        # If confidence is added to TradeCandidate, extract it: getattr(result.candidate, 'confidence', 100.0)
         conf = getattr(result.candidate, 'confidence', 100.0)
         
         return SetupScore(
             strategy_name=strategy_name,
             has_setup=True,
             confidence=float(conf),
-            rejection_reason=None
+            rejection_reason=None,
+            setup_progress=100.0,
+            failed_rule=None
         )

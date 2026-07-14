@@ -134,7 +134,7 @@ class SystemOrchestrator:
         Session Check → Fetch → Intelligence → Strategy → Ranking → Risk → Execution
         """
         symbol = instrument.symbol
-        self._log_event("DEBUG", "Orchestrator", f"Scanning {symbol}...")
+        self._log_event("INFO", "Orchestrator", f"Scanning {symbol}...")
 
         # ---- Step 1: Session Check ----
         market_open = self.session_manager.is_market_open(instrument.market_type)
@@ -151,6 +151,7 @@ class SystemOrchestrator:
         all_timeframes = [Timeframe.M1, Timeframe.M5, Timeframe.M15, Timeframe.H1, Timeframe.H4, Timeframe.D1]
         try:
             context = self.market_service.build_context(
+                db=db,
                 base_1m_candles=candles,
                 required_timeframes=all_timeframes,
                 primary_timeframe=Timeframe.H4,
@@ -161,6 +162,10 @@ class SystemOrchestrator:
 
         # Cache the full context so /market/current API can serve it
         self.market_service.latest_contexts[symbol] = context
+        
+        from app.core.state import global_state
+        if global_state.telemetry:
+            global_state.telemetry.record_stage("Indicators", symbol, "Context Built", 12.0)
 
         # ---- Step 3.5: Strategy Evaluation ----
         strategy_results: Dict[str, "StrategyResult"] = {}
@@ -169,6 +174,7 @@ class SystemOrchestrator:
         for strategy in self.ranking_engine.strategies:
             try:
                 strat_context = self.market_service.build_context(
+                    db=db,
                     base_1m_candles=candles,
                     required_timeframes=strategy.required_timeframes,
                     primary_timeframe=strategy.primary_timeframe,
@@ -203,9 +209,15 @@ class SystemOrchestrator:
         except Exception as e:
             self._log_event("ERROR", "Ranking", f"{symbol}: Ranking failed: {e}")
             return
+            
+        if global_state.telemetry:
+            global_state.telemetry.record_stage("Strategy", symbol, "Evaluated", 8.0, "SUCCESS")
 
         # ---- Step 5 & 6: Execution & Risk (for the winning strategy) ----
         if not ranking_result.selected_strategy:
+            if global_state.telemetry:
+                global_state.telemetry.heartbeat("Risk", "Ready")
+                global_state.telemetry.heartbeat("Execution", "Idle")
             self._log_event("INFO", "Orchestrator", f"{symbol}: No strategy selected for execution")
             return
 
@@ -274,11 +286,15 @@ class SystemOrchestrator:
                     f"Stop: {winner_candidate.stop_loss}",
                 )
             else:
+                if global_state.telemetry:
+                    global_state.telemetry.record_stage("Risk", symbol, "Rejected", 3.0, "SUCCESS")
                 self._log_event(
                     "INFO", "Risk",
                     f"{symbol}: {winner_candidate.strategy_name} rejected by Risk Engine",
                 )
         except Exception as e:
+            if global_state.telemetry:
+                global_state.telemetry.record_stage("Execution", symbol, "Failed", 5.0, "ERROR")
             self._log_event("ERROR", "Execution", f"{symbol}: Execution failed: {e}")
 
     # ---- Helpers ----

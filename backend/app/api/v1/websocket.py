@@ -146,10 +146,30 @@ def init_websocket_broadcaster(event_bus: EventBus):
         except RuntimeError:
             pass
 
+    def handle_pipeline_metrics(event):
+        msg = {
+            "event": "pipeline.metrics",
+            "data": {
+                "engine": event.engine,
+                "instrument": event.instrument,
+                "event_name": event.event_name,
+                "timestamp": event.timestamp,
+                "duration_ms": event.duration_ms,
+                "status": event.status
+            }
+        }
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(manager.broadcast(msg))
+        except RuntimeError:
+            pass
+
     # Note: market.candle.closed and market.regime.changed are not yet explicitly modeled as EventBus events
     # We will add them here when Phase 3/4 gets integrated into the EventBus.
     
+    from app.analytics.events import PipelineMetricsEvent
     event_bus.subscribe(DecisionEvent, handle_decision)
     event_bus.subscribe(ExecutionEvent, handle_execution)
     event_bus.subscribe(TradeClosedEvent, handle_trade_closed)
     event_bus.subscribe(SystemLogEvent, handle_system_log)
+    event_bus.subscribe(PipelineMetricsEvent, handle_pipeline_metrics)

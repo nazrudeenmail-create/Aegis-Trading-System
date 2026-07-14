@@ -108,19 +108,48 @@ class VolatilityAnalysis(BaseAnalysis):
 
 from datetime import datetime, timezone
 
+class LiveIndicatorContext(BaseModel):
+    """
+    Holds both the finalized official indicator state from the last closed candle,
+    and the real-time projected state for the current unclosed candle.
+    """
+    model_config = ConfigDict(
+        json_encoders={
+            Decimal: lambda v: float(v)
+        }
+    )
+    
+    # EMAs
+    ema_200_closed: Decimal | None = None
+    ema_200_live: Decimal | None = None
+    
+    ema_50_closed: Decimal | None = None
+    ema_50_live: Decimal | None = None
+    
+    ema_20_closed: Decimal | None = None
+    ema_20_live: Decimal | None = None
+
+    # Tracking
+    source_candle_time: datetime | None = None
+
+
 class MarketSnapshot(BaseModel):
     """
     The unified market intelligence snapshot produced by the MarketAnalysisService.
     Contains strictly typed fields for every analyzer output, plus the raw candles.
     """
     # Metadata
+    model_config = ConfigDict(arbitrary_types_allowed=True, from_attributes=True)
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     analysis_errors: List[str] = Field(default_factory=list)
     
     # Raw Data
     candles: List[Candle] = Field(default_factory=list)
     
-    # Tier 1 Facts
+    # Phase 4.5 Cache Layer (Long-term Context)
+    live_context: LiveIndicatorContext = Field(default_factory=LiveIndicatorContext)
+    
+    # Tier 1 Facts (Intraday calculations)
     ema: EMAAnalysis | None = None
     atr: ATRAnalysis | None = None
     adx: ADXAnalysis | None = None

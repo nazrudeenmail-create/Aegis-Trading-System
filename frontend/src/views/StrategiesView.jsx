@@ -118,7 +118,8 @@ export function StrategiesView() {
 
   const { data: rankingData, error: rankingError } = useSWR(
     selectedSymbol ? `/strategy/ranking?symbol=${selectedSymbol}` : null,
-    fetcher
+    fetcher,
+    { refreshInterval: 5000 }
   );
   const { data: profilesData, mutate: mutateProfiles } = useSWR('/strategy/profiles', fetcher);
 
@@ -225,7 +226,7 @@ export function StrategiesView() {
                 <th>Strategy</th>
                 <th className="text-right">Historical</th>
                 <th className="text-right">Market Match</th>
-                <th className="text-right">Setup</th>
+                <th className="text-right">Setup / Progress</th>
                 <th className="text-right">Total Score</th>
               </tr>
             </thead>
@@ -236,18 +237,39 @@ export function StrategiesView() {
                 </tr>
               ) : rankingData?.ranking ? (
                 rankingData.ranking.map((s, i) => (
-                  <tr key={i}>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-                      {s.strategy}
-                      {rankingData.winner === s.strategy && (
-                        <span className="ml-2 badge-success">Winner</span>
-                      )}
-                    </td>
-                    <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.historical?.toFixed(1) ?? 0}</td>
-                    <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.compatibility?.toFixed(1) ?? 0}</td>
-                    <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.setup?.toFixed(1) ?? 0}</td>
-                    <td className="text-right font-bold" style={{ color: 'var(--accent-primary)' }}>{s.total?.toFixed(1) ?? 0}</td>
-                  </tr>
+                  <React.Fragment key={i}>
+                    <tr>
+                      <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
+                        {s.strategy}
+                        {rankingData.winner === s.strategy && (
+                          <span className="ml-2 badge-success">Winner</span>
+                        )}
+                      </td>
+                      <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.historical?.toFixed(1) ?? 0}</td>
+                      <td className="text-right" style={{ color: 'var(--text-secondary)' }}>{s.compatibility?.toFixed(1) ?? 0}</td>
+                      <td className="text-right" style={{ color: 'var(--text-secondary)' }}>
+                        <div style={{ fontWeight: 600, color: s.setup > 0 ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
+                          {s.setup?.toFixed(1) ?? 0}
+                        </div>
+                        {s.setup_progress > 0 && s.setup === 0 && (
+                          <div className="text-[10px] mt-1 px-1 py-0.5 rounded inline-block" style={{ background: 'var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
+                            {s.setup_progress.toFixed(0)}% Progress
+                          </div>
+                        )}
+                      </td>
+                      <td className="text-right font-bold" style={{ color: 'var(--accent-primary)' }}>{s.total?.toFixed(1) ?? 0}</td>
+                    </tr>
+                    {(!s.setup || s.setup === 0) && s.rejection_reason && (
+                      <tr>
+                        <td colSpan="5" className="px-4 py-2 text-xs" style={{ background: 'var(--bg-secondary)', color: 'var(--warning)', borderTop: 'none' }}>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: 'var(--text-tertiary)' }}>Blocked By:</span> 
+                            <span>{s.rejection_reason}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))
               ) : (
                 <tr>

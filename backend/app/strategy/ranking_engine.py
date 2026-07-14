@@ -32,7 +32,7 @@ class StrategyRankingEngine:
             profile = strategy.get_profile()
             
             # 1. Historical Score
-            h_score = self.historical_scorer.score(db, name)
+            h_score = self.historical_scorer.score(db, name, symbol)
             
             # 2. Compatibility Score
             c_score = CompatibilityScorer.score(profile, snapshot)
@@ -43,9 +43,13 @@ class StrategyRankingEngine:
                 s_score_obj = SetupScorer.score(name, result)
                 s_score = s_score_obj.confidence if s_score_obj.has_setup else 0.0
                 rejection = s_score_obj.rejection_reason
+                setup_progress = s_score_obj.setup_progress
+                failed_rule = s_score_obj.failed_rule
             else:
                 s_score = 0.0
                 rejection = "Not evaluated"
+                setup_progress = 0.0
+                failed_rule = None
                 
             # Final calculation (40/30/30)
             final_score = (h_score * 0.40) + (c_score * 0.30) + (s_score * 0.30)
@@ -56,7 +60,10 @@ class StrategyRankingEngine:
                     historical_score=h_score,
                     market_score=c_score,
                     setup_score=s_score,
-                    final_score=final_score
+                    final_score=final_score,
+                    rejection_reason=rejection,
+                    setup_progress=setup_progress,
+                    failed_rule=failed_rule
                 )
             )
             
