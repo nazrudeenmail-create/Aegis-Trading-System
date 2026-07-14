@@ -68,6 +68,10 @@ services:
       CAPITAL_COM_LIVE_URL: https://api-capital.backend-capital.com/api/v1
       # CAPITAL_COM_API_KEY, CAPITAL_COM_USERNAME, CAPITAL_COM_PASSWORD
       # are read from backend/.env (mounted via volume)
+    command: >
+      bash -c "alembic upgrade head &&
+      python scripts/seed_all.py &&
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
     volumes:
