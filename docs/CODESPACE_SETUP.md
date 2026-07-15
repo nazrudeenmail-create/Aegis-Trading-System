@@ -22,4 +22,4 @@ This guide explains how to connect your GitHub Codespace environment to your Lap
 2. Update the `DATABASE_URL` to point to your laptop using the `ats_dev` user you created:
    `DATABASE_URL=postgresql+psycopg://ats_dev:ats_dev_password@[YOUR_LAPTOP_TAILSCALE_IP]:5432/ats_development`
 3. Start the backend:
-   `cd backend && source venv/bin/activate && python -m app.main`
+   `cd backend && source venv/bin/activate && uvicorn app.main:app --reload`
